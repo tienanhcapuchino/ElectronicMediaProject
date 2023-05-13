@@ -19,7 +19,7 @@ namespace ElectronicMedia.Core.Repository.Entity
         public string? Avatar { get; set; }
         public bool IsActived { get; set; }
         public Gender Gender { get; set; }
-        //public virtual ICollection<Post>? Posts { get; set; }
+        public virtual ICollection<Post>? Posts { get; set; }
     }
 
     public enum RoleType : byte

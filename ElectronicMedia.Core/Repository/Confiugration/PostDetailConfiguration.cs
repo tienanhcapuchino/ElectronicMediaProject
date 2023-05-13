@@ -17,8 +17,8 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Dislike);
             builder.Property(p => p.Like);
-            //builder.HasOne(p => p.Post).WithMany().HasForeignKey(x => x.PostId).OnDelete(DeleteBehavior.Cascade);
-            //builder.HasOne(p => p.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(p => p.Post).WithMany().HasForeignKey(x => x.PostId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(p => p.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
