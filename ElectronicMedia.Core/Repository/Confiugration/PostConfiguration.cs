@@ -22,8 +22,8 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.Property(x => x.Status).HasDefaultValue(0);
             builder.Property(t => t.Content).IsRequired();
             builder.Property(t => t.Title).IsRequired();
-            builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
+            //    builder.HasOne(x => x.User).WithMany(x => x.Posts).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            //    builder.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

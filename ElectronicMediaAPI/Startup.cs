@@ -51,11 +51,11 @@ namespace ElectronicMediaAPI
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            app.Run();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+            app.Run();
         }
     }
 }
