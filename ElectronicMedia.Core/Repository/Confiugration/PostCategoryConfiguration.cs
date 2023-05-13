@@ -13,7 +13,9 @@ namespace ElectronicMedia.Core.Repository.Confiugration
     {
         public void Configure(EntityTypeBuilder<PostCategory> builder)
         {
-            throw new NotImplementedException();
+            builder.ToTable("postCategory");
+            builder.HasKey(t => t.Id);
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
         }
     }
 }

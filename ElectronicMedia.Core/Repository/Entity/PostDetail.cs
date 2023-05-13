@@ -8,7 +8,7 @@ namespace ElectronicMedia.Core.Repository.Entity
 {
     public class PostDetail
     {
-        public Guid Guid { get; set; }
+        public Guid Id { get; set; }
         public Post Post { get; set; }
         public Guid PostId { get; set; }
         public User User { get; set; }

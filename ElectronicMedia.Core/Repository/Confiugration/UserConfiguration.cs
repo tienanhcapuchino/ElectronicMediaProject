@@ -24,6 +24,7 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.Property(x => x.FullName).IsRequired().HasMaxLength(250);
             builder.Property(x => x.Avatar);
             builder.Property(x => x.IsActived);
+            builder.Property(x => x.Gender).IsRequired().HasDefaultValue(0);
         }
     }
 }
