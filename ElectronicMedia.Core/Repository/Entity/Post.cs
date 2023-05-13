@@ -12,7 +12,7 @@ namespace ElectronicMedia.Core.Repository.Entity
     {
         public Guid Id { get; set; }
         public virtual User User { get; set; }
-        [ForeignKey("AuthorId")]
+        //[ForeignKey("AuthorId")]
         public Guid UserId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
@@ -20,7 +20,7 @@ namespace ElectronicMedia.Core.Repository.Entity
         public DateTime PublishedDate { get; set;}
         public DateTime UpdatedDate { get; set;}
         public virtual PostCategory Category { get; set; }
-        [ForeignKey("CategoryId")]
+        //[ForeignKey("CategoryId")]
         public Guid CategoryId { get; set;}
         public double? Rate { get; set; }
         public PostStatusModel Status { get; set; }

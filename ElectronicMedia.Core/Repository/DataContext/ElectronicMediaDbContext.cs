@@ -12,7 +12,10 @@ namespace ElectronicMedia.Core.Repository.DataContext
 {
     public class ElectronicMediaDbContext : DbContext
     {
-        public ElectronicMediaDbContext(DbContextOptions<ElectronicMediaDbContext> options) : base(options) { }
+        public ElectronicMediaDbContext(DbContextOptions<ElectronicMediaDbContext> options) : base(options)
+        { 
+
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
