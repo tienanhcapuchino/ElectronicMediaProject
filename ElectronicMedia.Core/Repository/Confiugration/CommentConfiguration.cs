@@ -18,6 +18,8 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.Property(x => x.Content).IsRequired();
             builder.Property(x => x.CreatedDate).HasDefaultValue(DateTime.Now);
             builder.Property(x => x.UpdatedDate).HasDefaultValue(DateTime.Now);
+            //builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            //builder.HasOne(x => x.Post).WithMany().HasForeignKey(x => x.PostId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

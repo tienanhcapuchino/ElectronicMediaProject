@@ -11,7 +11,7 @@ namespace ElectronicMedia.Core.Repository.Entity
     {
         public Guid Id { get; set; }
         public virtual Comment Comment { get; set; }
-        [ForeignKey("ParentId")]
+        //[ForeignKey("ParentId")]
         public Guid ParentId { get; set; }
         public string Content { get; set; }
         public User User { get; set; }
