@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,14 @@ namespace ElectronicMedia.Core.Repository.Entity
         public virtual PostCategory Category { get; set; }
         [ForeignKey("CategoryId")]
         public Guid CategoryId { get; set;}
-        public double Rate { get; set; }
+        public double? Rate { get; set; }
+        public PostStatusModel Status { get; set; }
+    }
+    public enum PostStatusModel : byte
+    {
+        Pending = 0,
+        Approved = 1,
+        Published = 2,
+        Denied = 3,
     }
 }
