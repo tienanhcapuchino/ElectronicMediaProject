@@ -19,11 +19,11 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.Property(t => t.CreatedDate).IsRequired().HasDefaultValue(DateTime.UtcNow);
             builder.Property(t => t.UpdatedDate).IsRequired().HasDefaultValue(DateTime.UtcNow);
             builder.Property(x => x.Rate);
-            builder.Property(x => x.Status).HasDefaultValue(0);
+            builder.Property(x => x.Status).HasDefaultValue(PostStatusModel.Pending);
             builder.Property(t => t.Content).IsRequired();
             builder.Property(t => t.Title).IsRequired();
-            //    builder.HasOne(x => x.User).WithMany(x => x.Posts).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
-            //    builder.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.User).WithMany(x => x.Posts).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

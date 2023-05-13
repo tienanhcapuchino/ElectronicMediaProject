@@ -17,6 +17,6 @@ namespace ElectronicMedia.Core.Repository.Entity
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
         public string Content { get; set; }
-        //public virtual ICollection<ReplyComment>? ReplyComments { get; set; }
+        public virtual ICollection<ReplyComment>? ReplyComments { get; set; }
     }
 }
