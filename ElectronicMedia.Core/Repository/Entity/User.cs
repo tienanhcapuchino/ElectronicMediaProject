@@ -18,6 +18,7 @@ namespace ElectronicMedia.Core.Repository.Entity
         public RoleType Role { get; set; }
         public string? Avatar { get; set; }
         public bool IsActived { get; set; }
+        public Gender Gender { get; set; } 
         public virtual ICollection<Post>? Posts { get; set; }
     }
 
@@ -28,5 +29,11 @@ namespace ElectronicMedia.Core.Repository.Entity
         Writer = 2,
         Leader = 3,
         Editor = 4
+    }
+    public enum Gender : byte
+    {
+        Unknown = 0,
+        Male = 1,
+        Female = 2
     }
 }
