@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ElectronicMedia.Core": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:51835;http://localhost:51836"
+    }
+  }
+}
