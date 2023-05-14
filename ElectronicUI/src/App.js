@@ -1,7 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { publishRoute } from '~/routes';
 import { DefaultLayout } from '~/components/Layout';
+import { initializeIcons } from '@fluentui/font-icons-mdl2';
 
+initializeIcons();
 function App() {
     return (
         <Router>
