@@ -1,4 +1,6 @@
 ﻿using ElectronicMedia.Core.Repository.DataContext;
+using ElectronicMedia.Core.Services.Interfaces;
+using ElectronicMedia.Core.Services.Service;
 using Microsoft.EntityFrameworkCore;
 
 namespace ElectronicMediaAPI
@@ -31,6 +33,9 @@ namespace ElectronicMediaAPI
             {
                 option.UseSqlServer(ConfigRoot.GetConnectionString("ElectronicStr"));
             });
+            #region register services
+            services.AddTransient<IUserService, UserService>();
+            #endregion
         }
         public void Configure(WebApplication app, IWebHostEnvironment env)
         {
