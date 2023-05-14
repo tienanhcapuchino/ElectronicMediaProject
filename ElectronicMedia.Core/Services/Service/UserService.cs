@@ -31,9 +31,8 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<APIResponeModel> Login(UserLoginModel model)
         {
             var result = new APIResponeModel();
-            var userLogin = await _context.Users.SingleOrDefaultAsync(x => (x.Username == model.Username 
-            || x.Email == model.Username) 
-            && VerifyPassword(model.Password, x.Password));
+            var userLogin = await _context.Users.SingleOrDefaultAsync(x => x.Username == model.Username
+            || x.Email == model.Username);
             if (userLogin == null)
             {
                 result.Code = 404;
@@ -42,6 +41,15 @@ namespace ElectronicMedia.Core.Services.Service
             }
             else
             {
+                if (!VerifyPassword(model.Password, userLogin.Password))
+                {
+                    return new APIResponeModel()
+                    {
+                        Code = 404,
+                        Message = "Username or password is not correct!",
+                        IsSucceed = false
+                    };
+                }
                 result.Code = 200;
                 result.Message = "Login successfully!";
                 result.IsSucceed = true;
@@ -67,6 +75,8 @@ namespace ElectronicMedia.Core.Services.Service
                 Role = RoleType.UserNormal,
                 Gender = model.Gender,
                 IsActived = true,
+                PhoneNumber = model.PhoneNumber,
+                Avatar = model.Avatar
             };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -126,19 +136,20 @@ namespace ElectronicMedia.Core.Services.Service
             Array.Clear(argon2.GetBytes(memorySize), 0, argon2.GetBytes(memorySize).Length);
             return true;
         }
-        private APIResponeModel IsValidUserRegister(UserRegisterModel model) {
+        private APIResponeModel IsValidUserRegister(UserRegisterModel model)
+        {
             APIResponeModel isValid = new APIResponeModel()
             {
                 Code = 200,
                 Message = "OK",
                 IsSucceed = true,
             };
-            string regexPassword = @"^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$\r\n";
+            string regexPassword = @"^(?=.*[a-zA-Z])(?=.*\d).{8,}$";
             string regexEmail = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
             string regexPhone = @"^0\d{9}$";
             if (model == null)
             {
-                isValid = new APIResponeModel()
+                return new APIResponeModel()
                 {
                     Code = 400,
                     Message = "cannot leave model is empty!",
@@ -146,9 +157,22 @@ namespace ElectronicMedia.Core.Services.Service
                 };
             }
 
+            var userEntity = _context.Users.SingleOrDefault(x => x.Username == model.Username
+                                                            || x.Email == model.Email
+                                                            || x.PhoneNumber == model.PhoneNumber);
+            if (userEntity != null)
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = "Account is already exitsed",
+                    IsSucceed = false,
+                };
+            }
+
             if (!model.Password.Equals(model.Repassword))
             {
-                isValid = new APIResponeModel()
+                return new APIResponeModel()
                 {
                     Code = 404,
                     Message = "Password is not match with repassword!",
@@ -157,30 +181,20 @@ namespace ElectronicMedia.Core.Services.Service
             }
             if (!Regex.IsMatch(model.Password, regexPassword))
             {
-                isValid = new APIResponeModel()
+                return new APIResponeModel()
                 {
                     Code = 400,
                     Message = "Password must contain both number and character, at least 8 character!",
-                    IsSucceed = false,
+                    IsSucceed = false
                 };
             }
             if (!Regex.IsMatch(model.Email, regexEmail))
             {
-                isValid = new APIResponeModel()
-                {
-                    Code = 400,
-                    Message = "Email is invalid!",
-                    IsSucceed = false,
-                };
+                return new APIResponeModel() { Code = 400, Message = "Email is invalid!", IsSucceed = false };
             }
             if (!Regex.IsMatch(model.PhoneNumber, regexPhone))
             {
-                isValid = new APIResponeModel()
-                {
-                    Code = 400,
-                    Message = "Phone number must is 10 number and start with 0!",
-                    IsSucceed = false,
-                };
+                return new APIResponeModel() { Code = 400, Message = "Phone number must is 10 number and start with 0!", IsSucceed = false };
             }
             return isValid;
         }

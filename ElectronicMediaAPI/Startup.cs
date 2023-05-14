@@ -25,6 +25,9 @@ namespace ElectronicMediaAPI
         }
         private void InjectDependencyServices(IServiceCollection services)
         {
+            #region register services
+            services.AddTransient<IUserService, UserService>();
+            #endregion
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
                 build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
@@ -33,9 +36,6 @@ namespace ElectronicMediaAPI
             {
                 option.UseSqlServer(ConfigRoot.GetConnectionString("ElectronicStr"));
             });
-            #region register services
-            services.AddTransient<IUserService, UserService>();
-            #endregion
         }
         public void Configure(WebApplication app, IWebHostEnvironment env)
         {
