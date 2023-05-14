@@ -28,7 +28,6 @@ namespace ElectronicMediaAPI
         {
             #region register services
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<Automapper>();
             #endregion
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
