@@ -1,4 +1,6 @@
 ﻿using ElectronicMedia.Core.Repository.DataContext;
+using ElectronicMedia.Core.Services.Interfaces;
+using ElectronicMedia.Core.Services.Service;
 using Microsoft.EntityFrameworkCore;
 
 namespace ElectronicMediaAPI
@@ -23,6 +25,9 @@ namespace ElectronicMediaAPI
         }
         private void InjectDependencyServices(IServiceCollection services)
         {
+            #region register services
+            services.AddTransient<IUserService, UserService>();
+            #endregion
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
                 build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
