@@ -5,7 +5,7 @@ name: .NET
 
 on:
   push:
-    branches: [ "master, dev-tien-anh" ]
+    branches: [ "master, dev-tien-anh" , "dev_tuan_anh"]
   pull_request:
     branches: [ "master" ]
 
