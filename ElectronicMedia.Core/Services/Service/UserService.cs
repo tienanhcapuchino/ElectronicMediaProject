@@ -5,9 +5,14 @@ using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using Konscious.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,14 +24,45 @@ namespace ElectronicMedia.Core.Services.Service
         const int memorySize = 1024;
         const int iterations = 10;
         private readonly ElectronicMediaDbContext _context;
-        public UserService(ElectronicMediaDbContext context)
+        private readonly AppSetting _appSettings;
+        public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor)
         {
             _context = context;
+            _appSettings = optionsMonitor.CurrentValue;
         }
 
-        public Task<string> GenerateToken()
+        public async Task<string> GenerateToken(User us)
         {
-            throw new NotImplementedException();
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+            var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
+            var tokenDecription = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]{
+                new Claim(ClaimTypes.Name, us.Username),
+                new Claim(ClaimTypes.Role, us.Role.ToString()),
+                new Claim(ClaimTypes.Email, us.Email),
+                new Claim("UserId", us.Id.ToString()),
+                new Claim("TokenId", Guid.NewGuid().ToString())}),
+                Expires = DateTime.UtcNow.AddMinutes(30),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha512Signature)
+            };
+            var token = jwtTokenHandler.CreateToken(tokenDecription);
+            string accessToken = jwtTokenHandler.WriteToken(token);
+            var userToken = new UserToken()
+            {
+                UserId = us.Id,
+                IsRevoked = false,
+                IsUsed = false,
+                IssuedAt = DateTime.UtcNow,
+                ExpiredAt = DateTime.UtcNow.AddMinutes(30),
+                AccessToken = accessToken,
+                RefreshToken = GenerateRefreshToken(),
+                JwtId = token.Id,
+            };
+            await _context.AddAsync(userToken);
+            await _context.SaveChangesAsync();
+            return accessToken;
         }
 
         public async Task<APIResponeModel> Login(UserLoginModel model)
@@ -54,6 +90,7 @@ namespace ElectronicMedia.Core.Services.Service
                 result.Code = 200;
                 result.Message = "Login successfully!";
                 result.IsSucceed = true;
+                await GenerateToken(userLogin);
             }
             return result;
         }
@@ -66,12 +103,156 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 return result;
             }
-            var user = model.MapTo<User>();
+            User user = new User()
+            {
+                FullName = model.Username,
+                Email = model.Email,
+                Username = model.Username,
+                Password = EncodePassword(model.Password),
+                Dob = model.Dob,
+                Role = RoleType.UserNormal,
+                Gender = model.Gender,
+                IsActived = true,
+                PhoneNumber = model.PhoneNumber,
+                Avatar = model.Avatar,
+            };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return result;
         }
+        public async Task<User> GetById(Guid id)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == id);
+            return user;
+        }
+        public async Task<APIResponeModel> RenewToken(TokenModel model)
+        {
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
+            var tokenValidateParam = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+                ClockSkew = TimeSpan.Zero,
+                ValidateLifetime = false, //không kiểm tra token hết hạn
+            };
+            try
+            {
+                // Check 1: AccessToken valid format
+                var tokenInVerification = jwtTokenHandler.ValidateToken(model.AccessToken, tokenValidateParam, out var validatedToken);
+
+                // Check 2: Check alg
+                if (validatedToken is JwtSecurityToken jwtSecurityToken)
+                {
+                    var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase);
+                    if (!result)
+                    {
+                        return new APIResponeModel
+                        {
+                            IsSucceed = false,
+                            Message = "Invalid Token",
+                        };
+                    }
+                }
+
+                // Check 3: Check access expire
+                var UtcExpireDate = long.Parse(tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+                var expireDate = ConverUnixTimeToDateTime(UtcExpireDate);
+                if (expireDate > DateTime.UtcNow)
+                {
+                    return new APIResponeModel
+                    {
+                        IsSucceed = false,
+                        Message = "Access token has not yet expired",
+                    };
+                }
+
+                // Check 4: Check refresh token exist in db
+                var storedToken = _context.UserTokens.FirstOrDefault(x => x.RefreshToken == model.RefreshToken);
+                if (storedToken == null)
+                {
+                    return new APIResponeModel
+                    {
+                        IsSucceed = false,
+                        Message = "Refresh token does not exist"
+                    };
+                }
+
+                // Check 5: Check refresh token isUsed/revoked
+                if (storedToken.IsUsed)
+                {
+                    return new APIResponeModel
+                    {
+                        IsSucceed = false,
+                        Message = "Refresh token has been used"
+                    };
+                }
+                if (storedToken.IsRevoked)
+                {
+                    return new APIResponeModel
+                    {
+                        IsSucceed = false,
+                        Message = "Refresh token has been revoked"
+                    };
+                }
+
+                // Check 6: Check refresh token isUsed/revoked
+                var jti = tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+                if (storedToken.JwtId != jti)
+                {
+                    return new APIResponeModel
+                    {
+                        IsSucceed = false,
+                        Message = "Token doesn't match"
+                    };
+                }
+
+                // Update token is used
+                storedToken.IsUsed = true;
+                storedToken.IsRevoked = true;
+                _context.Update(storedToken);
+                await _context.SaveChangesAsync();
+
+                //Create new token
+                var user = await GetById(storedToken.UserId);
+                var token = await GenerateToken(user);
+
+                return new APIResponeModel
+                {
+                    IsSucceed = true,
+                    Message = "Renew token Success",
+                    Data = token
+                };
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex.Message);
+                return new APIResponeModel
+                {
+                    IsSucceed = false,
+                    Message = ex.Message,
+                };
+            }
+        }
         #region private method
+        private DateTime ConverUnixTimeToDateTime(long utcExpireDate)
+        {
+            var dateTImeInterval = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTImeInterval.AddSeconds(utcExpireDate).ToUniversalTime();
+            return dateTImeInterval;
+        }
+        private string GenerateRefreshToken()
+        {
+            var random = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(random);
+                return Convert.ToBase64String(random);
+            }
+        }
         private string EncodePassword(string password)
         {
             var salt = new byte[16];

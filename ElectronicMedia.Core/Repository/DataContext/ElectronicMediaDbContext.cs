@@ -24,6 +24,7 @@ namespace ElectronicMedia.Core.Repository.DataContext
             modelBuilder.ApplyConfiguration(new CommentConfiguration());
             modelBuilder.ApplyConfiguration(new ReplyCommentConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
+            modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -38,6 +39,7 @@ namespace ElectronicMedia.Core.Repository.DataContext
         }
         #region entity
         public DbSet<User> Users { get; set; }
+        public DbSet<UserToken> UserTokens { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostCategory> PostCategories { get; set; }
         public DbSet<PostDetail> PostDetails { get; set; }

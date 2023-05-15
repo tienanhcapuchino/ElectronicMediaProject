@@ -12,5 +12,6 @@ namespace ElectronicMedia.Core.Repository.Models
         public int Code { get; set; }
         public string Message { get; set; }
         public bool IsSucceed { get; set; }
+        public object? Data { get; set; }
     }
 }
