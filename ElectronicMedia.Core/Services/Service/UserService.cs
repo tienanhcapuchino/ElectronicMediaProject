@@ -1,4 +1,5 @@
-﻿using ElectronicMedia.Core.Repository.DataContext;
+﻿using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
@@ -65,19 +66,7 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 return result;
             }
-            User user = new User()
-            {
-                FullName = model.Username,
-                Email = model.Email,
-                Username = model.Username,
-                Password = EncodePassword(model.Password),
-                Dob = model.Dob,
-                Role = RoleType.UserNormal,
-                Gender = model.Gender,
-                IsActived = true,
-                PhoneNumber = model.PhoneNumber,
-                Avatar = model.Avatar
-            };
+            var user = model.MapTo<User>();
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return result;

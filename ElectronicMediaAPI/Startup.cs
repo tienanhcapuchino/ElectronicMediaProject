@@ -1,6 +1,7 @@
 ﻿using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Service;
+using ElectronicMediaAPI.Automaper;
 using Microsoft.EntityFrameworkCore;
 
 namespace ElectronicMediaAPI
