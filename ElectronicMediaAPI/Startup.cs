@@ -1,8 +1,12 @@
 ﻿using ElectronicMedia.Core.Repository.DataContext;
+using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Service;
 using ElectronicMediaAPI.Automaper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace ElectronicMediaAPI
 {
@@ -29,6 +33,28 @@ namespace ElectronicMediaAPI
             #region register services
             services.AddTransient<IUserService, UserService>();
             #endregion
+
+            //configure JWT token
+
+            services.Configure<AppSetting>(ConfigRoot.GetSection("AppSettings"));
+
+            var secretKey = ConfigRoot["AppSettings:SecretKey"];
+            var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+
+                    //sign to token
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+
+                    ClockSkew = TimeSpan.Zero,
+                };
+            });
+
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
                 build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();

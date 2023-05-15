@@ -9,14 +9,15 @@ namespace ElectronicMedia.Core.Repository.Entity
     public class UserToken
     {
         public Guid Id { get; set; }
-        public User User { get; set; }
         public Guid UserId { get; set; }
-        public string? VerifyToken { get; set; }
-        public DateTime? VerifyExpiryDate { get; set; }
-        public string? ResetPasswordToken { get; set; }
-        public DateTime? ResetPassExpiryDate { get; set; }
-        public string? RefreshToken { get; set; }
-        public DateTime? RefreshTokenExpiryDate { get; set; }
+        public User User { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+        public string? JwtId { get; set; }
+        public bool IsUsed { get; set; }
+        public bool IsRevoked { get; set; }
+        public DateTime IssuedAt { get; set; }
+        public DateTime ExpiredAt { get; set; }
 
     }
 }
