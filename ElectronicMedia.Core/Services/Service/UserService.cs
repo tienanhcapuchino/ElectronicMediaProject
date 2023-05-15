@@ -103,19 +103,7 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 return result;
             }
-            User user = new User()
-            {
-                FullName = model.Username,
-                Email = model.Email,
-                Username = model.Username,
-                Password = EncodePassword(model.Password),
-                Dob = model.Dob,
-                Role = RoleType.UserNormal,
-                Gender = model.Gender,
-                IsActived = true,
-                PhoneNumber = model.PhoneNumber,
-                Avatar = model.Avatar,
-            };
+            var user = model.MapTo<User>();
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return result;
@@ -252,29 +240,6 @@ namespace ElectronicMedia.Core.Services.Service
                 rng.GetBytes(random);
                 return Convert.ToBase64String(random);
             }
-        }
-        private string EncodePassword(string password)
-        {
-            var salt = new byte[16];
-            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(salt);
-            }
-
-            var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
-            {
-                Salt = salt,
-                DegreeOfParallelism = 4,
-                Iterations = iterations,
-                MemorySize = memorySize
-            };
-            var hash = argon2.GetBytes(16);
-            var saltPlusHash = new byte[16 + hash.Length];
-            Buffer.BlockCopy(salt, 0, saltPlusHash, 0, salt.Length);
-            Buffer.BlockCopy(hash, 0, saltPlusHash, salt.Length, hash.Length);
-            Array.Clear(salt, 0, salt.Length);
-            Array.Clear(argon2.GetBytes(memorySize), 0, argon2.GetBytes(memorySize).Length);
-            return Convert.ToBase64String(saltPlusHash);
         }
         private bool VerifyPassword(string password, string hashedPassword)
         {
