@@ -1,7 +1,9 @@
-﻿using ElectronicMedia.Core.Repository.DataContext;
+﻿using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +26,15 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public Task<bool> CreateComment(CommentModel comment)
+        public async Task<bool> CreateComment(CommentModel comment)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(comment.Content))
+            {
+                return false;
+            }
+            var entity = comment.MapTo<Comment>();
+            bool result = await Add(entity);
+            return result;
         }
 
         public Task<bool> Delete(Guid id)
@@ -39,9 +47,11 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<CommentModel>> GetAllCommentsByPost(Guid postId)
+        public async Task<List<CommentModel>> GetAllCommentsByPost(Guid postId)
         {
-            throw new NotImplementedException();
+            var comments = await _context.Comments.Where(c => c.PostId == postId).OrderBy(c => c.CreatedDate).ToListAsync();
+            var result = comments.MapTo<List<CommentModel>>();
+            return result;
         }
 
         public Task<Comment> GetByIdAsync(Guid id)

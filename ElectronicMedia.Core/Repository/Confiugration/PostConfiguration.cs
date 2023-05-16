@@ -22,6 +22,8 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.Property(x => x.Status).HasDefaultValue(PostStatusModel.Pending);
             builder.Property(t => t.Content).IsRequired();
             builder.Property(t => t.Title).IsRequired();
+            builder.Property(t => t.Like).HasDefaultValue(0);
+            builder.Property(t => t.Dislike).HasDefaultValue(0);
             builder.HasOne(x => x.User).WithMany(x => x.Posts).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
         }
