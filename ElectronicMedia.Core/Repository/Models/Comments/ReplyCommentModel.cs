@@ -1,21 +1,18 @@
-﻿using System;
+﻿using ElectronicMedia.Core.Repository.Entity;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Repository.Entity
+namespace ElectronicMedia.Core.Repository.Models
 {
-    public class ReplyComment
+    public class ReplyCommentModel
     {
-        public Guid Id { get; set; }
-        public virtual Comment Comment { get; set; }
         public Guid ParentId { get; set; }
         public string Content { get; set; }
         public User User { get; set; }
         public Guid UserId { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime? UpdatedDate { get; set; }
     }
 }

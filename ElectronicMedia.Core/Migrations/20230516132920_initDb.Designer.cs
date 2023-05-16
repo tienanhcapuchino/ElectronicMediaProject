@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectronicMedia.Core.Migrations
 {
     [DbContext(typeof(ElectronicMediaDbContext))]
-    [Migration("20230513102536_initDb")]
+    [Migration("20230516132920_initDb")]
     partial class initDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 13, 17, 25, 36, 153, DateTimeKind.Local).AddTicks(5590));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(9528));
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -45,7 +45,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 13, 17, 25, 36, 153, DateTimeKind.Local).AddTicks(5994));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(9856));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -75,12 +75,12 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 13, 10, 25, 36, 154, DateTimeKind.Utc).AddTicks(5988));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7556));
 
                     b.Property<DateTime>("PublishedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 13, 10, 25, 36, 154, DateTimeKind.Utc).AddTicks(5644));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7335));
 
                     b.Property<double?>("Rate")
                         .HasColumnType("float");
@@ -97,7 +97,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 13, 10, 25, 36, 154, DateTimeKind.Utc).AddTicks(6237));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7903));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -164,8 +164,18 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 57, DateTimeKind.Local).AddTicks(2609));
+
                     b.Property<Guid>("ParentId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 57, DateTimeKind.Local).AddTicks(2846));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -191,7 +201,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("Dob")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 13, 17, 25, 36, 152, DateTimeKind.Local).AddTicks(9557));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(4629));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -232,6 +242,45 @@ namespace ElectronicMedia.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("user", (string)null);
+                });
+
+            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.UserToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("JwtId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("userToken", (string)null);
                 });
 
             modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.Comment", b =>
@@ -306,6 +355,17 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Comment");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.UserToken", b =>
+                {
+                    b.HasOne("ElectronicMedia.Core.Repository.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

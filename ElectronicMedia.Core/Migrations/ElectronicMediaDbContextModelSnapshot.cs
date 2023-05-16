@@ -35,7 +35,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 15, 15, 25, 49, 553, DateTimeKind.Local).AddTicks(9774));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(9528));
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -43,7 +43,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 15, 15, 25, 49, 554, DateTimeKind.Local).AddTicks(68));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(9856));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -73,12 +73,12 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 15, 8, 25, 49, 554, DateTimeKind.Utc).AddTicks(6752));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7556));
 
                     b.Property<DateTime>("PublishedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 15, 8, 25, 49, 554, DateTimeKind.Utc).AddTicks(6527));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7335));
 
                     b.Property<double?>("Rate")
                         .HasColumnType("float");
@@ -95,7 +95,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 15, 8, 25, 49, 554, DateTimeKind.Utc).AddTicks(6982));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7903));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -162,8 +162,18 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 57, DateTimeKind.Local).AddTicks(2609));
+
                     b.Property<Guid>("ParentId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 57, DateTimeKind.Local).AddTicks(2846));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -189,7 +199,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("Dob")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 15, 15, 25, 49, 553, DateTimeKind.Local).AddTicks(5614));
+                        .HasDefaultValue(new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(4629));
 
                     b.Property<string>("Email")
                         .IsRequired()

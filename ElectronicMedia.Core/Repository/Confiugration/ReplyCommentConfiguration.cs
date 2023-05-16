@@ -15,6 +15,8 @@ namespace ElectronicMedia.Core.Repository.Confiugration
         {
             builder.ToTable("replyComment");
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.CreatedDate).HasDefaultValue(DateTime.Now);
+            builder.Property(x => x.UpdatedDate).HasDefaultValue(DateTime.Now);
             builder.Property(x => x.Content).IsRequired();
             builder.HasOne(x => x.Comment).WithMany(x => x.ReplyComments)
                 .HasForeignKey(x => x.ParentId)
