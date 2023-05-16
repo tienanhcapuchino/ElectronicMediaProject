@@ -104,14 +104,16 @@ namespace ElectronicMedia.Core.Services.Service
                 return result;
             }
             var user = model.MapTo<User>();
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            if (!await Add(user))
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = "Add user to database failed",
+                    IsSucceed = false
+                };
+            }
             return result;
-        }
-        public async Task<User> GetById(Guid id)
-        {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == id);
-            return user;
         }
         public async Task<APIResponeModel> RenewToken(TokenModel model)
         {
@@ -205,7 +207,7 @@ namespace ElectronicMedia.Core.Services.Service
                 await _context.SaveChangesAsync();
 
                 //Create new token
-                var user = await GetById(storedToken.UserId);
+                var user = await GetByIdAsync(storedToken.UserId);
                 var token = await GenerateToken(user);
 
                 return new APIResponeModel
@@ -224,6 +226,33 @@ namespace ElectronicMedia.Core.Services.Service
                     Message = ex.Message,
                 };
             }
+        }
+        public async Task<User> GetByIdAsync(Guid id)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == id);
+            return await Task.FromResult(user);
+        }
+
+        public Task<List<User>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> Delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> Update(Guid id, User entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> Add(User entity)
+        {
+            await _context.Users.AddAsync(entity);
+            bool result = await _context.SaveChangesAsync() > 0;
+            return result;
         }
         #region private method
         private DateTime ConverUnixTimeToDateTime(long utcExpireDate)

@@ -23,7 +23,7 @@ namespace ElectronicMediaAPI.Controllers
         {
             try
             {
-                var user = await _userService.GetById(userId);
+                var user = await _userService.GetByIdAsync(userId);
                 return user;
             }
             catch (Exception ex)
