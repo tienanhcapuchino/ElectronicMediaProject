@@ -31,7 +31,7 @@ namespace ElectronicMedia.Core.Migrations
                     Username = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    Dob = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(4629)),
+                    Dob = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 23, 10, 18, 216, DateTimeKind.Local).AddTicks(7828)),
                     Role = table.Column<byte>(type: "tinyint", nullable: false),
                     Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActived = table.Column<bool>(type: "bit", nullable: false),
@@ -50,11 +50,13 @@ namespace ElectronicMedia.Core.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7556)),
-                    PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7335)),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 13, 29, 20, 57, DateTimeKind.Utc).AddTicks(7903)),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 16, 10, 18, 217, DateTimeKind.Utc).AddTicks(8571)),
+                    PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 16, 10, 18, 217, DateTimeKind.Utc).AddTicks(8337)),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 16, 10, 18, 217, DateTimeKind.Utc).AddTicks(8742)),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Rate = table.Column<double>(type: "float", nullable: true),
+                    Like = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    Dislike = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Status = table.Column<byte>(type: "tinyint", nullable: false, defaultValue: (byte)0)
                 },
                 constraints: table =>
@@ -105,8 +107,8 @@ namespace ElectronicMedia.Core.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(9528)),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 20, 29, 20, 56, DateTimeKind.Local).AddTicks(9856)),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 23, 10, 18, 217, DateTimeKind.Local).AddTicks(1581)),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2023, 5, 16, 23, 10, 18, 217, DateTimeKind.Local).AddTicks(1791)),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -132,8 +134,7 @@ namespace ElectronicMedia.Core.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Like = table.Column<int>(type: "int", nullable: false),
-                    Dislike = table.Column<int>(type: "int", nullable: false)
+                    Liked = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,8 +160,8 @@ namespace ElectronicMedia.Core.Migrations
                     ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 20, 29, 20, 57, DateTimeKind.Local).AddTicks(2609)),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2023, 5, 16, 20, 29, 20, 57, DateTimeKind.Local).AddTicks(2846))
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 5, 16, 23, 10, 18, 217, DateTimeKind.Local).AddTicks(3866)),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2023, 5, 16, 23, 10, 18, 217, DateTimeKind.Local).AddTicks(4114))
                 },
                 constraints: table =>
                 {

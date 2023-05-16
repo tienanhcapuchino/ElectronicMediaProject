@@ -14,11 +14,29 @@ namespace ElectronicMedia.Core.Automaper
         {
             #region User
             CreateMap<UserRegisterModel, User>()
-    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-    .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Username))
-    .ForMember(dest => dest.Password, opt => opt.MapFrom(src => EncodePassword(src.Password)))
-    .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleType.UserNormal))
-    .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Username))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => EncodePassword(src.Password)))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleType.UserNormal))
+                .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true));
+            #endregion
+
+            #region comments
+            CreateMap<CommentModel, Comment>();
+            CreateMap<ReplyCommentModel, ReplyComment>();
+            #endregion
+
+            #region posts
+            CreateMap<PostModel, Post>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PostStatusModel.Pending));
             #endregion
         }
         #region private medthod

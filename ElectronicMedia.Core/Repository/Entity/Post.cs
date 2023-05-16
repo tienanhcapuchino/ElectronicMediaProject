@@ -16,11 +16,13 @@ namespace ElectronicMedia.Core.Repository.Entity
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime PublishedDate { get; set; }
-        public DateTime UpdatedDate { get; set; }
+        public DateTime? PublishedDate { get; set; } = null;
+        public DateTime? UpdatedDate { get; set; } = null;
         public virtual PostCategory Category { get; set; }
         public Guid CategoryId { get; set; }
         public double? Rate { get; set; }
+        public int Like { get; set; } = 0;
+        public int Dislike { get; set; } = 0;
         public PostStatusModel Status { get; set; }
     }
     public enum PostStatusModel : byte

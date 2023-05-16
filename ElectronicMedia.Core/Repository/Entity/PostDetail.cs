@@ -13,7 +13,6 @@ namespace ElectronicMedia.Core.Repository.Entity
         public Guid PostId { get; set; }
         public User User { get; set; }
         public Guid UserId { get; set; }
-        public int Like { get; set; }
-        public int Dislike { get; set; }
+        public bool Liked { get; set; }
     }
 }

@@ -34,6 +34,7 @@ namespace ElectronicMediaAPI
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IReplyCommentService, ReplyCommentService>();
+            services.AddTransient<IPostService, PostService>();
             #endregion
 
             //configure JWT token
