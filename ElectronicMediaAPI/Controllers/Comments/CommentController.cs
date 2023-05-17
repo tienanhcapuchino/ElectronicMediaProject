@@ -30,19 +30,19 @@ namespace ElectronicMediaAPI.Controllers
                 throw;
             }
         }
-        [HttpPost("create")]
-        public async Task<APIResponeModel> CreateComment(CommentModel model)
+        [HttpPost("{userId}/create/{postId}")]
+        public async Task<APIResponeModel> CreateComment([FromRoute] Guid userId, [FromRoute] Guid postId, string content)
         {
             try
             {
-                if (await _commentService.CreateComment(model))
+                if (await _commentService.CreateComment(userId, postId, content))
                 {
                     return new APIResponeModel()
                     {
                         Code = 200,
                         Message = "OK",
                         IsSucceed = true,
-                        Data = model
+                        Data = content
                     };
                 }
                 else
@@ -56,7 +56,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"error when create comment at post: {model.PostId} and user: {model.UserId}", ex);
+                _logger.LogError($"error when create comment at post: {postId} and user: {userId}", ex);
                 throw;
             }
         }

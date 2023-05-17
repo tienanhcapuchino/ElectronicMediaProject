@@ -11,6 +11,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
     public interface ICommentService : ICoreRepository<Comment>
     {
         Task<List<CommentModel>> GetAllCommentsByPost(Guid postId);
-        Task<bool> CreateComment(CommentModel comment);
+        Task<bool> CreateComment(Guid userId, Guid postId, string content);
     }
 }

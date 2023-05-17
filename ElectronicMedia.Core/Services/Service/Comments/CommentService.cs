@@ -26,13 +26,19 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public async Task<bool> CreateComment(CommentModel comment)
+        public async Task<bool> CreateComment(Guid userId, Guid postId, string content)
         {
-            if (string.IsNullOrEmpty(comment.Content))
+            if (string.IsNullOrEmpty(content))
             {
                 return false;
             }
-            var entity = comment.MapTo<Comment>();
+            var entity = new Comment()
+            {
+                UserId = userId,
+                PostId = postId,
+                CreatedDate = DateTime.UtcNow,
+                Content = content
+            };
             bool result = await Add(entity);
             return result;
         }
