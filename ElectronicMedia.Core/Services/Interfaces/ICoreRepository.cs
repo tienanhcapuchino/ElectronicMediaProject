@@ -10,7 +10,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
     {
         Task<T> GetByIdAsync(Guid id);
         Task<List<T>> GetAllAsync();
-        Task<bool> Delete(Guid id);
+        Task<bool> Delete(Guid id, bool saveChange = true);
         Task<bool> Update(Guid id, T entity);
         Task<bool> Add(T entity);
     }

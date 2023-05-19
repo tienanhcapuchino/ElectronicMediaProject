@@ -238,7 +238,7 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<bool> Delete(Guid id)
+        public Task<bool> Delete(Guid id, bool saveChange = true)
         {
             throw new NotImplementedException();
         }
