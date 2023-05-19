@@ -12,6 +12,7 @@ namespace ElectronicMedia.Core.Repository.Entity
     {
         public Guid Id { get; set; }
         public virtual User User { get; set; }
+        [Column("AuthorId")]
         public Guid UserId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
@@ -20,6 +21,9 @@ namespace ElectronicMedia.Core.Repository.Entity
         public DateTime? UpdatedDate { get; set; } = null;
         public virtual PostCategory Category { get; set; }
         public Guid CategoryId { get; set; }
+        [Column("SubCategoryId")]
+        public Guid? SubCategoryId { get; set; } = Guid.Empty;
+        public virtual PostCategory SubCategory { get; set; }
         public double? Rate { get; set; }
         public int Like { get; set; } = 0;
         public int Dislike { get; set; } = 0;
