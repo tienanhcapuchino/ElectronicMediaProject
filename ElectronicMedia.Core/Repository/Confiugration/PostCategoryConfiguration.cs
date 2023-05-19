@@ -16,6 +16,7 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.ToTable("postCategory");
             builder.HasKey(t => t.Id);
             builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
+            builder.Property(x => x.Description);
             builder.HasOne(x => x.Category).WithMany(x => x.SubCategories).HasForeignKey(x => x.ParentId).OnDelete(DeleteBehavior.NoAction);
         }
     }

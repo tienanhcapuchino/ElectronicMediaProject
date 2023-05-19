@@ -2,7 +2,6 @@
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Service;
-using ElectronicMediaAPI.Automaper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,6 +34,7 @@ namespace ElectronicMediaAPI
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IReplyCommentService, ReplyCommentService>();
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IPostDetailService, PostDetailService>();
             #endregion
 
             //configure JWT token

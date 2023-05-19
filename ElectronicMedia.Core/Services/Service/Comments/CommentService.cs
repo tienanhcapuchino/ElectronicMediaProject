@@ -43,7 +43,7 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public Task<bool> Delete(Guid id)
+        public Task<bool> Delete(Guid id, bool saveChange = true)
         {
             throw new NotImplementedException();
         }

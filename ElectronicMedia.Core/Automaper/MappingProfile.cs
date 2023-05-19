@@ -36,7 +36,18 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PostStatusModel.Pending));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PostStatusModel.Pending))
+                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId));
+            CreateMap<PostCategoryModel, PostCategory>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+            CreateMap<PostDetailModel, PostDetail>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.AuthorId))
+                .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
+                .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.Liked));
             #endregion
         }
         #region private medthod

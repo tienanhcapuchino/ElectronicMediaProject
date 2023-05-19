@@ -1,4 +1,5 @@
 ﻿using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Services.Service
 {
-    public class ReplyCommentService : IReplyCommentService
+    public class PostDetailService : IPostDetailService
     {
-        public Task<bool> Add(ReplyComment entity)
+        public Task<bool> Add(PostDetail entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> CreateReplyComment(ReplyComment replyComment)
+        public Task<bool> CreatePostDetail(PostDetailModel model)
         {
             throw new NotImplementedException();
         }
@@ -25,22 +26,17 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<ReplyComment>> GetAllAsync()
+        public Task<List<PostDetail>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<ReplyComment> GetByIdAsync(Guid id)
+        public Task<PostDetail> GetByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<ReplyComment>> GetReplyCommentsByParentId(Guid parentId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> Update(Guid id, ReplyComment entity)
+        public Task<bool> Update(Guid id, PostDetail entity)
         {
             throw new NotImplementedException();
         }
