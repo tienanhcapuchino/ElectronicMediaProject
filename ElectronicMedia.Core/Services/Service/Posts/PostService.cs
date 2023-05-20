@@ -15,9 +15,12 @@ namespace ElectronicMedia.Core.Services.Service
     public class PostService : IPostService
     {
         private readonly ElectronicMediaDbContext _context;
-        public PostService(ElectronicMediaDbContext context)
+        private readonly PostDetailService _postDetailService;
+        public PostService(ElectronicMediaDbContext context, 
+            PostDetailService postDetailService)
         {
             _context = context;
+            _postDetailService = postDetailService;
         }
 
         public async Task<bool> Add(Post entity)
@@ -78,7 +81,7 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<bool> Delete(Guid id, bool saveChange = true)
         {
             bool result = true;
-            var post = await _context.Posts.Where(x => x.Id == id).SingleOrDefaultAsync();
+            var post = await GetByIdAsync(id);
             if (post == null)
             {
                 return false;
@@ -95,9 +98,18 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public Task<bool> EditCategory(Guid cateId)
+        public async Task<bool> EditCategory(Guid cateId, PostCategoryModel model)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(model.Name)) return false;
+            var oldEntity = await _context.PostCategories.SingleOrDefaultAsync(x => x.Id == cateId);
+            if (oldEntity == null)
+            {
+                return false;
+            }
+            var newEntity = model.MapTo<PostCategory>();
+            _context.PostCategories.Update(newEntity);
+            bool result = await _context.SaveChangesAsync() > 0;
+            return result;
         }
 
         public Task<List<Post>> GetAllAsync()
@@ -105,9 +117,10 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<Post> GetByIdAsync(Guid id)
+        public async Task<Post> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var post = await _context.Posts.Where(x => x.Id == id).SingleOrDefaultAsync();
+            return post;
         }
 
         public Task<bool> Update(Guid id, Post entity)
@@ -115,9 +128,36 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateLikeAndDislike(bool liked)
+        public async Task<bool> UpdateLikeAndDislike(Guid postId, bool liked)
         {
-            throw new NotImplementedException();
+            var entity = await GetByIdAsync(postId);
+            if (entity == null)
+            {
+                return false;
+            }
+            if (liked)
+            {
+                entity.Like += 1;
+            }
+            else
+            {
+                entity.Dislike += 1;
+            }
+            _context.Posts.Update(entity);
+            bool result = await _context.SaveChangesAsync() > 0;
+            return result;
+        }
+
+        public async Task<bool> VotePost(PostDetailModel postDetail)
+        {
+            bool result = false;
+            if (await _postDetailService.FindByUserId(postDetail.AuthorId, postDetail.PostId) != null) return false;
+            result = await _postDetailService.CreatePostDetail(postDetail);
+            if (result)
+            {
+                result = await UpdateLikeAndDislike(postDetail.PostId, postDetail.Liked);
+            }
+            return result;
         }
     }
 }

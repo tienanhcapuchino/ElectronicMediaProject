@@ -11,5 +11,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
     public interface IPostDetailService : ICoreRepository<PostDetail>
     {
         Task<bool> CreatePostDetail(PostDetailModel model);
+        Task<PostDetail> FindByUserId(Guid userId, Guid postId);
     }
 }

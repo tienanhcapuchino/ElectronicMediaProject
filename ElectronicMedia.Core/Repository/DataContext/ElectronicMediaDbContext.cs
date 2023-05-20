@@ -12,6 +12,7 @@ namespace ElectronicMedia.Core.Repository.DataContext
 {
     public class ElectronicMediaDbContext : DbContext
     {
+        public ElectronicMediaDbContext() { }
         public ElectronicMediaDbContext(DbContextOptions<ElectronicMediaDbContext> options) : base(options)
         { 
 

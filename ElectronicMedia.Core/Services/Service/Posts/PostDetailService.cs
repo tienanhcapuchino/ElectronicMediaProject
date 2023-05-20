@@ -1,6 +1,9 @@
-﻿using ElectronicMedia.Core.Repository.Entity;
+﻿using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Repository.DataContext;
+using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +14,34 @@ namespace ElectronicMedia.Core.Services.Service
 {
     public class PostDetailService : IPostDetailService
     {
-        public Task<bool> Add(PostDetail entity)
+        private readonly ElectronicMediaDbContext _dbContext;
+        public PostDetailService(ElectronicMediaDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }
+        public async Task<bool> Add(PostDetail entity)
+        {
+            await _dbContext.AddAsync(entity);
+            bool result = await _dbContext.SaveChangesAsync() > 0;
+            return result;
         }
 
-        public Task<bool> CreatePostDetail(PostDetailModel model)
+        public async Task<bool> CreatePostDetail(PostDetailModel model)
         {
-            throw new NotImplementedException();
+            if (model == null || model.AuthorId == null || model.PostId == null) return false;
+            var entity = model.MapTo<PostDetail>();
+            bool result = await Add(entity);
+            return result;
         }
 
         public Task<bool> Delete(Guid id, bool saveChange = true)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<PostDetail> FindByUserId(Guid userId, Guid postId)
+        {
+            return await _dbContext.PostDetails.SingleOrDefaultAsync(x => x.PostId == postId && x.UserId == userId);
         }
 
         public Task<List<PostDetail>> GetAllAsync()

@@ -47,6 +47,43 @@ namespace ElectronicMediaAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("vote")]
+        public async Task<APIResponeModel> VotePost([FromBody] PostDetailModel postDetail)
+        {
+            try
+            {
+                if (await _postService.VotePost(postDetail))
+                {
+                    return new APIResponeModel()
+                    {
+                        Code = 200,
+                        Message = "OK",
+                        IsSucceed = true,
+                        Data = postDetail
+                    };
+                }
+                else
+                {
+                    return new APIResponeModel()
+                    {
+                        Code = 400,
+                        Message = "failed",
+                        IsSucceed = false,
+                        Data = postDetail
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"error when vote post at post: {postDetail.PostId} by user {postDetail.AuthorId}", ex);
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = ex.ToString(),
+                    Data = postDetail
+                };
+            }
+        }
         [HttpPost("create")]
         public async Task<APIResponeModel> CreatePost(PostModel model)
         {
