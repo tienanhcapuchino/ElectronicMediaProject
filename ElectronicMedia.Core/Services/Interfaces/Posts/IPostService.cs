@@ -11,9 +11,10 @@ namespace ElectronicMedia.Core.Services.Interfaces
     public interface IPostService : ICoreRepository<Post>
     {
         Task<bool> CreatePostCategory(string categoryName);
-        Task<bool> EditCategory(Guid cateId);
+        Task<bool> EditCategory(Guid cateId, PostCategoryModel model);
         Task<bool> CreatePost(PostModel post);
-        Task<bool> UpdateLikeAndDislike(bool liked);
+        Task<bool> UpdateLikeAndDislike(Guid postId, bool liked);
         Task<bool> CreateSubCategories(List<PostCategoryModel> subCategories);
+        Task<bool> VotePost(PostDetailModel postDetail);
     }
 }
