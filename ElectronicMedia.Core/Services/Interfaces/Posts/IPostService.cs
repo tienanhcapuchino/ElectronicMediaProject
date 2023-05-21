@@ -10,7 +10,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
 {
     public interface IPostService : ICoreRepository<Post>
     {
-        Task<bool> CreatePostCategory(string categoryName);
+        Task<bool> CreatePostCategory(PostCategoryModel model);
         Task<bool> EditCategory(Guid cateId, PostCategoryModel model);
         Task<bool> CreatePost(PostModel post);
         Task<bool> UpdateLikeAndDislike(Guid postId, bool liked);

@@ -17,18 +17,18 @@ namespace ElectronicMediaAPI.Controllers
             _postService = postService;
         }
         [HttpPost("category/create")]
-        public async Task<APIResponeModel> CreatePostCategory(string categoryName)
+        public async Task<APIResponeModel> CreatePostCategory(PostCategoryModel model)
         {
             try
             {
-                if (await _postService.CreatePostCategory(categoryName))
+                if (await _postService.CreatePostCategory(model))
                 {
                     return new APIResponeModel()
                     {
                         Code = 200,
                         Message = "OK",
                         IsSucceed = true,
-                        Data = categoryName
+                        Data = model
                     };
                 }
                 else
