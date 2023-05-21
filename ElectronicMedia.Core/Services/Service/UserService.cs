@@ -243,15 +243,25 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<bool> Update(Guid id, User entity)
+        public async Task<bool> Update(User entity, bool saveChange = true)
         {
-            throw new NotImplementedException();
+            _context.Users.Update(entity);
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _context.SaveChangesAsync() > 0;
+            }
+            return await Task.FromResult(result);
         }
 
-        public async Task<bool> Add(User entity)
+        public async Task<bool> Add(User entity, bool saveChange = true)
         {
-            await _context.Users.AddAsync(entity);
-            bool result = await _context.SaveChangesAsync() > 0;
+            await _context.AddAsync(entity);
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _context.SaveChangesAsync() > 0;
+            }
             return result;
         }
         #region private method

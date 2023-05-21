@@ -19,10 +19,14 @@ namespace ElectronicMedia.Core.Services.Service
         {
             _dbContext = dbContext;
         }
-        public async Task<bool> Add(PostDetail entity)
+        public async Task<bool> Add(PostDetail entity, bool saveChange = true)
         {
             await _dbContext.AddAsync(entity);
-            bool result = await _dbContext.SaveChangesAsync() > 0;
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _dbContext.SaveChangesAsync() > 0;
+            }
             return result;
         }
 
@@ -63,9 +67,15 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<bool> Update(Guid id, PostDetail entity)
+        public async Task<bool> Update(PostDetail entity, bool saveChange = true)
         {
-            throw new NotImplementedException();
+            _dbContext.PostDetails.Update(entity);
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _dbContext.SaveChangesAsync() > 0;
+            }
+            return await Task.FromResult(result);
         }
     }
 }

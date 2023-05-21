@@ -19,11 +19,15 @@ namespace ElectronicMedia.Core.Services.Service
         {
             _context = context;
         }
-        public async Task<bool> Add(Comment entity)
+        public async Task<bool> Add(Comment entity, bool saveChange = true)
         {
             await _context.AddAsync(entity);
-            bool result = await _context.SaveChangesAsync() > 0;
-            return result;
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _context.SaveChangesAsync() > 0;
+            }
+            return await Task.FromResult(result);
         }
 
         public async Task<bool> CreateComment(Guid userId, Guid postId, string content)
@@ -65,9 +69,15 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<bool> Update(Guid id, Comment entity)
+        public async Task<bool> Update(Comment entity, bool saveChange = true)
         {
-            throw new NotImplementedException();
+            _context.Comments.Update(entity);
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _context.SaveChangesAsync() > 0;
+            }
+            return await Task.FromResult(result);
         }
     }
 }

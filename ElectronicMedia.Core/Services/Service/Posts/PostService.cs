@@ -23,10 +23,14 @@ namespace ElectronicMedia.Core.Services.Service
             _postDetailService = postDetailService;
         }
 
-        public async Task<bool> Add(Post entity)
+        public async Task<bool> Add(Post entity, bool saveChange = true)
         {
             await _context.AddAsync(entity);
-            bool result = await _context.SaveChangesAsync() > 0;
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _context.SaveChangesAsync() > 0;
+            }
             return result;
         }
 
@@ -45,19 +49,15 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public async Task<bool> CreatePostCategory(string categoryName)
+        public async Task<bool> CreatePostCategory(PostCategoryModel model)
         {
-            if (string.IsNullOrEmpty(categoryName))
+            if (string.IsNullOrEmpty(model.Name))
             {
                 return false;
             }
-            var categories = await _context.PostCategories.Where(x => x.Name == categoryName).Select(x => x.Name).ToListAsync();
+            var categories = await _context.PostCategories.Where(x => x.Name == model.Name).Select(x => x.Name).ToListAsync();
             if (categories.Any()) return false;
-            PostCategory cate = new PostCategory()
-            {
-                Id = Guid.NewGuid(),
-                Name = categoryName,
-            };
+            PostCategory cate = model.MapTo<PostCategory>();
             await _context.PostCategories.AddAsync(cate);
             bool result = await _context.SaveChangesAsync() > 0;
             return result;
@@ -123,9 +123,15 @@ namespace ElectronicMedia.Core.Services.Service
             return post;
         }
 
-        public Task<bool> Update(Guid id, Post entity)
+        public async Task<bool> Update(Post entity, bool saveChange = true)
         {
-            throw new NotImplementedException();
+            _context.Posts.Update(entity);
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _context.SaveChangesAsync() > 0;
+            }
+            return await Task.FromResult(result);
         }
 
         public async Task<bool> UpdateLikeAndDislike(Guid postId, bool liked)
@@ -143,8 +149,7 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 entity.Dislike += 1;
             }
-            _context.Posts.Update(entity);
-            bool result = await _context.SaveChangesAsync() > 0;
+            bool result = await Update(entity);
             return result;
         }
 
@@ -160,7 +165,12 @@ namespace ElectronicMedia.Core.Services.Service
                 }
                 else
                 {
-                    return await _postDetailService.DeleteByUserIdAndPostId(postDetailEntity.UserId, postDetailEntity.PostId);
+                    result = await _postDetailService.DeleteByUserIdAndPostId(postDetailEntity.UserId, postDetailEntity.PostId);
+                    if (result)
+                    {
+                        result = await UpdateLikeDelete(postDetailEntity.PostId, postDetail.Liked);
+                    }
+                    return result;
                 }
             }
             result = await _postDetailService.CreatePostDetail(postDetail);
@@ -170,5 +180,26 @@ namespace ElectronicMedia.Core.Services.Service
             }
             return result;
         }
+        #region private method
+        private async Task<bool> UpdateLikeDelete(Guid postId, bool liked)
+        {
+            if (liked == null) return false;
+            var post = await GetByIdAsync(postId);
+            if (post == null)
+            {
+                return false;
+            }
+            if (liked)
+            {
+                post.Like -= 1;
+            }
+            else
+            {
+                post.Dislike -= 1;
+            }
+            bool result = await Update(post);
+            return result;
+        }
+        #endregion
     }
 }
