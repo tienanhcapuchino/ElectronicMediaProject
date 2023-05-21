@@ -15,9 +15,9 @@ namespace ElectronicMedia.Core.Services.Service
     public class PostService : IPostService
     {
         private readonly ElectronicMediaDbContext _context;
-        private readonly PostDetailService _postDetailService;
-        public PostService(ElectronicMediaDbContext context, 
-            PostDetailService postDetailService)
+        private readonly IPostDetailService _postDetailService;
+        public PostService(ElectronicMediaDbContext context,
+            IPostDetailService postDetailService)
         {
             _context = context;
             _postDetailService = postDetailService;
@@ -151,7 +151,18 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<bool> VotePost(PostDetailModel postDetail)
         {
             bool result = false;
-            if (await _postDetailService.FindByUserId(postDetail.AuthorId, postDetail.PostId) != null) return false;
+            var postDetailEntity = await _postDetailService.FindByUserId(postDetail.AuthorId, postDetail.PostId);
+            if (postDetailEntity != null)
+            {
+                if (postDetail.Liked != postDetailEntity.Liked)
+                {
+                    return false;
+                }
+                else
+                {
+                    return await _postDetailService.DeleteByUserIdAndPostId(postDetailEntity.UserId, postDetailEntity.PostId);
+                }
+            }
             result = await _postDetailService.CreatePostDetail(postDetail);
             if (result)
             {
