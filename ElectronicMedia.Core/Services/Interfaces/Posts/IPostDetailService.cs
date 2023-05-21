@@ -12,5 +12,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
     {
         Task<bool> CreatePostDetail(PostDetailModel model);
         Task<PostDetail> FindByUserId(Guid userId, Guid postId);
+        Task<bool> DeleteByUserIdAndPostId(Guid userId, Guid postId); 
     }
 }

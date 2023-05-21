@@ -39,6 +39,15 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
+        public async Task<bool> DeleteByUserIdAndPostId(Guid userId, Guid postId)
+        {
+            var postDetail = await _dbContext.PostDetails.SingleOrDefaultAsync(x => x.PostId == postId && x.UserId == userId);
+            if (postDetail == null) return false;
+            _dbContext.PostDetails.Remove(postDetail);
+            bool result = await _dbContext.SaveChangesAsync() > 0;
+            return result;
+        }
+
         public async Task<PostDetail> FindByUserId(Guid userId, Guid postId)
         {
             return await _dbContext.PostDetails.SingleOrDefaultAsync(x => x.PostId == postId && x.UserId == userId);
