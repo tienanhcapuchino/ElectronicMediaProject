@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Services.Interfaces
 {
-    public interface IPostService : ICoreRepository<Post>
+    public interface IPostCategoryService : ICoreRepository<PostCategory>
     {
-        Task<bool> CreatePost(PostModel post);
-        Task<bool> UpdateLikeAndDislike(Guid postId, bool liked);
-        Task<bool> VotePost(PostDetailModel postDetail);
+        Task<bool> CreatePostCate(PostCategoryModel model);
+        Task<bool> UpdatePostCate(Guid id, PostCategoryModel model);
+        Task<List<PostCategory>> GetPostCateParent();
     }
 }

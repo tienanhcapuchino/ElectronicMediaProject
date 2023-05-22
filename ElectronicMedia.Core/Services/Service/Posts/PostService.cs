@@ -49,35 +49,6 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public async Task<bool> CreatePostCategory(PostCategoryModel model)
-        {
-            if (string.IsNullOrEmpty(model.Name))
-            {
-                return false;
-            }
-            var categories = await _context.PostCategories.Where(x => x.Name == model.Name).Select(x => x.Name).ToListAsync();
-            if (categories.Any()) return false;
-            PostCategory cate = model.MapTo<PostCategory>();
-            await _context.PostCategories.AddAsync(cate);
-            bool result = await _context.SaveChangesAsync() > 0;
-            return result;
-        }
-
-        public async Task<bool> CreateSubCategories(List<PostCategoryModel> subCategories)
-        {
-            foreach (var category in subCategories)
-            {
-                if (string.IsNullOrEmpty(category.Name))
-                {
-                    return false;
-                }
-            }
-            var categories = subCategories.MapTo<List<PostCategory>>();
-            await _context.PostCategories.AddRangeAsync(categories);
-            bool result = await _context.SaveChangesAsync() > 0;
-            return result;
-        }
-
         public async Task<bool> Delete(Guid id, bool saveChange = true)
         {
             bool result = true;
@@ -86,29 +57,11 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 return false;
             }
-            //var postDetails = await _context.PostDetails.Where(x => x.PostId == id).ToListAsync();
-            //_context.Remove(post);
-            //_c
-            //throw new NotImplementedException();
             _context.Posts.Remove(post);
             if (saveChange)
             {
                 result = await _context.SaveChangesAsync() > 0;
             }
-            return result;
-        }
-
-        public async Task<bool> EditCategory(Guid cateId, PostCategoryModel model)
-        {
-            if (string.IsNullOrEmpty(model.Name)) return false;
-            var oldEntity = await _context.PostCategories.SingleOrDefaultAsync(x => x.Id == cateId);
-            if (oldEntity == null)
-            {
-                return false;
-            }
-            var newEntity = model.MapTo<PostCategory>();
-            _context.PostCategories.Update(newEntity);
-            bool result = await _context.SaveChangesAsync() > 0;
             return result;
         }
 

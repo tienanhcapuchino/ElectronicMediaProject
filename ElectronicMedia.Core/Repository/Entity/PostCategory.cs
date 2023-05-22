@@ -13,6 +13,6 @@ namespace ElectronicMedia.Core.Repository.Entity
         public virtual PostCategory? Category { get; set; }
         public Guid? ParentId { get; set; }
         public string? Description { get; set; }
-        public virtual ICollection<PostCategory> SubCategories { get; set; }
+        public virtual ICollection<PostCategory>? SubCategories { get; set; }
     }
 }
