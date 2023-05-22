@@ -11,17 +11,21 @@ namespace ElectronicMediaAPI.Controllers
     {
         private readonly ILogger<PostController> _logger;
         private readonly IPostService _postService;
-        public PostController(ILogger<PostController> logger, IPostService postService)
+        private readonly IPostCategoryService _postCategoryService;
+        public PostController(ILogger<PostController> logger, 
+            IPostService postService,
+            IPostCategoryService postCategoryService)
         {
             _logger = logger;
             _postService = postService;
+            _postCategoryService = postCategoryService;
         }
         [HttpPost("category/create")]
         public async Task<APIResponeModel> CreatePostCategory(PostCategoryModel model)
         {
             try
             {
-                if (await _postService.CreatePostCategory(model))
+                if (await _postCategoryService.CreatePostCate(model))
                 {
                     return new APIResponeModel()
                     {
