@@ -1,6 +1,9 @@
-﻿using ElectronicMedia.Core.Repository.DataContext;
+﻿using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,14 +32,31 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public Task<bool> CreateReplyComment(ReplyComment replyComment)
+        public async Task<bool> CreateReplyComment(ReplyCommentModel replyComment)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(replyComment.Content))
+            {
+                throw new Exception("Cannot leave content in comment is blank!");
+            }
+            var enity = replyComment.MapTo<ReplyComment>();
+            var result = await Add(enity);
+            return result;
         }
 
-        public Task<bool> Delete(Guid id, bool saveChange = true)
+        public async Task<bool> Delete(Guid id, bool saveChange = true)
         {
-            throw new NotImplementedException();
+            var entity = await GetByIdAsync(id);
+            if (entity == null)
+            {
+                throw new Exception($"Error when remove reply comment. Cannot find replycomment at: {id}");
+            }
+            _context.ReplyComments.Remove(entity);
+            bool result = true;
+            if (saveChange)
+            {
+                result = await _context.SaveChangesAsync() > 0;
+            }
+            return result;
         }
 
         public Task<List<ReplyComment>> GetAllAsync()
@@ -44,14 +64,16 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<ReplyComment> GetByIdAsync(Guid id)
+        public async Task<ReplyComment> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.ReplyComments.Where(x => x.Id == id).SingleOrDefaultAsync();
         }
 
-        public Task<List<ReplyComment>> GetReplyCommentsByParentId(Guid parentId)
+        public async Task<List<ReplyCommentModel>> GetReplyCommentsByParentId(Guid parentId)
         {
-            throw new NotImplementedException();
+            var replys = await _context.ReplyComments.Where(x => x.ParentId == parentId).ToListAsync();
+            var result = replys.MapTo<List<ReplyCommentModel>>();
+            return result;
         }
 
         public async Task<bool> Update(ReplyComment entity, bool saveChange = true)

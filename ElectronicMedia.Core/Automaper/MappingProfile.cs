@@ -23,7 +23,12 @@ namespace ElectronicMedia.Core.Automaper
 
             #region comments
             CreateMap<CommentModel, Comment>();
-            CreateMap<ReplyCommentModel, ReplyComment>();
+            CreateMap<ReplyCommentModel, ReplyComment>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId))
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId)).ReverseMap();
             #endregion
 
             #region posts

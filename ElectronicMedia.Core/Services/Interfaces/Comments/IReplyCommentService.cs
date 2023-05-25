@@ -1,4 +1,5 @@
 ﻿using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Repository.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
 {
     public interface IReplyCommentService : ICoreRepository<ReplyComment>
     {
-        Task<List<ReplyComment>> GetReplyCommentsByParentId(Guid parentId);
-        Task<bool> CreateReplyComment(ReplyComment replyComment);
+        Task<List<ReplyCommentModel>> GetReplyCommentsByParentId(Guid parentId);
+        Task<bool> CreateReplyComment(ReplyCommentModel replyComment);
     }
 }
