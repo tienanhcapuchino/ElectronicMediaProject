@@ -86,5 +86,22 @@ namespace ElectronicMedia.Core.Services.Service
             }
             return await Task.FromResult(result);
         }
+
+        public async Task<bool> UpdateReplyComment(Guid replyId, string content)
+        {
+            var entity = await GetByIdAsync(replyId);
+            if (entity == null)
+            {
+                return false;
+            }
+            if (string.IsNullOrEmpty(content))
+            {
+                return false;
+            }
+            entity.Content = content;
+            entity.UpdatedDate = DateTime.Now;
+            bool result = await Update(entity);
+            return result;
+        }
     }
 }
