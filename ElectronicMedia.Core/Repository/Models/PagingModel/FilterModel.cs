@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Repository.Models
+namespace ElectronicMedia.Core
 {
     public class FilterModel
     {

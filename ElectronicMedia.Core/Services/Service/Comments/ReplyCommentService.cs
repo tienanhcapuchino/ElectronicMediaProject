@@ -59,7 +59,17 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public Task<List<ReplyComment>> GetAllAsync()
+        public Task<PagedList<ReplyComment>> GetAllAsync(PageRequestBody requestBody)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<ReplyComment>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedList<ReplyComment>> GetAllWithPaging(PageRequestBody requestBody)
         {
             throw new NotImplementedException();
         }

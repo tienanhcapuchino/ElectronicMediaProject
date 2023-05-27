@@ -233,9 +233,10 @@ namespace ElectronicMedia.Core.Services.Service
             return await Task.FromResult(user);
         }
 
-        public Task<List<User>> GetAllAsync()
+        public async Task<PagedList<User>> GetAllWithPaging(PageRequestBody requestBody)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.Skip(requestBody.Skip).Take(requestBody.Top).ToListAsync();
+            return PagedList<User>.ToPagedList(user,requestBody.Page,requestBody.Top);
         }
 
         public Task<bool> Delete(Guid id, bool saveChange = true)
@@ -372,6 +373,12 @@ namespace ElectronicMedia.Core.Services.Service
             }
             return isValid;
         }
+
+        public Task<IEnumerable<User>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

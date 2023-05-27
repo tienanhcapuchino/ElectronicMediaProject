@@ -9,7 +9,8 @@ namespace ElectronicMedia.Core.Services.Interfaces
     public interface ICoreRepository<T>
     {
         Task<T> GetByIdAsync(Guid id);
-        Task<List<T>> GetAllAsync();
+        Task<PagedList<T>> GetAllWithPaging(PageRequestBody requestBody);
+        Task<IEnumerable<T>> GetAllAsync();
         Task<bool> Delete(Guid id, bool saveChange = true);
         Task<bool> Update(T entity, bool saveChange = true);
         Task<bool> Add(T entity, bool saveChange = true);

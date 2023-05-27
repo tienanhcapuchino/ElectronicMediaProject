@@ -29,7 +29,6 @@ namespace ElectronicMedia.Core.Services.Service
             }
             return await Task.FromResult(result);
         }
-
         public async Task<bool> CreatePostCate(PostCategoryModel model)
         {
             if (string.IsNullOrEmpty(model.Name))
@@ -38,14 +37,7 @@ namespace ElectronicMedia.Core.Services.Service
             }
             var categories = (await GetAllAsync()).Select(x => x.Name).Where(x => x.Equals(model.Name)).ToList();
             if (categories.Any()) return false;
-            //have error when map
-            //PostCategory cate = model.MapTo<PostCategory>();
-            var cate = new PostCategory()
-            {
-                Name = model.Name,
-                ParentId = model.ParentId,
-                Description = model.Description
-            };
+            PostCategory cate = model.MapTo<PostCategory>();
             bool result = await Add(cate);
             return result;
         }
@@ -63,9 +55,17 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public async Task<List<PostCategory>> GetAllAsync()
+        public async Task<PagedList<PostCategory>> GetAllWithPaging(PageRequestBody requestBody)
         {
-            return await _context.PostCategories.ToListAsync();
+            try
+            {
+                var category = await _context.PostCategories.ToListAsync();
+                return PagedList<PostCategory>.ToPagedList(category, requestBody.Page, requestBody.Top);
+            }
+            catch(Exception ex) 
+            {
+                throw;
+            }
         }
 
         public async Task<PostCategory> GetByIdAsync(Guid id)
@@ -96,6 +96,11 @@ namespace ElectronicMedia.Core.Services.Service
             entity = model.MapTo<PostCategory>();
             bool result = await Update(entity);
             return result;
+        }
+
+        public async Task<IEnumerable<PostCategory>> GetAllAsync()
+        {
+            return await _context.PostCategories.ToListAsync();
         }
     }
 }

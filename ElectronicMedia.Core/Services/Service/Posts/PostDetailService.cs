@@ -57,7 +57,12 @@ namespace ElectronicMedia.Core.Services.Service
             return await _dbContext.PostDetails.SingleOrDefaultAsync(x => x.PostId == postId && x.UserId == userId);
         }
 
-        public Task<List<PostDetail>> GetAllAsync()
+        public async Task<IEnumerable<PostDetail>> GetAllAsync()
+        {
+            return await _dbContext.PostDetails.ToListAsync();
+        }
+
+        public Task<PagedList<PostDetail>> GetAllWithPaging(PageRequestBody requestBody)
         {
             throw new NotImplementedException();
         }

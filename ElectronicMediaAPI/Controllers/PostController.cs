@@ -1,4 +1,6 @@
-﻿using ElectronicMedia.Core.Repository.Models;
+﻿using ElectronicMedia.Core;
+using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +51,22 @@ namespace ElectronicMediaAPI.Controllers
             {
                 _logger.LogError("error when create post category", ex);
                 throw;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetAllCategory(PageRequestBody requestBody)
+        {
+            try
+            {
+                var result = await _postCategoryService.GetAllWithPaging(requestBody);
+                return new JsonResult(result);
+            }catch(Exception ex)
+            {
+                return new JsonResult(new ResultDto<PagedList<User>>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
             }
         }
         [HttpPost("vote")]

@@ -65,7 +65,12 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public Task<List<Post>> GetAllAsync()
+        public Task<IEnumerable<Post>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedList<Post>> GetAllWithPaging(PageRequestBody requestBody)
         {
             throw new NotImplementedException();
         }
