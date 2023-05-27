@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ElectronicMediaAPI
 {
@@ -66,6 +67,10 @@ namespace ElectronicMediaAPI
             services.AddDbContext<ElectronicMediaDbContext>(option =>
             {
                 option.UseSqlServer(ConfigRoot.GetConnectionString("ElectronicStr"));
+            });
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
         }
         public void Configure(WebApplication app, IWebHostEnvironment env)
