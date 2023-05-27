@@ -3,7 +3,6 @@
     public class PageRequestFilter
     {
         private IEnumerable<string> _value;
-
         public string ColumnName { get; set; }
         public bool IsNullValue { get; set; }
         public IEnumerable<string> Value
