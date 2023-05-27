@@ -1,1 +1,17 @@
 # ElectronicMediaProject
+
+# How to work
+
+## Follow the steps bellow to run project
+
+#### Step 1: Open ElectronicMediaProject.sln solution
+#### Step 2: Open ***appsettings.json*** file in ***ElectronicMediaAPI*** to update your environment
+#### Step 3: Run project ***ElectronicMediaAPI*** 
+#### Step 4: open terminal of folder ElectronicUI
+#### Step 5: run command ***npm install***
+#### Step 6: run command ***npm install react-bootstrap bootstrap***
+#### Step 7: run command ***npm run start***
+
+## Enjoy the project
+
+#### Thanks so much!
