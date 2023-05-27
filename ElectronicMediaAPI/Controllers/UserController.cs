@@ -1,4 +1,5 @@
-﻿using ElectronicMedia.Core.Repository.Entity;
+﻿using ElectronicMedia.Core;
+using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,23 @@ namespace ElectronicMediaAPI.Controllers
             {
                 _logger.LogError($"error when get user by id: {userId}", ex);
                 throw;
+            }
+        }
+        [HttpGet]
+        public IActionResult GetAllUser(PageRequestBody requestBody)
+        {
+            try
+            {
+                var result = _userService.GetAllWithPaging(requestBody);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ResultDto<PagedList<User>>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
             }
         }
 

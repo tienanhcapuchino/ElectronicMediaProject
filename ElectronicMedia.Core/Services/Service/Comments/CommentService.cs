@@ -52,7 +52,12 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<List<Comment>> GetAllAsync()
+        public Task<PagedList<Comment>> GetAllAsync(PageRequestBody requestBody)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Comment>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
@@ -62,6 +67,11 @@ namespace ElectronicMedia.Core.Services.Service
             var comments = await _context.Comments.Where(c => c.PostId == postId).OrderBy(c => c.CreatedDate).ToListAsync();
             var result = comments.MapTo<List<CommentModel>>();
             return result;
+        }
+
+        public Task<PagedList<Comment>> GetAllWithPaging(PageRequestBody requestBody)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<Comment> GetByIdAsync(Guid id)
