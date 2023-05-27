@@ -12,7 +12,7 @@ namespace ElectronicMediaAPI.Controllers
         private readonly ILogger<PostController> _logger;
         private readonly IPostService _postService;
         private readonly IPostCategoryService _postCategoryService;
-        public PostController(ILogger<PostController> logger, 
+        public PostController(ILogger<PostController> logger,
             IPostService postService,
             IPostCategoryService postCategoryService)
         {
@@ -88,6 +88,21 @@ namespace ElectronicMediaAPI.Controllers
                 };
             }
         }
+
+        [HttpGet("category")]
+        public async Task<IActionResult> GetAllCate()
+        {
+            try
+            {
+                var result = await _postCategoryService.GetAllAsync();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
         [HttpPost("create")]
         public async Task<APIResponeModel> CreatePost(PostModel model)
         {
