@@ -60,7 +60,8 @@ namespace ElectronicMedia.Core.Services.Service
             try
             {
                 var category = await _context.PostCategories.ToListAsync();
-                return PagedList<PostCategory>.ToPagedList(category, requestBody.Page, requestBody.Top);
+                var result = QueryData<PostCategory>.QueryForModel(requestBody,category).ToList();
+                return PagedList<PostCategory>.ToPagedList(result, requestBody.Page, requestBody.Top);
             }
             catch(Exception ex) 
             {
