@@ -1,0 +1,16 @@
+.list__focus_main {
+    width: calc(100% - 372.5px);
+}
+.main_item {
+    display: flex;
+    margin-bottom: 24px;
+}
+.item_first {
+    width: calc(100% - 286px);
+}
+.item_reletive {
+    width: 270px;
+    padding-left: 16px;
+    border-left: 1px solid #ebebeb;
+    margin-left: 16px;
+}
