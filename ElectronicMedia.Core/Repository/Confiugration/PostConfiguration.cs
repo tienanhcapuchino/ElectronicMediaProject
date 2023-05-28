@@ -19,6 +19,7 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.Property(t => t.CreatedDate).IsRequired().HasDefaultValue(DateTime.UtcNow);
             builder.Property(t => t.UpdatedDate).IsRequired().HasDefaultValue(DateTime.UtcNow);
             builder.Property(x => x.Rate);
+            builder.Property(x => x.Image).IsRequired();
             builder.Property(x => x.Status).HasDefaultValue(PostStatusModel.Pending);
             builder.Property(t => t.Content).IsRequired();
             builder.Property(t => t.Title).IsRequired();

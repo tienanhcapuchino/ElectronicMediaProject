@@ -4,6 +4,7 @@ using ElectronicMedia.Core.Repository.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectronicMedia.Core.Migrations
 {
     [DbContext(typeof(ElectronicMediaDbContext))]
-    partial class ElectronicMediaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230527160339_addImagePost")]
+    partial class addImagePost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

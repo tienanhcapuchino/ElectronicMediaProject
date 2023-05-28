@@ -1,4 +1,5 @@
 ﻿using ElectronicMedia.Core.Repository.Entity;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace ElectronicMedia.Core.Repository.Models
         public string Title { get; set; }
         public string Content { get; set; }
         public Guid CategoryId { get; set; }
+        public IFormFile FileURL { get; set; }
         public Guid? SubCategoryId { get; set; } = Guid.Empty;
     }
 }

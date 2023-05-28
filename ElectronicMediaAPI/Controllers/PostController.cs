@@ -60,7 +60,8 @@ namespace ElectronicMediaAPI.Controllers
             {
                 var result = await _postCategoryService.GetAllWithPaging(requestBody);
                 return new JsonResult(result);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return new JsonResult(new ResultDto<PagedList<User>>
                 {
@@ -122,7 +123,7 @@ namespace ElectronicMediaAPI.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<APIResponeModel> CreatePost(PostModel model)
+        public async Task<APIResponeModel> CreatePost([FromForm] PostModel model)
         {
             try
             {

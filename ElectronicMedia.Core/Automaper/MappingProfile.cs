@@ -2,6 +2,7 @@
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
 using System.Text;
 
 namespace ElectronicMedia.Core.Automaper
@@ -42,7 +43,8 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PostStatusModel.Pending))
-                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId));
+                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => ConvertFileToURL(src.FileURL)));
             CreateMap<PostCategoryModel, PostCategory>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
@@ -79,6 +81,34 @@ namespace ElectronicMedia.Core.Automaper
             Array.Clear(salt, 0, salt.Length);
             Array.Clear(argon2.GetBytes(memorySize), 0, argon2.GetBytes(memorySize).Length);
             return Convert.ToBase64String(saltPlusHash);
+        }
+        private string ConvertFileToURL(IFormFile file)
+        {
+            string urlBase = "";
+            if (file.ContentType.Equals("image/jpeg"))
+            {
+                urlBase = "data:image/jpeg;base64,";
+            }
+            if (file.ContentType.Equals("image/png"))
+            {
+                urlBase = "data:image/png;base64,";
+            }
+            if (string.IsNullOrEmpty(urlBase))
+            {
+                throw new Exception("We only support jpeg and png for upload image!");
+            }
+            if (file != null && file.Length > 0)
+            {
+                byte[] imageData = null;
+                using (var ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    imageData = ms.ToArray();
+                    var image = Convert.ToBase64String(imageData);
+                    return urlBase + image;
+                }
+            }
+            return null;
         }
         #endregion
 
