@@ -160,21 +160,6 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Update(post);
             return result;
         }
-        private string ConvertFileToURL(IFormFile file)
-        {
-            if (file != null && file.Length > 0)
-            {
-                byte[] imageData = null;
-                using (var ms = new MemoryStream())
-                {
-                    file.CopyTo(ms);
-                    imageData = ms.ToArray();
-                }
-                var image = Convert.ToBase64String(imageData);
-                return image;
-            }
-            return null;
-        }
         #endregion
     }
 }

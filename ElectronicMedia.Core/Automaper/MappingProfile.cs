@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using Konscious.Security.Cryptography;
@@ -17,7 +18,7 @@ namespace ElectronicMedia.Core.Automaper
             CreateMap<UserRegisterModel, User>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Username))
-                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => EncodePassword(src.Password)))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => CommonService.EncodePassword(src.Password)))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleType.UserNormal))
                 .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true));
             #endregion
@@ -44,7 +45,7 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PostStatusModel.Pending))
                 .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => ConvertFileToURL(src.FileURL)));
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => CommonService.ConvertFileToURL(src.FileURL)));
             CreateMap<PostCategoryModel, PostCategory>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
@@ -58,59 +59,5 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.Liked));
             #endregion
         }
-        #region private medthod
-        private string EncodePassword(string password)
-        {
-            var salt = new byte[16];
-            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(salt);
-            }
-
-            var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
-            {
-                Salt = salt,
-                DegreeOfParallelism = 4,
-                Iterations = iterations,
-                MemorySize = memorySize
-            };
-            var hash = argon2.GetBytes(16);
-            var saltPlusHash = new byte[16 + hash.Length];
-            Buffer.BlockCopy(salt, 0, saltPlusHash, 0, salt.Length);
-            Buffer.BlockCopy(hash, 0, saltPlusHash, salt.Length, hash.Length);
-            Array.Clear(salt, 0, salt.Length);
-            Array.Clear(argon2.GetBytes(memorySize), 0, argon2.GetBytes(memorySize).Length);
-            return Convert.ToBase64String(saltPlusHash);
-        }
-        private string ConvertFileToURL(IFormFile file)
-        {
-            string urlBase = "";
-            if (file.ContentType.Equals("image/jpeg"))
-            {
-                urlBase = "data:image/jpeg;base64,";
-            }
-            if (file.ContentType.Equals("image/png"))
-            {
-                urlBase = "data:image/png;base64,";
-            }
-            if (string.IsNullOrEmpty(urlBase))
-            {
-                throw new Exception("We only support jpeg and png for upload image!");
-            }
-            if (file != null && file.Length > 0)
-            {
-                byte[] imageData = null;
-                using (var ms = new MemoryStream())
-                {
-                    file.CopyTo(ms);
-                    imageData = ms.ToArray();
-                    var image = Convert.ToBase64String(imageData);
-                    return urlBase + image;
-                }
-            }
-            return null;
-        }
-        #endregion
-
     }
 }
