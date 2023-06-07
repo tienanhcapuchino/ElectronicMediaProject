@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using Konscious.Security.Cryptography;
@@ -18,7 +19,7 @@ namespace ElectronicMedia.Core.Automaper
             CreateMap<UserRegisterModel, User>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Username))
-                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => EncodePassword(src.Password)))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => CommonService.EncodePassword(src.Password)))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleType.UserNormal))
                 .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true));
             #endregion
@@ -45,7 +46,7 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PostStatusModel.Pending))
                 .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => ConvertFileToURL(src.FileURL)));
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => CommonService.ConvertFileToURL(src.FileURL)));
             CreateMap<PostCategoryModel, PostCategory>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
