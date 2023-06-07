@@ -3,6 +3,7 @@ using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using Konscious.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
+using System.Drawing;
 using System.Text;
 
 namespace ElectronicMedia.Core.Automaper
@@ -56,6 +57,8 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.AuthorId))
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
                 .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.Liked));
+            CreateMap<Post, PostViewModel>()
+                .ForMember(dest => dest.Image, otp => otp.MapFrom(src => "data:image/jpeg;base64," + Common.Decode(src.Image)));
             #endregion
         }
         #region private medthod
@@ -82,7 +85,7 @@ namespace ElectronicMedia.Core.Automaper
             Array.Clear(argon2.GetBytes(memorySize), 0, argon2.GetBytes(memorySize).Length);
             return Convert.ToBase64String(saltPlusHash);
         }
-        private string ConvertFileToURL(IFormFile file)
+        private byte[] ConvertFileToURL(IFormFile file)
         {
             string urlBase = "";
             if (file.ContentType.Equals("image/jpeg"))
@@ -103,9 +106,7 @@ namespace ElectronicMedia.Core.Automaper
                 using (var ms = new MemoryStream())
                 {
                     file.CopyTo(ms);
-                    imageData = ms.ToArray();
-                    var image = Convert.ToBase64String(imageData);
-                    return urlBase + image;
+                    return imageData = ms.ToArray();
                 }
             }
             return null;

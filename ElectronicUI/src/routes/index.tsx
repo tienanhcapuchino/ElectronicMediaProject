@@ -9,6 +9,6 @@ const publishRoute = [
     { path: '/login', component: Login, layout: SideBarOnly },
 ];
 // need login
-const privateRoute = [];
+const privateRoute: never[] = [];
 
 export { privateRoute, publishRoute };

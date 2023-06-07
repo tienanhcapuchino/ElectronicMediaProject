@@ -82,6 +82,11 @@ namespace ElectronicMedia.Core.Services.Service
             var post = await _context.Posts.Where(x => x.Id == id).SingleOrDefaultAsync();
             return post;
         }
+        public async Task<PostViewModel> GetById(Guid id)
+        {
+            var post = await GetByIdAsync(id);
+            return post.MapTo<PostViewModel>();
+        }
 
         public async Task<bool> Update(Post entity, bool saveChange = true)
         {
@@ -162,6 +167,7 @@ namespace ElectronicMedia.Core.Services.Service
         }
         private string ConvertFileToURL(IFormFile file)
         {
+            var image = string.Empty;
             if (file != null && file.Length > 0)
             {
                 byte[] imageData = null;
@@ -170,10 +176,10 @@ namespace ElectronicMedia.Core.Services.Service
                     file.CopyTo(ms);
                     imageData = ms.ToArray();
                 }
-                var image = Convert.ToBase64String(imageData);
+                image = Convert.ToBase64String(imageData);
                 return image;
             }
-            return null;
+            return image;
         }
         #endregion
     }

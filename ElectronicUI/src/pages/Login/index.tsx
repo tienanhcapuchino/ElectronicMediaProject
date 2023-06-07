@@ -1,13 +1,11 @@
 import style from './login.module.scss';
-import clsx from 'clsx';
 
-const cx = clsx.bind(style);
 function Login() {
     return (
-        <div className={cx('main')}>
-            <div className={cx('container')}>
-                <form action="" className={cx(style['form-login'])} data-ng-controller={cx('loginController')}>
-                    <ul className={cx(style['tabs-login'])}>
+        <div className="main">
+            <div className="container">
+                <form action="" className="form-login" data-ng-controller="loginController">
+                    <ul className="tabs-login">
                         <li className="tabs-login-item active">
                             <a href="#menu_1" className="tabs-link" data-ng-click="message = ''">
                                 Đăng nhập
@@ -25,25 +23,13 @@ function Login() {
                             <p className="login-by-subtext">Bằng tài khoản mạng xã hội</p>
                         </div>
                         <div className="login-social-network">
-                            <a
-                                href="javascript:void(0)"
-                                className="link-network"
-                                data-ng-click="authExternalProvider('Google')"
-                            >
+                            <a className="link-network" data-ng-click="authExternalProvider('Google')">
                                 Google
                             </a>
-                            <a
-                                href="javascript:void(0)"
-                                className="link-network"
-                                data-ng-click="authExternalProvider('Facebook')"
-                            >
+                            <a className="link-network" data-ng-click="authExternalProvider('Facebook')">
                                 Facebook
                             </a>
-                            <a
-                                href="javascript:void(0)"
-                                className="link-network"
-                                data-ng-click="authExternalProvider('Zalo')"
-                            >
+                            <a className="link-network" data-ng-click="authExternalProvider('Zalo')">
                                 <img src="#" alt="" className="icon-network" />
                                 Zalo
                             </a>
@@ -56,9 +42,7 @@ function Login() {
                     <div className="login-cnt">
                         <div id="menu_1" className="login-form-1">
                             <div className="login-email">
-                                <label for="" className="email-name">
-                                    Email
-                                </label>
+                                <label className="email-name">Email</label>
                                 <input
                                     type="text"
                                     className="input-email ng-pristine ng-valid"
@@ -67,37 +51,26 @@ function Login() {
                                 />
                             </div>
                             <div className="login-password">
-                                <label for="" className="email-name">
-                                    Mật khẩu
-                                </label>
+                                <label className="email-name">Mật khẩu</label>
                                 <input
                                     type="password"
                                     className="input-password ng-pristine ng-valid"
                                     data-ng-model="loginData.password"
                                     placeholder="Nhập mật khẩu"
                                 />
-                                <a
-                                    href="javascript:void(0)"
-                                    tabindex="-1"
-                                    className="view"
-                                    onclick="viewPass(this)"
-                                ></a>
+                                <a tabIndex={1} className="view"></a>
                             </div>
                             <a href="/quen-mat-khau" className="forget-password">
                                 Quên mật khẩu?
                             </a>
                             <div className="btn-login" data-ng-click="login()">
-                                <a href="javascript:void(0)" className="link-btn">
-                                    Đăng nhập
-                                </a>
+                                <a className="link-btn">Đăng nhập</a>
                             </div>
                         </div>
 
                         <div id="menu_2" className="login-form-2">
                             <div className="login-email">
-                                <label for="" className="email-name">
-                                    Email
-                                </label>
+                                <label className="email-name">Email</label>
                                 <input
                                     type="text"
                                     className="input-email ng-pristine ng-valid"
@@ -106,9 +79,7 @@ function Login() {
                                 />
                             </div>
                             <div className="login-name">
-                                <label for="" className="email-name">
-                                    Tên hiển thị
-                                </label>
+                                <label className="email-name">Tên hiển thị</label>
                                 <input
                                     type="text"
                                     className="input-name ng-pristine ng-valid"
@@ -117,33 +88,24 @@ function Login() {
                                 />
                             </div>
                             <div className="login-password">
-                                <label for="" className="email-name">
-                                    Mật khẩu
-                                </label>
+                                <label className="email-name">Mật khẩu</label>
                                 <input
                                     type="password"
                                     className="input-password ng-pristine ng-valid"
                                     data-ng-model="registration.password"
                                     placeholder="Nhập mật khẩu"
                                 />
-                                <a
-                                    href="javascript:void(0)"
-                                    className="view"
-                                    onclick="viewPass(this)"
-                                    tabindex="-1"
-                                ></a>
+                                <a className="view"></a>
                             </div>
                             <div className="login-password">
-                                <label for="" className="email-name">
-                                    Xác nhận mật khẩu
-                                </label>
+                                <label className="email-name">Xác nhận mật khẩu</label>
                                 <input
                                     type="password"
                                     className="input-password ng-pristine ng-valid"
                                     data-ng-model="registration.confirmPassword"
                                     placeholder="Nhập mật khẩu"
                                 />
-                                <a href="javascript:void(0)" className="view" onclick="viewPass(this)"></a>
+                                <a className="view"></a>
                             </div>
                             <p className="regula">
                                 Khi bấm đăng ký tài khoản bạn đã đồng ý với
@@ -157,7 +119,7 @@ function Login() {
                                 của tòa soạn
                             </p>
                             <div className="btn-login">
-                                <a href="javascript:void(0)" className="link-btn" data-ng-click="signUp()">
+                                <a className="link-btn" data-ng-click="signUp()">
                                     Đăng ký tài khoản
                                 </a>
                             </div>
