@@ -27,7 +27,8 @@ namespace ElectronicMedia.Core.Repository.Entity
         public double? Rate { get; set; }
         public int Like { get; set; } = 0;
         public int Dislike { get; set; } = 0;
-        public string Image { get; set; }
+        [Column(TypeName ="image")]
+        public byte[]? Image { get; set; }
         public PostStatusModel Status { get; set; }
     }
     public enum PostStatusModel : byte

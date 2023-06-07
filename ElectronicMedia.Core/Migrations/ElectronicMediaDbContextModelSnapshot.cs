@@ -35,7 +35,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 27, 23, 3, 39, 217, DateTimeKind.Local).AddTicks(8681));
+                        .HasDefaultValue(new DateTime(2023, 6, 7, 13, 7, 36, 58, DateTimeKind.Local).AddTicks(8803));
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -43,7 +43,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 27, 23, 3, 39, 217, DateTimeKind.Local).AddTicks(9008));
+                        .HasDefaultValue(new DateTime(2023, 6, 7, 13, 7, 36, 58, DateTimeKind.Local).AddTicks(9205));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -73,16 +73,16 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 27, 16, 3, 39, 218, DateTimeKind.Utc).AddTicks(6656));
+                        .HasDefaultValue(new DateTime(2023, 6, 7, 6, 7, 36, 59, DateTimeKind.Utc).AddTicks(7803));
 
                     b.Property<int>("Dislike")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<string>("Image")
+                    b.Property<byte[]>("Image")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("image");
 
                     b.Property<int>("Like")
                         .ValueGeneratedOnAdd()
@@ -93,7 +93,7 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 27, 16, 3, 39, 218, DateTimeKind.Utc).AddTicks(6305));
+                        .HasDefaultValue(new DateTime(2023, 6, 7, 6, 7, 36, 59, DateTimeKind.Utc).AddTicks(7424));
 
                     b.Property<double?>("Rate")
                         .HasColumnType("float");
@@ -115,7 +115,7 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 27, 16, 3, 39, 218, DateTimeKind.Utc).AddTicks(6877));
+                        .HasDefaultValue(new DateTime(2023, 6, 7, 6, 7, 36, 59, DateTimeKind.Utc).AddTicks(8042));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier")
@@ -193,7 +193,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 27, 23, 3, 39, 218, DateTimeKind.Local).AddTicks(1472));
+                        .HasDefaultValue(new DateTime(2023, 6, 7, 13, 7, 36, 59, DateTimeKind.Local).AddTicks(1907));
 
                     b.Property<Guid>("ParentId")
                         .HasColumnType("uniqueidentifier");
@@ -201,7 +201,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 27, 23, 3, 39, 218, DateTimeKind.Local).AddTicks(1719));
+                        .HasDefaultValue(new DateTime(2023, 6, 7, 13, 7, 36, 59, DateTimeKind.Local).AddTicks(2183));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -227,7 +227,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("Dob")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 5, 27, 23, 3, 39, 217, DateTimeKind.Local).AddTicks(1599));
+                        .HasDefaultValue(new DateTime(2023, 6, 7, 13, 7, 36, 58, DateTimeKind.Local).AddTicks(799));
 
                     b.Property<string>("Email")
                         .IsRequired()

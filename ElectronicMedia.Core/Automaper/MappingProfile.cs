@@ -4,6 +4,7 @@ using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using Konscious.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
+using System.Drawing;
 using System.Text;
 
 namespace ElectronicMedia.Core.Automaper
@@ -57,7 +58,61 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.AuthorId))
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
                 .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.Liked));
+            CreateMap<Post, PostViewModel>()
+                .ForMember(dest => dest.Image, otp => otp.MapFrom(src => "data:image/jpeg;base64," + CommonFunct.Decode(src.Image)));
             #endregion
         }
+        #region private medthod
+        private string EncodePassword(string password)
+        {
+            var salt = new byte[16];
+            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(salt);
+            }
+
+            var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
+            {
+                Salt = salt,
+                DegreeOfParallelism = 4,
+                Iterations = iterations,
+                MemorySize = memorySize
+            };
+            var hash = argon2.GetBytes(16);
+            var saltPlusHash = new byte[16 + hash.Length];
+            Buffer.BlockCopy(salt, 0, saltPlusHash, 0, salt.Length);
+            Buffer.BlockCopy(hash, 0, saltPlusHash, salt.Length, hash.Length);
+            Array.Clear(salt, 0, salt.Length);
+            Array.Clear(argon2.GetBytes(memorySize), 0, argon2.GetBytes(memorySize).Length);
+            return Convert.ToBase64String(saltPlusHash);
+        }
+        private byte[] ConvertFileToURL(IFormFile file)
+        {
+            string urlBase = "";
+            if (file.ContentType.Equals("image/jpeg"))
+            {
+                urlBase = "data:image/jpeg;base64,";
+            }
+            if (file.ContentType.Equals("image/png"))
+            {
+                urlBase = "data:image/png;base64,";
+            }
+            if (string.IsNullOrEmpty(urlBase))
+            {
+                throw new Exception("We only support jpeg and png for upload image!");
+            }
+            if (file != null && file.Length > 0)
+            {
+                byte[] imageData = null;
+                using (var ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    return imageData = ms.ToArray();
+                }
+            }
+            return null;
+        }
+        #endregion
+
     }
 }

@@ -82,6 +82,11 @@ namespace ElectronicMedia.Core.Services.Service
             var post = await _context.Posts.Where(x => x.Id == id).SingleOrDefaultAsync();
             return post;
         }
+        public async Task<PostViewModel> GetById(Guid id)
+        {
+            var post = await GetByIdAsync(id);
+            return post.MapTo<PostViewModel>();
+        }
 
         public async Task<bool> Update(Post entity, bool saveChange = true)
         {

@@ -53,6 +53,23 @@ namespace ElectronicMediaAPI.Controllers
                 throw;
             }
         }
+        [HttpGet("id")]
+        public async Task<IActionResult> GetPostById(Guid id)
+        {
+            try
+            {
+                var result = await _postService.GetById(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ResultDto<PostViewModel>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> GetAllCategory(PageRequestBody requestBody)
         {
