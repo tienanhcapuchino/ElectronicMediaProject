@@ -59,7 +59,7 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
                 .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.Liked));
             CreateMap<Post, PostViewModel>()
-                .ForMember(dest => dest.Image, otp => otp.MapFrom(src => "data:image/jpeg;base64," + Common.Decode(src.Image)));
+                .ForMember(dest => dest.Image, otp => otp.MapFrom(src => "data:image/jpeg;base64," + CommonFunct.Decode(src.Image)));
             #endregion
         }
         #region private medthod

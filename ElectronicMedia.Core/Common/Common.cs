@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core
 {
-    public static class Common
+    public static class CommonFunct
     {
         public static string Decode(byte[] data)
         {
