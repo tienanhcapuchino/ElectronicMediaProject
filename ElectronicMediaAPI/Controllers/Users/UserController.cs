@@ -8,7 +8,7 @@ namespace ElectronicMediaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public partial class UserController : ControllerBase
     {
         private readonly IUserService _userService;
         private ILogger<UserController> _logger;
