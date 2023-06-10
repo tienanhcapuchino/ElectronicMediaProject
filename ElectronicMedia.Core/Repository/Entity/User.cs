@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +18,8 @@ namespace ElectronicMedia.Core.Repository.Entity
         public string PhoneNumber { get; set; }
         public DateTime Dob { get; set; }
         public RoleType Role { get; set; }
-        public string? Avatar { get; set; }
+        [Column(TypeName = "image")]
+        public byte[]? Image { get; set; }
         public bool IsActived { get; set; }
         public Gender? Gender { get; set; }
         public virtual ICollection<Post>? Posts { get; set; }

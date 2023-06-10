@@ -14,5 +14,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<APIResponeModel> Register(UserRegisterModel model);
         Task<string> GenerateToken(User us);
         Task<APIResponeModel> RenewToken(TokenModel model);
+        Task<UserProfileModel> GetProfileUser(Guid userId);
     }
 }

@@ -12,6 +12,20 @@ namespace ElectronicMedia.Core.Common.Extension
     {
         public static int memorySize = 1024;
         public static int iterations = 10;
+        public static byte[] InitAvatarUser()
+        {
+            try
+            {
+                string codeFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                string path = Path.Combine(codeFolder, @"..\..\..\..\avt_default.jpg");
+                byte[] data = File.ReadAllBytes(path);
+                return data;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Cannot init avatar user with expection: {ex.ToString()}");
+            }
+        }
         public static string EncodePassword(string password)
         {
             var salt = new byte[16];

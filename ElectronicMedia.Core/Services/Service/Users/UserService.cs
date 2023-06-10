@@ -34,7 +34,14 @@ namespace ElectronicMedia.Core.Services.Service
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == id);
             return await Task.FromResult(user);
         }
-
+        public async Task<UserProfileModel> GetProfileUser(Guid userId)
+        {
+            var user = GetByIdAsync(userId);
+            if (user == null) throw new Exception($"Cannot find user with id: {userId}");
+            var profile = user.MapTo<UserProfileModel>();
+            if (profile == null) throw new Exception("cannot map profile from user");
+            return await Task.FromResult(profile);
+        }
         public async Task<PagedList<User>> GetAllWithPaging(PageRequestBody requestBody)
         {
             var user = await _context.Users.Skip(requestBody.Skip).Take(requestBody.Top).ToListAsync();

@@ -16,7 +16,6 @@ namespace ElectronicMedia.Core.Repository.Models
         public string Repassword { get; set; }
         public DateTime Dob { get; set; }
         public Gender Gender { get; set; }
-        public string? Avatar { get; set; }
         public string PhoneNumber { get; set; }
     }
 }
