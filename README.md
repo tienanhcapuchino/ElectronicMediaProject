@@ -9,8 +9,7 @@
 #### Step 3: Run project ***ElectronicMediaAPI*** 
 #### Step 4: open terminal of folder ElectronicUI
 #### Step 5: run command ***npm install***
-#### Step 6: run command ***npm install react-bootstrap bootstrap***
-#### Step 7: run command ***npm run start***
+#### Step 6: run command ***npm run start***
 
 ## Enjoy the project
 
