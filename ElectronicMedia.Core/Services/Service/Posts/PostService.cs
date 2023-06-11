@@ -86,8 +86,6 @@ namespace ElectronicMedia.Core.Services.Service
             }
         }
 
-
-
         public async Task<Post> GetByIdAsync(Guid id)
         {
             var post = await _context.Posts.Where(x => x.Id == id).SingleOrDefaultAsync();
