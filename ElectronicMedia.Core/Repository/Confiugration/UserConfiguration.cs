@@ -22,7 +22,7 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.Property(x => x.Email).IsRequired().HasMaxLength(250);
             builder.Property(x => x.PhoneNumber).IsRequired().HasMaxLength(250);
             builder.Property(x => x.FullName).IsRequired().HasMaxLength(250);
-            builder.Property(x => x.Image).IsRequired();
+            builder.Property(x => x.Image);
             builder.Property(x => x.IsActived);
             builder.Property(x => x.Gender).IsRequired().HasDefaultValue(Gender.Unknown);
         }

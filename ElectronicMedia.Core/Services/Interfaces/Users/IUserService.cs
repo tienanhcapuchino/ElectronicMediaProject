@@ -15,5 +15,8 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<string> GenerateToken(User us);
         Task<APIResponeModel> RenewToken(TokenModel model);
         Task<UserProfileModel> GetProfileUser(Guid userId);
+        Task<bool> UpdateUserProfile(Guid userId, UserProfileModel profile);
+        Task<bool> IsDuplicatePhone(Guid userId, string phoneNumber);
+        Task<bool> IsDuplicateEmail(Guid userId, string email);
     }
 }
