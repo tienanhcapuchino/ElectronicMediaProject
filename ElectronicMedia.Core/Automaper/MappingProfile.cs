@@ -47,7 +47,7 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PostStatusModel.Pending))
                 .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => CommonService.ConvertFileToURL(src.FileURL)));
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => (src.FileURL != null)? CommonService.ConvertFileToURL(src.FileURL) : CommonService.InitAvatarUser()));
             CreateMap<PostCategoryModel, PostCategory>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))

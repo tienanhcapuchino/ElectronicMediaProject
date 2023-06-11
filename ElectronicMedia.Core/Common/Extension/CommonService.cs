@@ -49,7 +49,7 @@ namespace ElectronicMedia.Core.Common.Extension
             Array.Clear(argon2.GetBytes(memorySize), 0, argon2.GetBytes(memorySize).Length);
             return Convert.ToBase64String(saltPlusHash);
         }
-        public static string ConvertFileToURL(IFormFile file)
+        public static byte[] ConvertFileToURL(IFormFile file)
         {
             string urlBase = "";
             if (file.ContentType.Equals("image/jpeg"))
@@ -70,9 +70,7 @@ namespace ElectronicMedia.Core.Common.Extension
                 using (var ms = new MemoryStream())
                 {
                     file.CopyTo(ms);
-                    imageData = ms.ToArray();
-                    var image = Convert.ToBase64String(imageData);
-                    return urlBase + image;
+                    return imageData = ms.ToArray();
                 }
             }
             return null;
