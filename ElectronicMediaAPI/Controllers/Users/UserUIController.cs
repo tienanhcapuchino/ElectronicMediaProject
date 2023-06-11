@@ -57,7 +57,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
         [HttpPost("update/profile/{userId}")]
-        public async Task<bool> UpdateProfile([FromRoute] Guid userId, UserProfileModel profile)
+        public async Task<bool> UpdateProfile([FromRoute] Guid userId, [FromBody] UserProfileModel profile)
         {
             try
             {
