@@ -22,7 +22,7 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true))
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => CommonService.InitAvatarUser()));
             CreateMap<User, UserProfileModel>()
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => CommonFunct.Decode(src.Image)));
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => "data:image/jpg;base64," + CommonFunct.Decode(src.Image)));
             #endregion
 
             #region comments

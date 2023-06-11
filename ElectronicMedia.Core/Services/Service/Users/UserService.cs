@@ -28,7 +28,7 @@ namespace ElectronicMedia.Core.Services.Service
             _context = context;
             _appSettings = optionsMonitor.CurrentValue;
         }
-        
+
         public async Task<User> GetByIdAsync(Guid id)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == id);
@@ -36,8 +36,13 @@ namespace ElectronicMedia.Core.Services.Service
         }
         public async Task<UserProfileModel> GetProfileUser(Guid userId)
         {
-            var user = GetByIdAsync(userId);
+            var user = await GetByIdAsync(userId);
             if (user == null) throw new Exception($"Cannot find user with id: {userId}");
+            if (user.Image == null)
+            {
+                user.Image = CommonService.InitAvatarUser();
+                await Update(user);
+            }
             var profile = user.MapTo<UserProfileModel>();
             if (profile == null) throw new Exception("cannot map profile from user");
             return await Task.FromResult(profile);
@@ -73,6 +78,51 @@ namespace ElectronicMedia.Core.Services.Service
                 result = await _context.SaveChangesAsync() > 0;
             }
             return result;
+        }
+        public async Task<bool> UpdateUserProfile(Guid userId, UserProfileModel profile)
+        {
+            var user = await GetByIdAsync(userId);
+            if (user == null) throw new Exception($"Cannot find user with userId: {userId}");
+            if (!profile.Username.Equals(user.Username))
+            {
+                throw new Exception("Cannot change username");
+            }
+            if (!await IsDuplicateEmail(userId, profile.Email)
+                || !await IsDuplicatePhone(userId, profile.PhoneNumber))
+            {
+
+                return false;
+            }
+            user.FullName = profile.FullName;
+            user.Email = profile.Email;
+            user.PhoneNumber = profile.PhoneNumber;
+            user.Dob = profile.Dob;
+            user.Gender = profile.Gender;
+            if (string.IsNullOrEmpty(profile.Image))
+            {
+                user.Image = Convert.FromBase64String(profile.Image);
+            }
+            bool result = await Update(user);
+            return await Task.FromResult(result);
+        }
+        public async Task<bool> IsDuplicateEmail(Guid userId, string email)
+        {
+            string regexEmail = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
+            if (!Regex.IsMatch(email, regexEmail)) return false;
+            var emails = await _context.Users.Where(x => x.Id != userId).Select(x => x.Email).ToListAsync();
+            if (emails != null && emails.Any() && emails.Contains(email))
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<bool> IsDuplicatePhone(Guid userId, string phoneNumber)
+        {
+            string regexPhone = @"^0\d{9}$";
+            if (!Regex.IsMatch(phoneNumber, regexPhone)) return false;
+            var phones = await _context.Users.Where(x => x.Id != userId).Select(x => x.PhoneNumber).ToListAsync();
+            if (phones != null && phones.Any() && phones.Contains(phoneNumber)) return false;
+            return true;
         }
         #region private method
         private DateTime ConverUnixTimeToDateTime(long utcExpireDate)
