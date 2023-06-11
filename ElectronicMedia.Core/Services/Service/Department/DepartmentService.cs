@@ -51,6 +51,10 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 foreach (var item in members)
                 {
+                    if (item.Role != RoleType.Writer)
+                    {
+                        throw new Exception("You only can assign writer to become member of department!");
+                    }
                     if (item.DepartmentId == null || item.DepartmentId != depId)
                     {
                         item.DepartmentId = depId;
