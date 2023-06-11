@@ -22,16 +22,23 @@ namespace ElectronicMedia.Core.Repository.Entity
         public byte[]? Image { get; set; }
         public bool IsActived { get; set; }
         public Gender? Gender { get; set; }
+        public virtual Department? Department { get; set; }
+        public Guid? DepartmentId { get; set; }
         public virtual ICollection<Post>? Posts { get; set; }
     }
 
     public enum RoleType : byte
     {
+        //only can comment and vote
         UserNormal = 0,
+        //full role, CRUD, setting
         Admin = 1,
+        //write post
         Writer = 2,
+        //approve post
         Leader = 3,
-        Editor = 4
+        //publish post
+        EditorDirector = 4
     }
     public enum Gender : byte
     {

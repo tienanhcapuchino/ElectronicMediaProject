@@ -25,6 +25,7 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.Property(x => x.Image);
             builder.Property(x => x.IsActived);
             builder.Property(x => x.Gender).IsRequired().HasDefaultValue(Gender.Unknown);
+            builder.HasOne(x => x.Department).WithMany(x => x.Members).HasForeignKey(x => x.DepartmentId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
