@@ -170,5 +170,22 @@ namespace ElectronicMediaAPI.Controllers
                 throw;
             }
         }
+        [HttpPost("page")]
+        public async Task<IActionResult> GetPostByPaging(PageRequestBody requestBody)
+        {
+            try
+            {
+                var result = await _postService.GetAllWithPaging(requestBody);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ResultDto<PagedList<User>>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
+            }
+        }
     }
 }
