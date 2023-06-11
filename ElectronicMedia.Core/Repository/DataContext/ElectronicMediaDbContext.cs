@@ -25,6 +25,7 @@ namespace ElectronicMedia.Core.Repository.DataContext
             modelBuilder.ApplyConfiguration(new ReplyCommentConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -45,6 +46,7 @@ namespace ElectronicMedia.Core.Repository.DataContext
         public DbSet<PostDetail> PostDetails { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ReplyComment> ReplyComments { get; set; }
+        public DbSet<Department> Departments { get; set; }
         #endregion
     }
 }
