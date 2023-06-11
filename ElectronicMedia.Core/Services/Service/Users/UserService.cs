@@ -124,6 +124,11 @@ namespace ElectronicMedia.Core.Services.Service
             if (phones != null && phones.Any() && phones.Contains(phoneNumber)) return false;
             return true;
         }
+        public async Task<List<User>> GetUsersByIds(List<Guid> userIds)
+        {
+            var result = await _context.Users.Where(x => userIds.Contains(x.Id)).ToListAsync();
+            return result;
+        }
         #region private method
         private DateTime ConverUnixTimeToDateTime(long utcExpireDate)
         {
