@@ -72,10 +72,22 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public Task<PagedList<Post>> GetAllWithPaging(PageRequestBody requestBody)
+        public async  Task<PagedList<Post>> GetAllWithPaging(PageRequestBody requestBody)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var post = await _context.Posts.ToListAsync();
+                var result = QueryData<Post>.QueryForModel(requestBody, post).ToList();
+                return PagedList<Post>.ToPagedList(result, requestBody.Page, requestBody.Top);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
         }
+
+
 
         public async Task<Post> GetByIdAsync(Guid id)
         {
