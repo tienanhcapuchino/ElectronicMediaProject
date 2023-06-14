@@ -21,7 +21,7 @@
  * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
  * 
  * 
- * Copy right 2023 - PRN231 - SU23 - Group 10. All Rights Reserved
+* Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
  * 
  * Unpublished - All rights reserved under the copyright laws 
  * of the Government of Viet Nam
