@@ -27,18 +27,15 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using ElectronicMedia.Core.Repository.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Services.Interfaces
+namespace ElectronicMedia.Core.Services.Service.Analists
 {
-    public interface IDepartmentService : ICoreRepository<Department>
+    public class AnalistPostService
     {
-        Task<bool> AssignMemberToDepartment(Guid depId, List<Guid> membersId);
-        Task<bool> AssignLeader(Guid depId, Guid leaderId);
     }
 }

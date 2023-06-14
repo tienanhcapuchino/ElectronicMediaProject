@@ -27,18 +27,15 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using ElectronicMedia.Core.Repository.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ElectronicMedia.Core.Services.Interfaces
+namespace ElectronicMediaAPI.Controllers.Analists
 {
-    public interface IDepartmentService : ICoreRepository<Department>
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AnalistPostController : ControllerBase
     {
-        Task<bool> AssignMemberToDepartment(Guid depId, List<Guid> membersId);
-        Task<bool> AssignLeader(Guid depId, Guid leaderId);
+
     }
 }
