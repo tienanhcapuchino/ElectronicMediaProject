@@ -1,4 +1,4 @@
-import { menuItem } from '~/helpers/data';
+import { menuItem } from '~/helper/data';
 import clsx from 'clsx';
 import style from './nav.module.scss';
 import { Icon } from '@fluentui/react/lib/Icon';
