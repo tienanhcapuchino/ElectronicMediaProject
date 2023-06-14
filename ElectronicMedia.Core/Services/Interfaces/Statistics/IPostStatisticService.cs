@@ -27,15 +27,18 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using ElectronicMedia.Core.Repository.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ElectronicMediaAPI.Controllers.Analists
+namespace ElectronicMedia.Core.Services.Interfaces
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AnalistPostController : ControllerBase
+    public interface IPostStatisticService
     {
-
+        Task<PostStatisticModel> GetTotalPostForEachWriter(Guid userId);
+        Task<PostStatisticModel> GetToltalPostInAnDepartment(Guid departmentId);
     }
 }
