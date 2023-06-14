@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import style from './header.module.scss';
 import { Icon } from '@fluentui/react/lib/Icon';
+import LoginIcon from '@mui/icons-material/Login';
 
 function Header() {
     return (
@@ -25,6 +26,9 @@ function Header() {
                             <img src="https://static.thanhnien.com.vn/thanhnien.vn/image/logo.svg"></img>
                         </a>
                     </h1>
+                    <div className="login">
+                        <LoginIcon />
+                    </div>
                 </div>
             </div>
         </div>
