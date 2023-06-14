@@ -33,10 +33,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Services.Interfaces
+namespace ElectronicMedia.Core.Repository.Models
 {
-    public class IAnalistPostService
+    public class PostStatisticModel
     {
-        
+        public int NumberPost { get; set; }
+        public int Month { get; set; }
     }
 }
