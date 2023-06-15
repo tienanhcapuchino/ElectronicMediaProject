@@ -67,13 +67,13 @@ namespace ElectronicMedia.Core.Services.Service
         {
             var user = await GetByIdAsync(userId);
             if (user == null) throw new Exception($"Cannot find user with id: {userId}");
-            if (user.Image == null)
-            {
-                user.Image = CommonService.InitAvatarUser();
-                await Update(user);
-            }
+            //if (user.Image == null)
+            //{
+            //    user.Image = CommonService.InitAvatarUser();
+            //    await Update(user);
+            //}
             var profile = user.MapTo<UserProfileModel>();
-            if (profile == null) throw new Exception("cannot map profile from user");
+            //if (profile == null) throw new Exception("cannot map profile from user");
             return await Task.FromResult(profile);
         }
         public async Task<PagedList<User>> GetAllWithPaging(PageRequestBody requestBody)
@@ -127,10 +127,10 @@ namespace ElectronicMedia.Core.Services.Service
             user.PhoneNumber = profile.PhoneNumber;
             user.Dob = profile.Dob;
             user.Gender = profile.Gender;
-            if (string.IsNullOrEmpty(profile.Image))
-            {
-                user.Image = Convert.FromBase64String(profile.Image);
-            }
+            //if (string.IsNullOrEmpty(profile.Image))
+            //{
+            //    user.Image = Convert.FromBase64String(profile.Image);
+            //}
             bool result = await Update(user);
             return await Task.FromResult(result);
         }

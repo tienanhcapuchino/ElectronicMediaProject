@@ -1,33 +1,4 @@
-﻿/*********************************************************************
- * 
- * PROPRIETARY and CONFIDENTIAL
- * 
- * This is licensed from, and is trade secret of:
- * 
- *          Group 10 - PRN231 - SU23
- *          FPT University, Education and Training zone
- *          Hoa Lac Hi-tech Park, Km29, Thang Long Highway
- *          Ha Noi, Viet Nam
- *          
- * Refer to your License Agreement for restrictions on use,
- * duplication, or disclosure
- * 
- * RESTRICTED RIGHTS LEGEND
- * 
- * Use, duplication or disclosure is the
- * subject to restriction in Articles 736 and 738 of the 
- * 2005 Civil Code, the Intellectual Property Law and Decree 
- * No. 85/2011/ND-CP amending and supplementing a number of 
- * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
- * 
- * 
- * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
- * 
- * Unpublished - All rights reserved under the copyright laws 
- * of the Government of Viet Nam
-*********************************************************************/
-
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -38,6 +9,19 @@ namespace ElectronicMedia.Core.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "department",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_department", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "postCategory",
                 columns: table => new
@@ -67,15 +51,22 @@ namespace ElectronicMedia.Core.Migrations
                     Username = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    Dob = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 10, 12, 55, 57, 236, DateTimeKind.Local).AddTicks(2204)),
+                    Dob = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 15, 22, 23, 59, 974, DateTimeKind.Local).AddTicks(482)),
                     Role = table.Column<byte>(type: "tinyint", nullable: false),
-                    Image = table.Column<byte[]>(type: "image", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActived = table.Column<bool>(type: "bit", nullable: false),
-                    Gender = table.Column<byte>(type: "tinyint", nullable: false, defaultValue: (byte)0)
+                    Gender = table.Column<byte>(type: "tinyint", nullable: false, defaultValue: (byte)0),
+                    DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_user", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_user_department_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "department",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -86,15 +77,15 @@ namespace ElectronicMedia.Core.Migrations
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 10, 5, 55, 57, 237, DateTimeKind.Utc).AddTicks(5258)),
-                    PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 10, 5, 55, 57, 237, DateTimeKind.Utc).AddTicks(4981)),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 10, 5, 55, 57, 237, DateTimeKind.Utc).AddTicks(5430)),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 15, 15, 23, 59, 975, DateTimeKind.Utc).AddTicks(2005)),
+                    PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 15, 15, 23, 59, 975, DateTimeKind.Utc).AddTicks(1768)),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 15, 15, 23, 59, 975, DateTimeKind.Utc).AddTicks(2159)),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Rate = table.Column<double>(type: "float", nullable: true),
                     Like = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Dislike = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    Image = table.Column<byte[]>(type: "image", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<byte>(type: "tinyint", nullable: false, defaultValue: (byte)0)
                 },
                 constraints: table =>
@@ -150,8 +141,8 @@ namespace ElectronicMedia.Core.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 10, 12, 55, 57, 236, DateTimeKind.Local).AddTicks(8276)),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2023, 6, 10, 12, 55, 57, 236, DateTimeKind.Local).AddTicks(8544)),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 15, 22, 23, 59, 974, DateTimeKind.Local).AddTicks(6362)),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2023, 6, 15, 22, 23, 59, 974, DateTimeKind.Local).AddTicks(6531)),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -203,8 +194,8 @@ namespace ElectronicMedia.Core.Migrations
                     ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 10, 12, 55, 57, 237, DateTimeKind.Local).AddTicks(648)),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2023, 6, 10, 12, 55, 57, 237, DateTimeKind.Local).AddTicks(852))
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 6, 15, 22, 23, 59, 974, DateTimeKind.Local).AddTicks(8343)),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValue: new DateTime(2023, 6, 15, 22, 23, 59, 974, DateTimeKind.Local).AddTicks(8511))
                 },
                 constraints: table =>
                 {
@@ -273,6 +264,11 @@ namespace ElectronicMedia.Core.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_DepartmentId",
+                table: "user",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_userToken_UserId",
                 table: "userToken",
                 column: "UserId");
@@ -300,6 +296,9 @@ namespace ElectronicMedia.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "user");
+
+            migrationBuilder.DropTable(
+                name: "department");
         }
     }
 }

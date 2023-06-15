@@ -27,7 +27,8 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -35,18 +36,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Repository.Models
+namespace ElectronicMedia.Core.Services.Service
 {
-    public class UserRegisterModel
+    public class FileStorageService : IFileStorageService
     {
-        public string FullName { get; set; }
-        public string Email { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Repassword { get; set; }
-        public DateTime Dob { get; set; }
-        public Gender Gender { get; set; }
-        public string PhoneNumber { get; set; }
-        public IFormFile Image { get; set; }
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public FileStorageService (IWebHostEnvironment webHostEnvironment)
+        {
+            _webHostEnvironment = webHostEnvironment;
+        }
+        public void DeleteImageFile(string fileName)
+        {
+            string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "Images", fileName);
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+
+        public void SaveImageFile(IFormFile file)
+        {
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "Images", file.FileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(fileStream);
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
 # ElectronicMediaProject
 
+# Important note: you can delete file in folder Images, but ***MUSTN'T DELETE FOLDER IMAGES***
+
 # How to work
 
 ## Follow the steps bellow to run project
