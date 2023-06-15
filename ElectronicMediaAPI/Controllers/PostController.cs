@@ -31,6 +31,7 @@ using ElectronicMedia.Core;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using ElectronicMedia.Core.Services.Service.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,7 @@ namespace ElectronicMediaAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class PostController : ControllerBase
     {
         private readonly ILogger<PostController> _logger;
@@ -83,6 +85,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
         [HttpGet("id")]
+        [BasicAuthentication("Admin")]
         public async Task<IActionResult> GetPostById(Guid id)
         {
             try
