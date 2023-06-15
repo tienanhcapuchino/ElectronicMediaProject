@@ -43,13 +43,16 @@ namespace ElectronicMediaAPI.Controllers
         private readonly ILogger<PostController> _logger;
         private readonly IPostService _postService;
         private readonly IPostCategoryService _postCategoryService;
+        private readonly IFileStorageService _fileStorageService;
         public PostController(ILogger<PostController> logger,
             IPostService postService,
-            IPostCategoryService postCategoryService)
+            IPostCategoryService postCategoryService,
+            IFileStorageService fileStorageService)
         {
             _logger = logger;
             _postService = postService;
             _postCategoryService = postCategoryService;
+            _fileStorageService = fileStorageService;
         }
         [HttpPost("category/create")]
         public async Task<APIResponeModel> CreatePostCategory(PostCategoryModel model)
@@ -175,6 +178,7 @@ namespace ElectronicMediaAPI.Controllers
             {
                 if (await _postService.CreatePost(model))
                 {
+                    _fileStorageService.SaveImageFile(model.FileURL);
                     return new APIResponeModel()
                     {
                         Code = 200,

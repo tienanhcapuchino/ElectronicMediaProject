@@ -47,8 +47,8 @@ namespace ElectronicMedia.Core.Repository.Entity
         public string PhoneNumber { get; set; }
         public DateTime Dob { get; set; }
         public RoleType Role { get; set; }
-        [Column(TypeName = "image")]
-        public byte[]? Image { get; set; }
+        //[Column(TypeName = "image")]
+        public string? Image { get; set; }
         public bool IsActived { get; set; }
         public Gender? Gender { get; set; }
         public virtual Department? Department { get; set; }
