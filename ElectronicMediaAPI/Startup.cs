@@ -27,13 +27,17 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.DataContext;
+using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -54,6 +58,7 @@ namespace ElectronicMediaAPI
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddControllers();
+            
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             InjectDependencyServices(services);
         }
@@ -91,7 +96,9 @@ namespace ElectronicMediaAPI
                     ClockSkew = TimeSpan.Zero,
                 };
             });
-
+            services.AddIdentity<UserIdentity, IdentityRole>()
+            .AddEntityFrameworkStores<ElectronicMediaDbContext>()
+            .AddDefaultTokenProviders();
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
                 build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
@@ -105,7 +112,7 @@ namespace ElectronicMediaAPI
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
         }
-        public void Configure(WebApplication app, IWebHostEnvironment env)
+        public  void Configure(WebApplication app, IWebHostEnvironment env)
         {
             if (!app.Environment.IsDevelopment())
             {
@@ -128,6 +135,20 @@ namespace ElectronicMediaAPI
             {
                 endpoints.MapControllers();
             });
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var roles = UserRole.Roles;
+                foreach (var role in roles)
+                {
+                    if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
+                    {
+                         roleManager.CreateAsync(new IdentityRole(role)).GetAwaiter().GetResult();
+                    }
+                }
+            }
+            
             app.Run();
         }
     }

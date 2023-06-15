@@ -33,6 +33,7 @@ using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -52,10 +53,15 @@ namespace ElectronicMedia.Core.Services.Service
     {
         private readonly ElectronicMediaDbContext _context;
         private readonly AppSetting _appSettings;
-        public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor)
+        private readonly UserManager<UserIdentity> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor,
+           UserManager<UserIdentity> _userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _appSettings = optionsMonitor.CurrentValue;
+            userManager = _userManager;
+            this.roleManager = roleManager;
         }
 
         public async Task<User> GetByIdAsync(Guid id)
@@ -112,7 +118,7 @@ namespace ElectronicMedia.Core.Services.Service
         {
             var user = await GetByIdAsync(userId);
             if (user == null) throw new Exception($"Cannot find user with userId: {userId}");
-            if (!profile.Username.Equals(user.Username))
+            if (!profile.Username.Equals(user.UserName))
             {
                 throw new Exception("Cannot change username");
             }
@@ -127,10 +133,10 @@ namespace ElectronicMedia.Core.Services.Service
             user.PhoneNumber = profile.PhoneNumber;
             user.Dob = profile.Dob;
             user.Gender = profile.Gender;
-            //if (string.IsNullOrEmpty(profile.Image))
-            //{
-            //    user.Image = Convert.FromBase64String(profile.Image);
-            //}
+          /*  if (string.IsNullOrEmpty(profile.Image))
+            {
+                user.Image = Convert.FromBase64String(profile.Image);
+            }*/
             bool result = await Update(user);
             return await Task.FromResult(result);
         }
@@ -196,7 +202,7 @@ namespace ElectronicMedia.Core.Services.Service
                 };
             }
 
-            var userEntity = _context.Users.SingleOrDefault(x => x.Username == model.Username
+            var userEntity = _context.Users.SingleOrDefault(x => x.UserName == model.Username
                                                             || x.Email == model.Email
                                                             || x.PhoneNumber == model.PhoneNumber);
             if (userEntity != null)

@@ -46,7 +46,7 @@ namespace ElectronicMedia.Core.Repository.Confiugration
             builder.HasKey(t => t.Id);
             builder.Property(x => x.Role);
             builder.Property(x => x.Dob).IsRequired().HasDefaultValue(DateTime.Now);
-            builder.Property(x => x.Username).IsRequired().HasMaxLength(250);
+            builder.Property(x => x.UserName).IsRequired().HasMaxLength(250);
             builder.Property(x => x.Password).IsRequired().HasMaxLength(250);
             builder.Property(x => x.Email).IsRequired().HasMaxLength(250);
             builder.Property(x => x.PhoneNumber).IsRequired().HasMaxLength(250);

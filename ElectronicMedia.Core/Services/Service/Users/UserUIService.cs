@@ -28,9 +28,12 @@
 *********************************************************************/
 
 using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -45,6 +48,7 @@ namespace ElectronicMedia.Core.Services.Service
 {
     public partial class UserService
     {
+
         public async Task<string> GenerateToken(User us)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
@@ -53,7 +57,7 @@ namespace ElectronicMedia.Core.Services.Service
             var tokenDecription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]{
-                new Claim(ClaimTypes.Name, us.Username),
+                new Claim(ClaimTypes.Name, us.UserName),
                 new Claim(ClaimTypes.Role, us.Role.ToString()),
                 new Claim(ClaimTypes.Email, us.Email),
                 new Claim("UserId", us.Id.ToString()),
@@ -82,7 +86,7 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<APIResponeModel> Login(UserLoginModel model)
         {
             var result = new APIResponeModel();
-            var userLogin = await _context.Users.SingleOrDefaultAsync(x => x.Username == model.Username
+            var userLogin = await _context.Users.SingleOrDefaultAsync(x => x.UserName == model.Username
             || x.Email == model.Username);
             if (userLogin == null)
             {
@@ -118,15 +122,32 @@ namespace ElectronicMedia.Core.Services.Service
                 return result;
             }
             var user = model.MapTo<User>();
-            if (!await Add(user))
+
+            await Add(user);
+            UserIdentity u = new UserIdentity()
             {
-                return new APIResponeModel()
-                {
-                    Code = 400,
-                    Message = "Add user to database failed",
-                    IsSucceed = false
-                };
+                Id = user.Id.ToString(),
+                Email = user.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = user.UserName
+            };
+            var resultAddUser = await userManager.CreateAsync(u, model.Password);
+
+
+            if (await roleManager.RoleExistsAsync(UserRole.NormalUser))
+            {
+                await userManager.AddToRoleAsync(u, UserRole.NormalUser);
             }
+            /* if (!await Add(user))
+             {
+
+                 return new APIResponeModel()
+                 {
+                     Code = 400,
+                     Message = "Add user to database failed",
+                     IsSucceed = false
+                 };
+             }*/
             return result;
         }
         public async Task<APIResponeModel> RenewToken(TokenModel model)
