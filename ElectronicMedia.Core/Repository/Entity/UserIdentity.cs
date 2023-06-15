@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Repository.Entity
 {
-<<<<<<< HEAD
+
     public class UserIdentity : IdentityUser
-=======
-    public  class UserIdentity : IdentityUser
->>>>>>> update code authen
     {
     }
 }
