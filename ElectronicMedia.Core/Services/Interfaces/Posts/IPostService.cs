@@ -43,5 +43,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<bool> UpdateLikeAndDislike(Guid postId, bool liked);
         Task<bool> VotePost(PostDetailModel postDetail);
         Task<PostViewModel> GetById(Guid id);
+        Task<bool> DeletePost(Guid postId);
     }
 }

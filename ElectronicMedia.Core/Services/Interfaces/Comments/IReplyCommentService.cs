@@ -42,5 +42,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<List<ReplyCommentModel>> GetReplyCommentsByParentId(Guid parentId);
         Task<bool> CreateReplyComment(ReplyCommentModel replyComment);
         Task<bool> UpdateReplyComment(Guid replyId, string content);
+        Task<List<ReplyComment>> GetAllRepliesByParentIds(List<Guid> parentIds);
     }
 }

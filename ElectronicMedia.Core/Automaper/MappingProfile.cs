@@ -55,7 +55,7 @@ namespace ElectronicMedia.Core.Automaper
             #endregion
 
             #region comments
-            CreateMap<CommentModel, Comment>();
+            CreateMap<CommentModel, Comment>().ReverseMap();
             CreateMap<ReplyCommentModel, ReplyComment>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId))
