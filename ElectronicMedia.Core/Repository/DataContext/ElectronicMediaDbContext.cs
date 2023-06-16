@@ -29,6 +29,8 @@
 
 using ElectronicMedia.Core.Repository.Confiugration;
 using ElectronicMedia.Core.Repository.Entity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -39,7 +41,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Repository.DataContext
 {
-    public class ElectronicMediaDbContext : DbContext
+    public class ElectronicMediaDbContext : IdentityDbContext<UserIdentity>
     {
         public ElectronicMediaDbContext(DbContextOptions<ElectronicMediaDbContext> options) : base(options)
         { 
@@ -55,6 +57,7 @@ namespace ElectronicMedia.Core.Repository.DataContext
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+            base.OnModelCreating(modelBuilder);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

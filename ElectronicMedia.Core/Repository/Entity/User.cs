@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace ElectronicMedia.Core.Repository.Entity
         public Guid Id { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string Password { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime Dob { get; set; }

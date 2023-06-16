@@ -28,10 +28,11 @@
 *********************************************************************/
 
 using ElectronicMedia.Core;
+using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
-using ElectronicMedia.Core.Services.Service.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +58,7 @@ namespace ElectronicMediaAPI.Controllers
             _fileStorageService = fileStorageService;
         }
         [HttpPost("category/create")]
+        [Authorize(UserRole.Admin)]
         public async Task<APIResponeModel> CreatePostCategory(PostCategoryModel model)
         {
             try
@@ -88,7 +90,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
         [HttpGet("id")]
-        [BasicAuthentication("Admin")]
+        [Authorize(UserRole.Admin)]
         public async Task<IActionResult> GetPostById(Guid id)
         {
             try
@@ -161,6 +163,8 @@ namespace ElectronicMediaAPI.Controllers
         }
 
         [HttpGet("category")]
+        [Authorize(Roles = $"{UserRole.Admin},{UserRole.NormalUser}")]
+       
         public async Task<IActionResult> GetAllCate()
         {
             try
