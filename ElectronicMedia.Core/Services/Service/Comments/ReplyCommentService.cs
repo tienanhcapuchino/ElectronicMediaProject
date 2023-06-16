@@ -142,5 +142,10 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Update(entity);
             return result;
         }
+        public async Task<List<ReplyComment>> GetAllRepliesByParentIds(List<Guid> parentIds)
+        {
+            var result = await _context.ReplyComments.Where(x => parentIds.Contains(x.ParentId)).ToListAsync();
+            return result;
+        }
     }
 }

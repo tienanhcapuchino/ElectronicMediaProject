@@ -46,11 +46,17 @@ namespace ElectronicMedia.Core.Services.Service
     {
         private readonly ElectronicMediaDbContext _context;
         private readonly IPostDetailService _postDetailService;
+        private readonly ICommentService _commentService;
+        private readonly IReplyCommentService _replyCommentService;
         public PostService(ElectronicMediaDbContext context,
-            IPostDetailService postDetailService)
+            IPostDetailService postDetailService,
+            ICommentService commentService,
+            IReplyCommentService replyCommentService)
         {
             _context = context;
             _postDetailService = postDetailService;
+            _commentService = commentService;
+            _replyCommentService = replyCommentService;
         }
 
         public async Task<bool> Add(Post entity, bool saveChange = true)
@@ -106,7 +112,7 @@ namespace ElectronicMedia.Core.Services.Service
             try
             {
                 var posts = await _context.Posts.ToListAsync();
-                var result = QueryData<Post>.QueryForModel(requestBody,posts).ToList();
+                var result = QueryData<Post>.QueryForModel(requestBody, posts).ToList();
                 return PagedList<Post>.ToPagedList(result, requestBody.Page, requestBody.Top);
             }
             catch (Exception ex)
@@ -182,6 +188,31 @@ namespace ElectronicMedia.Core.Services.Service
                 result = await UpdateLikeAndDislike(postDetail.PostId, postDetail.Liked);
             }
             return result;
+        }
+        public async Task<bool> DeletePost(Guid postId)
+        {
+            var post = await GetByIdAsync(postId);
+            if (post == null) return false;
+            var comments = await _commentService.GetAllCommentsByPost(postId);
+            List<ReplyComment> replyComments = new List<ReplyComment>();
+            List<Comment> commentEnities = new List<Comment>();
+            if (comments != null && comments.Any())
+            {
+                commentEnities = comments.MapTo<List<Comment>>();
+                var commentIds = commentEnities.Select(x => x.Id).ToList();
+                replyComments = await _replyCommentService.GetAllRepliesByParentIds(commentIds);
+            }
+            if (replyComments.Any())
+            {
+                _context.ReplyComments.RemoveRange(replyComments);
+            }
+            if (commentEnities.Any())
+            {
+                _context.Comments.RemoveRange(commentEnities);
+            }
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+            return true;
         }
         #region private method
         private async Task<bool> UpdateLikeDelete(Guid postId, bool liked)
