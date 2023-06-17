@@ -47,6 +47,5 @@ namespace ElectronicMedia.Core.Repository.Models
         public DateTime Dob { get; set; }
         public Gender Gender { get; set; }
         public string PhoneNumber { get; set; }
-        public IFormFile Image { get; set; }
     }
 }
