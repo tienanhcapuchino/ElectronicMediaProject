@@ -45,30 +45,6 @@ namespace ElectronicMedia.Core.Repository.Models
         public string PhoneNumber { get; set; }
         public DateTime Dob { get; set; }
         public Gender? Gender { get; set; }
-        public string Image
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(this.Image))
-                {
-                    return Convert.ToBase64String(CommonService.InitAvatarUser());
-                }
-                else
-                {
-                    return this.Image;
-                }
-            }
-            set
-            {
-                if (!string.IsNullOrEmpty(this.Image))
-                {
-                    this.Image = value;
-                }
-                else
-                {
-                    this.Image = Convert.ToBase64String(CommonService.InitAvatarUser());
-                }
-            }
-        }
+        public string Image { get;set;}
     }
 }
