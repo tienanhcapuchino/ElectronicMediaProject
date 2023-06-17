@@ -118,7 +118,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
         [HttpPost("register")]
-        public async Task<APIResponeModel> Register([FromForm] UserRegisterModel model)
+        public async Task<APIResponeModel> Register(UserRegisterModel model)
         {
             try
             {
