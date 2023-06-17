@@ -49,7 +49,6 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => CommonService.EncodePassword(src.Password)))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleType.UserNormal))
                 .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image != null ? src.Image.FileName : "avatar_default"));
             CreateMap<User, UserProfileModel>();
                 //.ForMember(dest => dest.Image, opt => opt.MapFrom(src => "data:image/jpg;base64," + CommonFunct.Decode(src.Image)));
             #endregion

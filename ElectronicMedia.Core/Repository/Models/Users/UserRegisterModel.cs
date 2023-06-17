@@ -47,6 +47,5 @@ namespace ElectronicMedia.Core.Repository.Models
         public DateTime Dob { get; set; }
         public Gender Gender { get; set; }
         public string PhoneNumber { get; set; }
-        public string? Image { get; set; } = "avt_default.jpg";
     }
 }
