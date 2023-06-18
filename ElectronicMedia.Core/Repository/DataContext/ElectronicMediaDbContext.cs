@@ -57,6 +57,8 @@ namespace ElectronicMedia.Core.Repository.DataContext
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+            modelBuilder.ApplyConfiguration(new EmailSettingConfiguration());
+            modelBuilder.ApplyConfiguration(new EmailTemplateConfiguration());
             base.OnModelCreating(modelBuilder);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -79,6 +81,8 @@ namespace ElectronicMedia.Core.Repository.DataContext
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ReplyComment> ReplyComments { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<EmailSetting> EmailSettings { get; set; }
+        public DbSet<EmailTemplate> EmailTemplates { get; set; }
         #endregion
     }
 }
