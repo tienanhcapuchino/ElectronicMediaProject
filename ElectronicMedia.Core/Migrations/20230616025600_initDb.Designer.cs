@@ -4,6 +4,7 @@ using ElectronicMedia.Core.Repository.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectronicMedia.Core.Migrations
 {
     [DbContext(typeof(ElectronicMediaDbContext))]
-    partial class ElectronicMediaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230616025600_initDb")]
+    partial class initDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,7 +37,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 642, DateTimeKind.Local).AddTicks(1726));
+                        .HasDefaultValue(new DateTime(2023, 6, 16, 9, 56, 0, 205, DateTimeKind.Local).AddTicks(1307));
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -43,7 +45,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 642, DateTimeKind.Local).AddTicks(1941));
+                        .HasDefaultValue(new DateTime(2023, 6, 16, 9, 56, 0, 205, DateTimeKind.Local).AddTicks(1733));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -76,71 +78,6 @@ namespace ElectronicMedia.Core.Migrations
                     b.ToTable("department", (string)null);
                 });
 
-            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.EmailSetting", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("EmailTemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ResourceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmailTemplateId");
-
-                    b.ToTable("emailSetting", (string)null);
-                });
-
-            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.EmailTemplate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsUsed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("MailTo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte>("MailType")
-                        .HasColumnType("tinyint");
-
-                    b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ModifedBy");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ModifiedBy");
-
-                    b.ToTable("emailTemplate", (string)null);
-                });
-
             modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.Post", b =>
                 {
                     b.Property<Guid>("Id")
@@ -157,7 +94,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 18, 3, 45, 1, 642, DateTimeKind.Utc).AddTicks(8337));
+                        .HasDefaultValue(new DateTime(2023, 6, 16, 2, 56, 0, 206, DateTimeKind.Utc).AddTicks(2345));
 
                     b.Property<int>("Dislike")
                         .ValueGeneratedOnAdd()
@@ -176,7 +113,7 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 18, 3, 45, 1, 642, DateTimeKind.Utc).AddTicks(8104));
+                        .HasDefaultValue(new DateTime(2023, 6, 16, 2, 56, 0, 206, DateTimeKind.Utc).AddTicks(1901));
 
                     b.Property<double?>("Rate")
                         .HasColumnType("float");
@@ -198,7 +135,7 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 18, 3, 45, 1, 642, DateTimeKind.Utc).AddTicks(8585));
+                        .HasDefaultValue(new DateTime(2023, 6, 16, 2, 56, 0, 206, DateTimeKind.Utc).AddTicks(2639));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier")
@@ -276,7 +213,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 642, DateTimeKind.Local).AddTicks(4035));
+                        .HasDefaultValue(new DateTime(2023, 6, 16, 9, 56, 0, 205, DateTimeKind.Local).AddTicks(5263));
 
                     b.Property<Guid>("ParentId")
                         .HasColumnType("uniqueidentifier");
@@ -284,7 +221,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 642, DateTimeKind.Local).AddTicks(4276));
+                        .HasDefaultValue(new DateTime(2023, 6, 16, 9, 56, 0, 205, DateTimeKind.Local).AddTicks(5620));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -310,7 +247,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("Dob")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 641, DateTimeKind.Local).AddTicks(4823));
+                        .HasDefaultValue(new DateTime(2023, 6, 16, 9, 56, 0, 203, DateTimeKind.Local).AddTicks(9549));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -614,28 +551,6 @@ namespace ElectronicMedia.Core.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.EmailSetting", b =>
-                {
-                    b.HasOne("ElectronicMedia.Core.Repository.Entity.EmailTemplate", "EmailTemplate")
-                        .WithMany()
-                        .HasForeignKey("EmailTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EmailTemplate");
-                });
-
-            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.EmailTemplate", b =>
-                {
-                    b.HasOne("ElectronicMedia.Core.Repository.Entity.User", "User")
-                        .WithMany("EmailTemplates")
-                        .HasForeignKey("ModifiedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.Post", b =>
                 {
                     b.HasOne("ElectronicMedia.Core.Repository.Entity.PostCategory", "Category")
@@ -798,8 +713,6 @@ namespace ElectronicMedia.Core.Migrations
 
             modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.User", b =>
                 {
-                    b.Navigation("EmailTemplates");
-
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

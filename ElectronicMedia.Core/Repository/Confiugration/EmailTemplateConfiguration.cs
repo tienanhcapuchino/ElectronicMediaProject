@@ -28,20 +28,31 @@
 *********************************************************************/
 
 using ElectronicMedia.Core.Repository.Entity;
-using ElectronicMedia.Core.Repository.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Services.Interfaces
+namespace ElectronicMedia.Core.Repository.Confiugration
 {
-    public interface IReplyCommentService : ICoreRepository<ReplyComment>
+    internal class EmailTemplateConfiguration : IEntityTypeConfiguration<EmailTemplate>
     {
-        Task<List<ReplyCommentModel>> GetReplyCommentsByParentId(Guid parentId);
-        Task<bool> CreateReplyComment(ReplyCommentModel replyComment);
-        Task<bool> UpdateReplyComment(Guid replyId, string content);
-        Task<List<ReplyComment>> GetAllRepliesByParentIds(List<Guid> parentIds);
+        public void Configure(EntityTypeBuilder<EmailTemplate> builder)
+        {
+            builder.ToTable("emailTemplate");
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(250);
+            builder.Property(x => x.MailTo).IsRequired();
+            builder.Property(x => x.Subject).HasMaxLength(450).IsRequired();
+            builder.Property(x => x.Description);
+            builder.Property(x => x.Body).IsRequired();
+            builder.Property(x => x.MailType).IsRequired();
+            builder.Property(x => x.IsUsed).HasDefaultValue(false);
+            builder.HasOne(x => x.User).WithMany(x => x.EmailTemplates)
+                .HasForeignKey(x => x.ModifiedBy).OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }

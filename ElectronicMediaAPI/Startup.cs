@@ -33,11 +33,12 @@ using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -58,7 +59,7 @@ namespace ElectronicMediaAPI
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddControllers();
-            
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             InjectDependencyServices(services);
         }
@@ -96,6 +97,19 @@ namespace ElectronicMediaAPI
                     ClockSkew = TimeSpan.Zero,
                 };
             });
+           // services.Configure<GoogleCredential>(ConfigRoot.GetSection("GoogleCredential"));
+           // var clientId = ConfigRoot["GoogleCredential:ClientId"];
+           // var clientSecret = ConfigRoot["GoogleCredential:ClientSecret"];
+           // services.AddAuthentication(options =>
+           // {
+           //     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+           //     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+           // }).AddCookie()
+           //.AddGoogle(options =>
+           //{
+           //    options.ClientId = clientId;
+           //    options.ClientSecret = clientSecret;
+           //});
             services.AddIdentity<UserIdentity, IdentityRole>()
             .AddEntityFrameworkStores<ElectronicMediaDbContext>()
             .AddDefaultTokenProviders();
@@ -112,7 +126,7 @@ namespace ElectronicMediaAPI
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
         }
-        public  void Configure(WebApplication app, IWebHostEnvironment env)
+        public void Configure(WebApplication app, IWebHostEnvironment env)
         {
             if (!app.Environment.IsDevelopment())
             {
@@ -144,11 +158,11 @@ namespace ElectronicMediaAPI
                 {
                     if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
                     {
-                         roleManager.CreateAsync(new IdentityRole(role)).GetAwaiter().GetResult();
+                        roleManager.CreateAsync(new IdentityRole(role)).GetAwaiter().GetResult();
                     }
                 }
             }
-            
+
             app.Run();
         }
     }

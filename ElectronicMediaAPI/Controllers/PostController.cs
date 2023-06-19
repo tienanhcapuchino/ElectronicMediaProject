@@ -164,7 +164,7 @@ namespace ElectronicMediaAPI.Controllers
 
         [HttpGet("category")]
         [Authorize(Roles = $"{UserRole.Admin},{UserRole.NormalUser}")]
-       
+
         public async Task<IActionResult> GetAllCate()
         {
             try
@@ -225,6 +225,50 @@ namespace ElectronicMediaAPI.Controllers
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message
                 });
+            }
+        }
+
+        [HttpDelete("delete/{postId}")]
+        public async Task<APIResponeModel> DeletePost([FromRoute] Guid postId)
+        {
+            try
+            {
+                var post = await _postService.GetByIdAsync(postId);
+                if (await _postService.DeletePost(postId))
+                {
+                    if (!string.IsNullOrEmpty(post.Image))
+                    {
+                        _fileStorageService.DeleteImageFile(post.Image);
+                    }
+                    return new APIResponeModel()
+                    {
+                        Code = StatusCodes.Status200OK,
+                        Message = "Ok",
+                        Data = post,
+                        IsSucceed = true
+                    };
+                }
+                else
+                {
+                    return new APIResponeModel()
+                    {
+                        Code = StatusCodes.Status400BadRequest,
+                        IsSucceed = false,
+                        Data = post,
+                        Message = "delete failed"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error when delete post with postId {postId}");
+                return new APIResponeModel()
+                {
+                    Code = StatusCodes.Status400BadRequest,
+                    Message = ex.ToString(),
+                    IsSucceed = false,
+                    Data = postId
+                };
             }
         }
     }

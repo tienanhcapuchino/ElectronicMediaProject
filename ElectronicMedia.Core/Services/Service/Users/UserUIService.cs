@@ -108,7 +108,7 @@ namespace ElectronicMedia.Core.Services.Service
                 result.Code = 200;
                 result.Message = "Login successfully!";
                 result.IsSucceed = true;
-                await GenerateToken(userLogin);
+                result.Data = await GenerateToken(userLogin);
             }
             return result;
         }

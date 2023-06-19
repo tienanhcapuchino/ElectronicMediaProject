@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectronicMedia.Core.Migrations
 {
     [DbContext(typeof(ElectronicMediaDbContext))]
-    [Migration("20230615165108_updateAuthen")]
-    partial class updateAuthen
+    [Migration("20230618034501_addEmailTemplate")]
+    partial class addEmailTemplate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,7 +37,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 15, 23, 51, 8, 689, DateTimeKind.Local).AddTicks(8836));
+                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 642, DateTimeKind.Local).AddTicks(1726));
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -45,7 +45,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 15, 23, 51, 8, 689, DateTimeKind.Local).AddTicks(9134));
+                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 642, DateTimeKind.Local).AddTicks(1941));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -78,6 +78,71 @@ namespace ElectronicMedia.Core.Migrations
                     b.ToTable("department", (string)null);
                 });
 
+            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.EmailSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmailTemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmailTemplateId");
+
+                    b.ToTable("emailSetting", (string)null);
+                });
+
+            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.EmailTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsUsed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("MailTo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("MailType")
+                        .HasColumnType("tinyint");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ModifedBy");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModifiedBy");
+
+                    b.ToTable("emailTemplate", (string)null);
+                });
+
             modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.Post", b =>
                 {
                     b.Property<Guid>("Id")
@@ -94,15 +159,15 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 15, 16, 51, 8, 690, DateTimeKind.Utc).AddTicks(7165));
+                        .HasDefaultValue(new DateTime(2023, 6, 18, 3, 45, 1, 642, DateTimeKind.Utc).AddTicks(8337));
 
                     b.Property<int>("Dislike")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("image");
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Like")
                         .ValueGeneratedOnAdd()
@@ -113,7 +178,7 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 15, 16, 51, 8, 690, DateTimeKind.Utc).AddTicks(6876));
+                        .HasDefaultValue(new DateTime(2023, 6, 18, 3, 45, 1, 642, DateTimeKind.Utc).AddTicks(8104));
 
                     b.Property<double?>("Rate")
                         .HasColumnType("float");
@@ -135,7 +200,7 @@ namespace ElectronicMedia.Core.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 15, 16, 51, 8, 690, DateTimeKind.Utc).AddTicks(7453));
+                        .HasDefaultValue(new DateTime(2023, 6, 18, 3, 45, 1, 642, DateTimeKind.Utc).AddTicks(8585));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier")
@@ -213,7 +278,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 15, 23, 51, 8, 690, DateTimeKind.Local).AddTicks(1808));
+                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 642, DateTimeKind.Local).AddTicks(4035));
 
                     b.Property<Guid>("ParentId")
                         .HasColumnType("uniqueidentifier");
@@ -221,7 +286,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 15, 23, 51, 8, 690, DateTimeKind.Local).AddTicks(2083));
+                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 642, DateTimeKind.Local).AddTicks(4276));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -247,7 +312,7 @@ namespace ElectronicMedia.Core.Migrations
                     b.Property<DateTime>("Dob")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 6, 15, 23, 51, 8, 688, DateTimeKind.Local).AddTicks(6728));
+                        .HasDefaultValue(new DateTime(2023, 6, 18, 10, 45, 1, 641, DateTimeKind.Local).AddTicks(4823));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -264,8 +329,8 @@ namespace ElectronicMedia.Core.Migrations
                         .HasColumnType("tinyint")
                         .HasDefaultValue((byte)0);
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("image");
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActived")
                         .HasColumnType("bit");
@@ -551,6 +616,28 @@ namespace ElectronicMedia.Core.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.EmailSetting", b =>
+                {
+                    b.HasOne("ElectronicMedia.Core.Repository.Entity.EmailTemplate", "EmailTemplate")
+                        .WithMany()
+                        .HasForeignKey("EmailTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EmailTemplate");
+                });
+
+            modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.EmailTemplate", b =>
+                {
+                    b.HasOne("ElectronicMedia.Core.Repository.Entity.User", "User")
+                        .WithMany("EmailTemplates")
+                        .HasForeignKey("ModifiedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.Post", b =>
                 {
                     b.HasOne("ElectronicMedia.Core.Repository.Entity.PostCategory", "Category")
@@ -713,6 +800,8 @@ namespace ElectronicMedia.Core.Migrations
 
             modelBuilder.Entity("ElectronicMedia.Core.Repository.Entity.User", b =>
                 {
+                    b.Navigation("EmailTemplates");
+
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

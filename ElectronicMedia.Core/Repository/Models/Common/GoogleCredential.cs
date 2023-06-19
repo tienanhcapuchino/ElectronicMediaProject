@@ -1,4 +1,4 @@
-/*********************************************************************
+﻿/*********************************************************************
  * 
  * PROPRIETARY and CONFIDENTIAL
  * 
@@ -27,17 +27,17 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-import style from './sideBar.module.scss';
-import Nav from '../Nav';
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-function SideBar() {
-    return (
-        <div className={style.wrapcontainer}>
-            <div className={style.sidebar}>
-                <Nav />
-            </div>
-        </div>
-    );
+namespace ElectronicMedia.Core.Repository.Models
+{
+    public class GoogleCredential
+    {
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
+    }
 }
-
-export default SideBar;

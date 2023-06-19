@@ -1,4 +1,4 @@
-/*********************************************************************
+﻿/*********************************************************************
  * 
  * PROPRIETARY and CONFIDENTIAL
  * 
@@ -27,17 +27,33 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-import style from './sideBar.module.scss';
-import Nav from '../Nav';
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-function SideBar() {
-    return (
-        <div className={style.wrapcontainer}>
-            <div className={style.sidebar}>
-                <Nav />
-            </div>
-        </div>
-    );
+namespace ElectronicMedia.Core.Repository.Entity
+{
+    public class EmailTemplate
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public MailType MailType { get; set; }
+        public string? Description { get; set; }
+        public string MailTo { get; set; }
+        public string Body { get; set; }
+        public string Subject { get; set; }
+        public bool IsUsed { get; set; }
+        [Column("ModifedBy")]
+        public Guid ModifiedBy { get; set; }
+        public virtual User User { get; set; }
+    }
+    public enum MailType : byte
+    {
+        PostPublished = 1,
+        CommentNotification = 2,
+        PendingForApprovalPost = 3
+    }
 }
-
-export default SideBar;

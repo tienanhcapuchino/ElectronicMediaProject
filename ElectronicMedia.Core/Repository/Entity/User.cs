@@ -55,6 +55,7 @@ namespace ElectronicMedia.Core.Repository.Entity
         public virtual Department? Department { get; set; }
         public Guid? DepartmentId { get; set; }
         public virtual ICollection<Post>? Posts { get; set; }
+        public virtual ICollection<EmailTemplate>? EmailTemplates { get; set; }
     }
 
     public enum RoleType : byte

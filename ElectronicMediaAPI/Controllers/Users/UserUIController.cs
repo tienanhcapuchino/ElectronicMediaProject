@@ -63,7 +63,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when check duplicate email with userId: {userId} and email: {email}", ex);
+                _logger.LogError($"Error when check duplicate email with userId: {userId}", ex);
                 return false;
             }
         }
@@ -81,7 +81,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when check duplicate phone with userId: {userId} and phone: {phone}", ex);
+                _logger.LogError($"Error when check duplicate phone with userId: {userId}", ex);
                 return false;
             }
         }

@@ -48,14 +48,13 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Username))
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => CommonService.EncodePassword(src.Password)))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleType.UserNormal))
-                .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image != null ? src.Image.FileName : "avatar_default"));
+                .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true));
             CreateMap<User, UserProfileModel>();
                 //.ForMember(dest => dest.Image, opt => opt.MapFrom(src => "data:image/jpg;base64," + CommonFunct.Decode(src.Image)));
             #endregion
 
             #region comments
-            CreateMap<CommentModel, Comment>();
+            CreateMap<CommentModel, Comment>().ReverseMap();
             CreateMap<ReplyCommentModel, ReplyComment>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId))
