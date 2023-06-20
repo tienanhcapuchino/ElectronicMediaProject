@@ -33,8 +33,8 @@ using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Service;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
+//using Microsoft.AspNetCore.Authentication.Cookies;
+//using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +77,10 @@ namespace ElectronicMediaAPI
             services.AddTransient<IFileStorageService, FileStorageService>();
             #endregion
 
+            #region data upgrade service
+            services.AddScoped<IDataUpgradeService, RoleDataUpgrade>();
+            services.AddScoped<IDataUpgradeService, EmailTemplateDataUpgradeService>();
+            #endregion
             //configure JWT token
 
             services.Configure<AppSetting>(ConfigRoot.GetSection("AppSettings"));
@@ -97,19 +101,19 @@ namespace ElectronicMediaAPI
                     ClockSkew = TimeSpan.Zero,
                 };
             });
-           // services.Configure<GoogleCredential>(ConfigRoot.GetSection("GoogleCredential"));
-           // var clientId = ConfigRoot["GoogleCredential:ClientId"];
-           // var clientSecret = ConfigRoot["GoogleCredential:ClientSecret"];
-           // services.AddAuthentication(options =>
-           // {
-           //     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-           //     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-           // }).AddCookie()
-           //.AddGoogle(options =>
-           //{
-           //    options.ClientId = clientId;
-           //    options.ClientSecret = clientSecret;
-           //});
+            // services.Configure<GoogleCredential>(ConfigRoot.GetSection("GoogleCredential"));
+            // var clientId = ConfigRoot["GoogleCredential:ClientId"];
+            // var clientSecret = ConfigRoot["GoogleCredential:ClientSecret"];
+            // services.AddAuthentication(options =>
+            // {
+            //     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            // }).AddCookie()
+            //.AddGoogle(options =>
+            //{
+            //    options.ClientId = clientId;
+            //    options.ClientSecret = clientSecret;
+            //});
             services.AddIdentity<UserIdentity, IdentityRole>()
             .AddEntityFrameworkStores<ElectronicMediaDbContext>()
             .AddDefaultTokenProviders();
@@ -150,19 +154,13 @@ namespace ElectronicMediaAPI
                 endpoints.MapControllers();
             });
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var roles = UserRole.Roles;
-                foreach (var role in roles)
-                {
-                    if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
-                    {
-                        roleManager.CreateAsync(new IdentityRole(role)).GetAwaiter().GetResult();
-                    }
-                }
-            }
+            var scope = app.Services.CreateScope();
 
+            var services = scope.ServiceProvider.GetServices<IDataUpgradeService>();
+            foreach (var service in services)
+            {
+                service.UpgradeData().GetAwaiter().GetResult();
+            }
             app.Run();
         }
     }
