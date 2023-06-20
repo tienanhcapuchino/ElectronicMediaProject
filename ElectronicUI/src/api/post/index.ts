@@ -29,12 +29,15 @@
 
 import { IFunc1 } from '~/util';
 import { Endpoint as api } from '../helpers';
-import axios from 'axios';
-
+import instance from '../contexts/config';
 export class PostService {
     public static getPost: IFunc1<any, Promise<any>> = (object) => {
-        const query: string = `?id=${object.id}`;
-        return axios.get(`${api.getpost}${query}`).then((result) => result.data);
+        const query: string = `?id=${object}`;
+        return instance.get(`${api.getpost}${query}`).then((result) => result.data);
+    };
+
+    public static getPostPagding: IFunc1<any, Promise<any>> = (object) => {
+        return instance.post(`${api.getPostPagding}`, object).then((result) => result.data);
     };
 }
 
