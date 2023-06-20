@@ -78,6 +78,7 @@ const reducer = (state: any, action: any) => {
 };
 
 const AuthContext = createContext({
+    ...initialState,
     method: 'JWT',
     login: (object: any) => {},
     logout: () => {},
@@ -89,7 +90,10 @@ export const AuthProvider = ({ children }: any) => {
 
     const login = async (object: any) => {
         const response = await UserService.login(object);
-        const { user } = response.data;
+        const user = response.data;
+        if (user.isSucceed) {
+            setSession(user.data);
+        }
         dispatch({ type: 'LOGIN', payload: { user } });
     };
 

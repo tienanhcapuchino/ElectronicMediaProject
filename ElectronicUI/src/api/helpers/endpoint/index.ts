@@ -39,6 +39,9 @@ export default class Endpoint {
     static get getpost(): string {
         return Endpoint.baseUrl + 'Post/id';
     }
+    static get getPostPagding(): string {
+        return Endpoint.baseUrl + 'Post/page';
+    }
 
     static get userLogin(): string {
         return Endpoint.baseUrl + 'User/login';

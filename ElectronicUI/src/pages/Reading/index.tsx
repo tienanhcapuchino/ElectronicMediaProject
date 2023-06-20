@@ -31,6 +31,7 @@ import { useState, useEffect } from 'react';
 import { PostService } from '~/api';
 
 function Reading() {
+    PostService.getPost('2BCF4A86-E56D-4F85-B0D0-15DCFF044555');
     return <div></div>;
 }
 
