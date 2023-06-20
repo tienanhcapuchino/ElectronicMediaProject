@@ -28,15 +28,18 @@
 *********************************************************************/
 
 import ListFocus from '~/components/ListFocus';
-import style from './home.module.scss';
+import './home.module.scss';
+import Hero from '~/components/Homes/hero/Hero';
+import Homes from '~/components/Homes/mainContent/homes/Home';
+import Discover from '~/components/Homes/discover/Discover';
 
 function Home() {
     return (
-        <div className={style.main}>
-            <div className={style.content}>
-                <ListFocus />
-            </div>
-        </div>
+        <>
+            <Hero />
+            <Homes />
+            <Discover />
+        </>
     );
 }
 
