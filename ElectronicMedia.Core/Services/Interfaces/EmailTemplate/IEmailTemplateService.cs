@@ -27,43 +27,16 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using ElectronicMedia.Core.Repository.DataContext;
-using ElectronicMedia.Core.Repository.Domains;
 using ElectronicMedia.Core.Repository.Entity;
-using ElectronicMedia.Core.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Services.Service
+namespace ElectronicMedia.Core.Services.Interfaces
 {
-    public class EmailTemplateDataUpgradeService : IDataUpgradeService
+    public interface IEmailTemplateService : ICoreRepository<EmailTemplate>
     {
-        private readonly ElectronicMediaDbContext _context;
-        private readonly ILogger<EmailTemplateDataUpgradeService> _logger;
-        public EmailTemplateDataUpgradeService(ElectronicMediaDbContext context,
-            ILogger<EmailTemplateDataUpgradeService> logger)
-        {
-            _context = context;
-            _logger = logger;
-        }
-        public async Task UpgradeData()
-        {
-            await InitialEmailTemplate();
-        }
-
-        private async Task InitialEmailTemplate()
-        {
-            var emails = await _context.EmailTemplates.ToListAsync();
-            EmailTemplate email = new EmailTemplate()
-            {
-                Name = EmailTemplateNameConstant.CommentNotificationName,
-            };
-            _logger.LogInformation("start to create email template!");
-        }
     }
 }

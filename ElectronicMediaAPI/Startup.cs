@@ -75,6 +75,7 @@ namespace ElectronicMediaAPI
             services.AddTransient<IDepartmentService, DepartmentService>();
             services.AddTransient<IPostStatisticService, PostStatisticService>();
             services.AddTransient<IFileStorageService, FileStorageService>();
+            services.AddTransient<IEmailTemplateService, EmailTemplateService>();
             #endregion
 
             #region data upgrade service
