@@ -71,10 +71,12 @@ namespace ElectronicMedia.Core.Services.Service
                     await _emailTemplateService.Add(email);
                 }
             }
+            _logger.LogInformation("finished to create email template!");
         }
 
         private async Task CreateSystemAccount()
         {
+            _logger.LogInformation("start to create system account user!");
             User systemAccount = new User()
             {
                 Id = new Guid(EmailTemplateIdConstant.SystemAccountId),
@@ -93,6 +95,7 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 await _userService.Add(systemAccount);
             }
+            _logger.LogInformation("finished to create system account user!");
         }
     }
 }
