@@ -45,12 +45,10 @@ namespace ElectronicMedia.Core.Services.Service
     {
         private readonly IEmailTemplateService _emailTemplateService;
         private readonly IUserService _userService;
-        private readonly ILogger<EmailTemplateDataUpgradeService> _logger;
-        public EmailTemplateDataUpgradeService(ILogger<EmailTemplateDataUpgradeService> logger,
-            IEmailTemplateService emailTemplateService,
+        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(EmailTemplateDataUpgradeService));
+        public EmailTemplateDataUpgradeService(IEmailTemplateService emailTemplateService,
             IUserService userService)
         {
-            _logger = logger;
             _emailTemplateService = emailTemplateService;
             _userService = userService;
         }
@@ -62,7 +60,7 @@ namespace ElectronicMedia.Core.Services.Service
 
         private async Task InitialEmailTemplate()
         {
-            _logger.LogInformation("start to create email template!");
+            _logger.Info("start to create email template!");
             List<EmailTemplate> emails = EmailTemplateConstants.GetAllEmailTemplateBuitIns();
             foreach (EmailTemplate email in emails)
             {
@@ -71,12 +69,12 @@ namespace ElectronicMedia.Core.Services.Service
                     await _emailTemplateService.Add(email);
                 }
             }
-            _logger.LogInformation("finished to create email template!");
+            _logger.Info("finished to create email template!");
         }
 
         private async Task CreateSystemAccount()
         {
-            _logger.LogInformation("start to create system account user!");
+            _logger.Info("start to create system account user!");
             User systemAccount = new User()
             {
                 Id = new Guid(EmailTemplateIdConstant.SystemAccountId),
@@ -95,7 +93,7 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 await _userService.Add(systemAccount);
             }
-            _logger.LogInformation("finished to create system account user!");
+            _logger.Info("finished to create system account user!");
         }
     }
 }

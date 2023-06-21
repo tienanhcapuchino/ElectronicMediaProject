@@ -40,12 +40,13 @@ namespace ElectronicMediaAPI.Controllers
         {
             try
             {
+                _logger.Info("START get user profile!");
                 var profile = await _userService.GetProfileUser(userId);
                 return profile;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when get user profile with userId: {userId}", ex);
+                _logger.Error($"Error when get user profile with userId: {userId}", ex);
                 return null;
             }
         }
@@ -63,7 +64,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when check duplicate email with userId: {userId}", ex);
+                _logger.Error($"Error when check duplicate email with userId: {userId}", ex);
                 return false;
             }
         }
@@ -81,7 +82,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when check duplicate phone with userId: {userId}", ex);
+                _logger.Error($"Error when check duplicate phone with userId: {userId}", ex);
                 return false;
             }
         }
@@ -95,7 +96,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when update profile user with userId: {userId}", ex);
+                _logger.Error($"Error when update profile user with userId: {userId}", ex);
                 return false;
             }
         }

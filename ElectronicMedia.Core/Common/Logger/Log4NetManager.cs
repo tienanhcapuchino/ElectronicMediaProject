@@ -27,21 +27,39 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using ElectronicMedia.Core.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using log4net.Config;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ElectronicMediaAPI.Controllers
+namespace ElectronicMedia.Core.Common.Logger
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EmailTemplateController : ControllerBase
+    public class Log4NetManager : ILoggerProvider
     {
-        private readonly IEmailTemplateService _emailTemplateService;
-        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(EmailTemplateController));
-        public EmailTemplateController(IEmailTemplateService emailTemplateService)
+        public Log4NetManager(string filename = "log4net.config")
         {
-            _emailTemplateService = emailTemplateService;
+            var logRepository = log4net.LogManager.GetRepository(Assembly.GetEntryAssembly());
+            var file = new FileInfo(filename);
+            XmlConfigurator.Configure(logRepository, file);
+        }
+
+        public ILogger CreateLogger(string categoryName)
+        {
+            return new Log4NetCore();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        public virtual void Dispose(bool disposing)
+        {
+            //cleanup
         }
     }
 }

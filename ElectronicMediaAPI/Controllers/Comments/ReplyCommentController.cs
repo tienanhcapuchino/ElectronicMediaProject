@@ -39,11 +39,10 @@ namespace ElectronicMediaAPI.Controllers.Comments
     [ApiController]
     public class ReplyCommentController : ControllerBase
     {
-        private readonly ILogger<ReplyCommentController> _logger;
+        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(ReplyCommentController));
         private readonly IReplyCommentService _replyCommentService;
-        public ReplyCommentController(ILogger<ReplyCommentController> logger, IReplyCommentService replyCommentService)
+        public ReplyCommentController(IReplyCommentService replyCommentService)
         {
-            _logger = logger;
             _replyCommentService = replyCommentService;
         }
         [HttpGet("replycomments/{parentId}")]
@@ -56,7 +55,7 @@ namespace ElectronicMediaAPI.Controllers.Comments
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when get all reply comments at comment: {parentId}", ex);
+                _logger.Error($"Error when get all reply comments at comment: {parentId}", ex);
                 throw;
             }
         }
@@ -87,7 +86,7 @@ namespace ElectronicMediaAPI.Controllers.Comments
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error when create reply comment", ex);
+                _logger.Error("Error when create reply comment", ex);
                 throw;
             }
         }
@@ -118,7 +117,7 @@ namespace ElectronicMediaAPI.Controllers.Comments
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when remove reply comment: {replyId}", ex);
+                _logger.Error($"Error when remove reply comment: {replyId}", ex);
                 throw;
             }
         }
@@ -149,7 +148,7 @@ namespace ElectronicMediaAPI.Controllers.Comments
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when edit reply comment: {replyId}", ex);
+                _logger.Error($"Error when edit reply comment: {replyId}", ex);
                 throw;
             }
         }
