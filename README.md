@@ -4,7 +4,15 @@
 
 # How to work
 
-## Follow the steps bellow to run project
+## 1. Install tool and environment
+
+#### Install [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) 
+
+#### Install [Node JS v.17](https://nodejs.org/en/blog/release/v17.7.1)
+
+#### Install [SQL Server 2022](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+
+## 2. Follow the steps bellow to run project
 
 #### Step 1: Open ElectronicMediaProject.sln solution
 #### Step 2: Open ***appsettings.json*** file in ***ElectronicMediaAPI*** to update your environment
