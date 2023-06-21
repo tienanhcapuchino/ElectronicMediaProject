@@ -28,6 +28,7 @@
 *********************************************************************/
 
 using ElectronicMedia.Core.Common;
+using ElectronicMedia.Core.Common.Logger;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
@@ -85,6 +86,14 @@ namespace ElectronicMediaAPI
             services.AddScoped<IDataUpgradeService, RoleDataUpgrade>();
             services.AddScoped<IDataUpgradeService, EmailTemplateDataUpgradeService>();
             #endregion
+
+            services.AddLogging(builder =>
+            {
+                builder.ClearProviders();
+                builder.AddProvider(new Log4NetManager());
+                builder.AddConsole();
+            });
+
             //configure JWT token
 
             services.Configure<AppSetting>(ConfigRoot.GetSection("AppSettings"));

@@ -39,12 +39,10 @@ namespace ElectronicMediaAPI.Controllers.Analists
     public class PostStatisticController : ControllerBase
     {
         private readonly IPostStatisticService _postStatisticService;
-        private readonly ILogger<PostStatisticController> _logger;
-        public PostStatisticController(IPostStatisticService postStatisticService,
-            ILogger<PostStatisticController> logger)
+        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostStatisticController));
+        public PostStatisticController(IPostStatisticService postStatisticService)
         {
             _postStatisticService = postStatisticService;
-            _logger = logger;
         }
 
         [HttpGet("{writerId}")]
@@ -57,7 +55,7 @@ namespace ElectronicMediaAPI.Controllers.Analists
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when get total post of writer in month with userId {writerId}", ex);
+                _logger.Error($"Error when get total post of writer in month with userId {writerId}", ex);
                 return new PostStatisticModel()
                 {
                     Month = 0,
