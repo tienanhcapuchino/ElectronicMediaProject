@@ -58,7 +58,10 @@ namespace ElectronicMediaAPI
         {
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             InjectDependencyServices(services);
@@ -125,10 +128,6 @@ namespace ElectronicMediaAPI
             services.AddDbContext<ElectronicMediaDbContext>(option =>
             {
                 option.UseSqlServer(ConfigRoot.GetConnectionString("ElectronicStr"));
-            });
-            services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
         }
         public void Configure(WebApplication app, IWebHostEnvironment env)
