@@ -38,11 +38,10 @@ namespace ElectronicMediaAPI.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private readonly ILogger<CommentController> _logger;
+        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(CommentController));
         private readonly ICommentService _commentService;
-        public CommentController(ILogger<CommentController> logger, ICommentService commentService)
+        public CommentController(ICommentService commentService)
         {
-            _logger = logger;
             _commentService = commentService;
         }
         [HttpGet("{postId}")]
@@ -55,7 +54,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error when create post category", ex);
+                _logger.Error("error when create post category", ex);
                 throw;
             }
         }
@@ -85,7 +84,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"error when create comment at post: {postId} and user: {userId}", ex);
+                _logger.Error($"error when create comment at post: {postId} and user: {userId}", ex);
                 throw;
             }
         }

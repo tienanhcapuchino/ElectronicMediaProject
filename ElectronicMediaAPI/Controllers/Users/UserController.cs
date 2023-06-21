@@ -40,11 +40,10 @@ namespace ElectronicMediaAPI.Controllers
     public partial class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private ILogger<UserController> _logger;
-        public UserController(IUserService userService, ILogger<UserController> logger)
+        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(UserController));
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _logger = logger;
         }
 
         [HttpGet("{userId}")]
@@ -57,7 +56,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"error when get user by id: {userId}", ex);
+                _logger.Error($"error when get user by id: {userId}", ex);
                 return null;
             }
         }
@@ -88,7 +87,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"error when renew token", ex);
+                _logger.Error($"error when renew token", ex);
                 return new APIResponeModel()
                 {
                     Code = 400,
@@ -108,7 +107,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error when login", ex);
+                _logger.Error("error when login", ex);
                 return new APIResponeModel()
                 {
                     Code = 400,
@@ -127,7 +126,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error when login", ex);
+                _logger.Error("error when login", ex);
                 return new APIResponeModel()
                 {
                     Code = 400,

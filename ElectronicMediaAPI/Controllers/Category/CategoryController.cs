@@ -44,13 +44,11 @@ namespace ElectronicMediaAPI.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ILogger<CategoryController> _logger;
+        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(CategoryController));
         private readonly IPostCategoryService _postCategoryService;
-        public CategoryController(ILogger<CategoryController> logger,
-            IPostCategoryService postCategoryService)
+        public CategoryController(IPostCategoryService postCategoryService)
         {
             _postCategoryService = postCategoryService;
-            _logger = logger;
         }
         // GET: api/<CategoryController>
         [HttpPost]
@@ -96,7 +94,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch(Exception ex)
             {
-                _logger.LogError("error when get category", ex);
+                _logger.Error("error when get category", ex);
                 return new JsonResult(new ResultDto<PagedList<User>>
                 {
                     Status = ApiResultStatus.Failed,

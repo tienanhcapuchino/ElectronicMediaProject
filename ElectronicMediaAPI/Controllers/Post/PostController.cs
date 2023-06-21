@@ -42,14 +42,12 @@ namespace ElectronicMediaAPI.Controllers.Post
 
     public class PostController : ControllerBase
     {
-        private readonly ILogger<PostController> _logger;
+        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostController));
         private readonly IPostService _postService;
         private readonly IFileStorageService _fileStorageService;
-        public PostController(ILogger<PostController> logger,
-            IPostService postService,
+        public PostController(IPostService postService,
             IFileStorageService fileStorageService)
         {
-            _logger = logger;
             _postService = postService;
             _fileStorageService = fileStorageService;
         }
@@ -99,7 +97,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
             catch (Exception ex)
             {
-                _logger.LogError($"error when vote post at post: {postDetail.PostId} by user {postDetail.AuthorId}", ex);
+                _logger.Error($"error when vote post at post: {postDetail.PostId} by user {postDetail.AuthorId}", ex);
                 return new APIResponeModel()
                 {
                     Code = 400,
@@ -136,7 +134,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
             catch (Exception ex)
             {
-                _logger.LogError("error when create post", ex);
+                _logger.Error("error when create post", ex);
                 throw;
             }
         }
@@ -190,7 +188,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when delete post with postId {postId}");
+                _logger.Error($"Error when delete post with postId {postId}");
                 return new APIResponeModel()
                 {
                     Code = StatusCodes.Status400BadRequest,
