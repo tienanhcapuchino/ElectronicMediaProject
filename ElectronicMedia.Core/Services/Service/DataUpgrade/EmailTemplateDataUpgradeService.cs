@@ -43,27 +43,56 @@ namespace ElectronicMedia.Core.Services.Service
 {
     public class EmailTemplateDataUpgradeService : IDataUpgradeService
     {
-        private readonly ElectronicMediaDbContext _context;
+        private readonly IEmailTemplateService _emailTemplateService;
+        private readonly IUserService _userService;
         private readonly ILogger<EmailTemplateDataUpgradeService> _logger;
-        public EmailTemplateDataUpgradeService(ElectronicMediaDbContext context,
-            ILogger<EmailTemplateDataUpgradeService> logger)
+        public EmailTemplateDataUpgradeService(ILogger<EmailTemplateDataUpgradeService> logger,
+            IEmailTemplateService emailTemplateService,
+            IUserService userService)
         {
-            _context = context;
             _logger = logger;
+            _emailTemplateService = emailTemplateService;
+            _userService = userService;
         }
         public async Task UpgradeData()
         {
+            await CreateSystemAccount();
             await InitialEmailTemplate();
         }
 
         private async Task InitialEmailTemplate()
         {
-            var emails = await _context.EmailTemplates.ToListAsync();
-            EmailTemplate email = new EmailTemplate()
-            {
-                Name = EmailTemplateNameConstant.CommentNotificationName,
-            };
             _logger.LogInformation("start to create email template!");
+            List<EmailTemplate> emails = EmailTemplateConstants.GetAllEmailTemplateBuitIns();
+            foreach (EmailTemplate email in emails)
+            {
+                if (await _emailTemplateService.GetByIdAsync(email.Id) == null)
+                {
+                    await _emailTemplateService.Add(email);
+                }
+            }
+        }
+
+        private async Task CreateSystemAccount()
+        {
+            User systemAccount = new User()
+            {
+                Id = new Guid(EmailTemplateIdConstant.SystemAccountId),
+                FullName = "System account",
+                Email = "systemaccount@gmail.com",
+                UserName = "systemaccount",
+                Password = "noneedpassword",
+                Dob = DateTime.Now,
+                Role = RoleType.Admin,
+                IsActived = true,
+                Gender = Gender.Unknown,
+                PhoneNumber = "noneedphone"
+            };
+            var userEntity = await _userService.GetByIdAsync(systemAccount.Id);
+            if (userEntity == null)
+            {
+                await _userService.Add(systemAccount);
+            }
         }
     }
 }
