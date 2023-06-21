@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ElectronicMedia.Core.Repository.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +53,7 @@ namespace ElectronicMedia.Core.Repository.Domains
         public const string PostPublishedId = "da894852-0c22-4f97-831f-996947584d91";
         public const string CommentNotificationId = "6ab21b15-d166-45ec-9f26-865c5150ed76";
         public const string PendingForApprovalPostId = "8a4e789f-d1ab-4661-8a97-7492351f3e67";
+        public const string SystemAccountId = "e4adc524-90d6-4903-a7fa-0668fda5157e";
     }
     public class EmailTemplateBodyConstant
     {
@@ -84,5 +86,51 @@ namespace ElectronicMedia.Core.Repository.Domains
         public const string PostPublishedDes = "Notify to writer that your post is published!";
         public const string CommentNotificationDes = "Notify to participant in the post that the post have new comment";
         public const string PendingForApprovalPostDes = "Notify to leader that he (she) has a new post need to be approved";
+    }
+    public static class EmailTemplateConstants
+    {
+        public static List<EmailTemplate> GetAllEmailTemplateBuitIns()
+        {
+            List<EmailTemplate> emailTemplates = new List<EmailTemplate>()
+            {
+                new EmailTemplate()
+                {
+                    Id = new Guid(EmailTemplateIdConstant.PostPublishedId),
+                    Name = EmailTemplateNameConstant.PostPublishedName,
+                    Subject = EmailTemplateSubjectConstant.PostPublishedSubject,
+                    Body = EmailTemplateBodyConstant.PostPublishedBody,
+                    MailType = MailType.PostPublished,
+                    Description = EmailTemplateDescriptionConstant.PostPublishedDes,
+                    MailTo = EmailTemplateRecieverConstant.PostPublishedReciever,
+                    IsUsed = false,
+                    ModifiedBy = new Guid(EmailTemplateIdConstant.SystemAccountId),
+                },
+                new EmailTemplate()
+                {
+                    Id = new Guid(EmailTemplateIdConstant.CommentNotificationId),
+                    Name = EmailTemplateNameConstant.CommentNotificationName,
+                    Subject = EmailTemplateSubjectConstant.CommentNotificationSubject,
+                    Body = EmailTemplateBodyConstant.CommentNotificationBody,
+                    MailType = MailType.CommentNotification,
+                    Description = EmailTemplateDescriptionConstant.CommentNotificationDes,
+                    MailTo = EmailTemplateRecieverConstant.CommentNotificationReciever,
+                    IsUsed = false,
+                    ModifiedBy = new Guid(EmailTemplateIdConstant.SystemAccountId),
+                },
+                new EmailTemplate()
+                {
+                    Id = new Guid(EmailTemplateIdConstant.PendingForApprovalPostId),
+                    Name = EmailTemplateNameConstant.PendingForApprovalPostName,
+                    Subject = EmailTemplateSubjectConstant.PendingForApprovalPostSubject,
+                    Body = EmailTemplateBodyConstant.PendingForApprovalPostBody,
+                    MailType = MailType.PendingForApprovalPost,
+                    Description = EmailTemplateDescriptionConstant.PendingForApprovalPostDes,
+                    MailTo = EmailTemplateRecieverConstant.PendingForApprovalPostReciever,
+                    IsUsed = false,
+                    ModifiedBy = new Guid(EmailTemplateIdConstant.SystemAccountId),
+                }
+            };
+            return emailTemplates;
+        }
     }
 }
