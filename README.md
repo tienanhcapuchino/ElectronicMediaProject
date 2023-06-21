@@ -23,8 +23,7 @@
 #### Step 7: open command prompt (cmd) of folder ElectronicUI
 #### Step 8: run command ***npm install***
 #### Step 9: run command ***npm run start***
-#### Note important: the database will be empty, so you can use swagger when run project ElectronicMediaAPI or use SSMS
-to create data first.
+#### Note important: the database will be empty, so you can use swagger when run project ElectronicMediaAPI or use SSMS to create data first.
 
 ## Enjoy the project
 
