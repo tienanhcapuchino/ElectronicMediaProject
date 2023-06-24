@@ -130,8 +130,6 @@ namespace ElectronicMedia.Core.Services.Service
                 UserName = user.UserName
             };
             var resultAddUser = await userManager.CreateAsync(u, model.Password);
-
-            // check if resultAddUser return fasle
             if (resultAddUser.Succeeded == true)
             {
                 if (await roleManager.RoleExistsAsync(UserRole.NormalUser))
