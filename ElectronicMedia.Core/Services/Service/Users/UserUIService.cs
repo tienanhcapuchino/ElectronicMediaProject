@@ -122,8 +122,6 @@ namespace ElectronicMedia.Core.Services.Service
                 return result;
             }
             var user = model.MapTo<User>();
-
-            await Add(user);
             UserIdentity u = new UserIdentity()
             {
                 Id = user.Id.ToString(),
@@ -133,21 +131,29 @@ namespace ElectronicMedia.Core.Services.Service
             };
             var resultAddUser = await userManager.CreateAsync(u, model.Password);
 
-
-            if (await roleManager.RoleExistsAsync(UserRole.NormalUser))
+            if (resultAddUser.Succeeded == true)
             {
-                await userManager.AddToRoleAsync(u, UserRole.NormalUser);
+                if (await roleManager.RoleExistsAsync(UserRole.NormalUser))
+                {
+                    await Add(user);
+                    await userManager.AddToRoleAsync(u, UserRole.NormalUser);
+                }
             }
-            /* if (!await Add(user))
-             {
+            else
+            {
+                string errorMesage = "";
+                foreach (var error in resultAddUser.Errors)
+                {
+                    errorMesage += error.Description;
+                }
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = errorMesage,
+                    IsSucceed = false
+                };
+            }
 
-                 return new APIResponeModel()
-                 {
-                     Code = 400,
-                     Message = "Add user to database failed",
-                     IsSucceed = false
-                 };
-             }*/
             return result;
         }
         public async Task<APIResponeModel> RenewToken(TokenModel model)
