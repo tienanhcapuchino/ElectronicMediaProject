@@ -179,7 +179,7 @@ namespace ElectronicMedia.Core.Services.Service
                 }
                 else
                 {
-                    result = await _postDetailService.DeleteByUserIdAndPostId(postDetailEntity.UserId, postDetailEntity.PostId);
+                    result = await _postDetailService.DeleteByUserIdAndPostId(Guid.Parse(postDetailEntity.UserId), postDetailEntity.PostId);
                     if (result)
                     {
                         result = await UpdateLikeDelete(postDetailEntity.PostId, postDetail.Liked);

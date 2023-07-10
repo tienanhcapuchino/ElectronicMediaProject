@@ -63,7 +63,7 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<bool> AssignLeader(Guid depId, Guid leaderId)
         {
             var user = await _userService.GetByIdAsync(leaderId);
-            if (user.Role != RoleType.Leader) throw new Exception("user is not a leader to assign!");
+            //if (user.Role != RoleType.Leader) throw new Exception("user is not a leader to assign!");
             if (user.DepartmentId == null || user.DepartmentId != depId)
             {
                 user.DepartmentId = depId;
@@ -80,10 +80,10 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 foreach (var item in members)
                 {
-                    if (item.Role != RoleType.Writer)
-                    {
-                        throw new Exception("You only can assign writer to become member of department!");
-                    }
+                    //if (item.Role != RoleType.Writer)
+                    //{
+                    //    throw new Exception("You only can assign writer to become member of department!");
+                    //}
                     if (item.DepartmentId == null || item.DepartmentId != depId)
                     {
                         item.DepartmentId = depId;

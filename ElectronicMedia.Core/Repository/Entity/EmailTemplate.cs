@@ -47,8 +47,8 @@ namespace ElectronicMedia.Core.Repository.Entity
         public string Subject { get; set; }
         public bool IsUsed { get; set; }
         [Column("ModifedBy")]
-        public Guid ModifiedBy { get; set; }
-        public virtual User User { get; set; }
+        public string ModifiedBy { get; set; }
+        public virtual UserIdentity User { get; set; }
     }
     public enum MailType : byte
     {

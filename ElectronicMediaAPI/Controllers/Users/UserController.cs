@@ -52,20 +52,6 @@ namespace ElectronicMediaAPI.Controllers
             _emailService = mailService;
         }
 
-        [HttpGet("{userId}")]
-        public async Task<User> GetById([FromRoute] Guid userId)
-        {
-            try
-            {
-                var user = await _userService.GetByIdAsync(userId);
-                return user;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"error when get user by id: {userId}", ex);
-                return null;
-            }
-        }
         [HttpGet("getall")]
         public IActionResult GetAllUser(PageRequestBody requestBody)
         {
@@ -76,30 +62,11 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new ResultDto<PagedList<User>>
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
                 {
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message
                 });
-            }
-        }
-
-        [HttpPost("renew")]
-        public async Task<APIResponeModel> RenewToken(TokenModel model)
-        {
-            try
-            {
-                return await _userService.RenewToken(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"error when renew token", ex);
-                return new APIResponeModel()
-                {
-                    Code = 400,
-                    Message = ex.ToString(),
-                    IsSucceed = false
-                };
             }
         }
 

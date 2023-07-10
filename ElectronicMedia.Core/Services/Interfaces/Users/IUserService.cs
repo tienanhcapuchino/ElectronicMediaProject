@@ -37,16 +37,13 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Services.Interfaces
 {
-    public interface IUserService : ICoreRepository<User>
+    public interface IUserService : ICoreRepository<UserIdentity>
     {
         Task<APIResponeModel> Login(UserLoginModel model);
         Task<APIResponeModel> Register(UserRegisterModel model);
-        Task<string> GenerateToken(User us);
-        Task<APIResponeModel> RenewToken(TokenModel model);
+        Task<string> GenerateToken(UserIdentity us);
         Task<UserProfileModel> GetProfileUser(Guid userId);
         Task<bool> UpdateUserProfile(Guid userId, UserProfileModel profile);
-        Task<bool> IsDuplicatePhone(Guid userId, string phoneNumber);
-        Task<bool> IsDuplicateEmail(Guid userId, string email);
-        Task<List<User>> GetUsersByIds(List<Guid> userIds);
+        Task<List<UserIdentity>> GetUsersByIds(List<Guid> userIds);
     }
 }

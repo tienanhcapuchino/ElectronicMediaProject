@@ -103,7 +103,7 @@ namespace ElectronicMedia.Core.Repository.Domains
                     Description = EmailTemplateDescriptionConstant.PostPublishedDes,
                     MailTo = EmailTemplateRecieverConstant.PostPublishedReciever,
                     IsUsed = false,
-                    ModifiedBy = new Guid(EmailTemplateIdConstant.SystemAccountId),
+                    ModifiedBy = EmailTemplateIdConstant.SystemAccountId,
                 },
                 new EmailTemplate()
                 {
@@ -115,7 +115,7 @@ namespace ElectronicMedia.Core.Repository.Domains
                     Description = EmailTemplateDescriptionConstant.CommentNotificationDes,
                     MailTo = EmailTemplateRecieverConstant.CommentNotificationReciever,
                     IsUsed = false,
-                    ModifiedBy = new Guid(EmailTemplateIdConstant.SystemAccountId),
+                    ModifiedBy = EmailTemplateIdConstant.SystemAccountId,
                 },
                 new EmailTemplate()
                 {
@@ -127,7 +127,7 @@ namespace ElectronicMedia.Core.Repository.Domains
                     Description = EmailTemplateDescriptionConstant.PendingForApprovalPostDes,
                     MailTo = EmailTemplateRecieverConstant.PendingForApprovalPostReciever,
                     IsUsed = false,
-                    ModifiedBy = new Guid(EmailTemplateIdConstant.SystemAccountId),
+                    ModifiedBy = EmailTemplateIdConstant.SystemAccountId,
                 }
             };
             return emailTemplates;

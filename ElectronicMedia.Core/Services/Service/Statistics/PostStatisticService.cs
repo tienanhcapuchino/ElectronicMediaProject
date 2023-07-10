@@ -31,6 +31,7 @@ using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -43,9 +44,11 @@ namespace ElectronicMedia.Core.Services.Service
     public class PostStatisticService : IPostStatisticService
     {
         private readonly ElectronicMediaDbContext _context;
-        public PostStatisticService(ElectronicMediaDbContext context)
+        private readonly UserManager<UserIdentity> _userManager;
+        public PostStatisticService(ElectronicMediaDbContext context, UserManager<UserIdentity> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public async Task<PostStatisticModel> GetToltalPostInAnDepartment(Guid departmentId)
         {
@@ -75,11 +78,11 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<PostStatisticModel> GetTotalPostForEachWriter(Guid userId)
         {
-            var writer = await _context.Users.Where(x => x.Id == userId).Include(x => x.Posts).FirstOrDefaultAsync();
+            var writer = await _userManager.Users.Where(x => x.Id.Equals(userId)).Include(x => x.Posts).FirstOrDefaultAsync();
             PostStatisticModel result = new PostStatisticModel()
             {
                 NumberPost = 0,
-                Month = DateTime.Now.Month,
+                //Month = DateTime.Now.Month,
             };
             if (writer != null && writer.Posts != null && writer.Posts.Any())
             {

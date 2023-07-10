@@ -31,6 +31,7 @@ using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Domains;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -45,12 +46,14 @@ namespace ElectronicMedia.Core.Services.Service
     {
         private readonly IEmailTemplateService _emailTemplateService;
         private readonly IUserService _userService;
+        private readonly UserManager<UserIdentity> _userManager;
         private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(EmailTemplateDataUpgradeService));
         public EmailTemplateDataUpgradeService(IEmailTemplateService emailTemplateService,
-            IUserService userService)
+            IUserService userService, UserManager<UserIdentity> userManager)
         {
             _emailTemplateService = emailTemplateService;
             _userService = userService;
+            _userManager = userManager;
         }
         public async Task UpgradeData()
         {
@@ -60,38 +63,43 @@ namespace ElectronicMedia.Core.Services.Service
 
         private async Task InitialEmailTemplate()
         {
-            _logger.Info("start to create email template!");
-            List<EmailTemplate> emails = EmailTemplateConstants.GetAllEmailTemplateBuitIns();
-            foreach (EmailTemplate email in emails)
+            try
             {
-                if (await _emailTemplateService.GetByIdAsync(email.Id) == null)
+                _logger.Info("start to create email template!");
+                List<EmailTemplate> emails = EmailTemplateConstants.GetAllEmailTemplateBuitIns();
+                foreach (EmailTemplate email in emails)
                 {
-                    await _emailTemplateService.Add(email);
+                    if (await _emailTemplateService.GetByIdAsync(email.Id) == null)
+                    {
+                        await _emailTemplateService.Add(email);
+                    }
                 }
+                _logger.Info("finished to create email template!");
+            }catch (Exception ex)
+            {
+                _logger.Error($"start to create email template: {ex.Message}");
             }
-            _logger.Info("finished to create email template!");
+            
         }
 
         private async Task CreateSystemAccount()
         {
             _logger.Info("start to create system account user!");
-            User systemAccount = new User()
+            UserIdentity systemAccount = new UserIdentity()
             {
-                Id = new Guid(EmailTemplateIdConstant.SystemAccountId),
+                Id = new Guid(EmailTemplateIdConstant.SystemAccountId).ToString(),
                 FullName = "System account",
                 Email = "systemaccount@gmail.com",
                 UserName = "systemaccount",
-                Password = "noneedpassword",
                 Dob = DateTime.Now,
-                Role = RoleType.Admin,
                 IsActived = true,
                 Gender = Gender.Unknown,
                 PhoneNumber = "noneedphone"
             };
-            var userEntity = await _userService.GetByIdAsync(systemAccount.Id);
-            if (userEntity == null)
+            var user = await _userManager.FindByEmailAsync("systemaccount@gmail.com");
+            if (user == null)
             {
-                await _userService.Add(systemAccount);
+                await _userManager.CreateAsync(systemAccount, "noneedpassword");
             }
             _logger.Info("finished to create system account user!");
         }

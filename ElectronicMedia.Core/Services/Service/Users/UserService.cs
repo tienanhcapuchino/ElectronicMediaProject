@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core.Automaper;
 using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.DataContext;
@@ -54,19 +55,22 @@ namespace ElectronicMedia.Core.Services.Service
         private readonly ElectronicMediaDbContext _context;
         private readonly AppSetting _appSettings;
         private readonly UserManager<UserIdentity> _userManager;
+        private readonly SignInManager<UserIdentity> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor,
-           UserManager<UserIdentity> userManager, RoleManager<IdentityRole> roleManager)
+           UserManager<UserIdentity> userManager, RoleManager<IdentityRole> roleManager,
+            SignInManager<UserIdentity> signInManager)
         {
             _context = context;
             _appSettings = optionsMonitor.CurrentValue;
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
-        public async Task<User> GetByIdAsync(Guid id)
+        public async Task<UserIdentity> GetByIdAsync(Guid id)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == id);
+            var user = await _userManager.FindByIdAsync(id.ToString());
             return await Task.FromResult(user);
         }
         public async Task<UserProfileModel> GetProfileUser(Guid userId)
@@ -82,10 +86,10 @@ namespace ElectronicMedia.Core.Services.Service
             //if (profile == null) throw new Exception("cannot map profile from user");
             return await Task.FromResult(profile);
         }
-        public async Task<PagedList<User>> GetAllWithPaging(PageRequestBody requestBody)
+        public async Task<PagedList<UserIdentity>> GetAllWithPaging(PageRequestBody requestBody)
         {
-            var user = await _context.Users.Skip(requestBody.Skip).Take(requestBody.Top).ToListAsync();
-            return PagedList<User>.ToPagedList(user, requestBody.Page, requestBody.Top);
+            var user = await _userManager.Users.ToListAsync();
+            return PagedList<UserIdentity>.ToPagedList(user, requestBody.Page, requestBody.Top);
         }
 
         public Task<bool> Delete(Guid id, bool saveChange = true)
@@ -93,9 +97,9 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public async Task<bool> Update(User entity, bool saveChange = true)
+        public async Task<bool> Update(UserIdentity entity, bool saveChange = true)
         {
-            _context.Users.Update(entity);
+            await _userManager.UpdateAsync(entity);
             bool result = true;
             if (saveChange)
             {
@@ -104,9 +108,9 @@ namespace ElectronicMedia.Core.Services.Service
             return await Task.FromResult(result);
         }
 
-        public async Task<bool> Add(User entity, bool saveChange = true)
+        public async Task<bool> Add(UserIdentity entity, bool saveChange = true)
         {
-            await _context.AddAsync(entity);
+            await _userManager.CreateAsync(entity);
             bool result = true;
             if (saveChange)
             {
@@ -122,12 +126,6 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 throw new Exception("Cannot change username");
             }
-            if (!await IsDuplicateEmail(userId, profile.Email)
-                || !await IsDuplicatePhone(userId, profile.PhoneNumber))
-            {
-
-                return false;
-            }
             user.FullName = profile.FullName;
             user.Email = profile.Email;
             user.PhoneNumber = profile.PhoneNumber;
@@ -139,30 +137,6 @@ namespace ElectronicMedia.Core.Services.Service
             }*/
             bool result = await Update(user);
             return await Task.FromResult(result);
-        }
-        public async Task<bool> IsDuplicateEmail(Guid userId, string email)
-        {
-            string regexEmail = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
-            if (!Regex.IsMatch(email, regexEmail)) return false;
-            var emails = await _context.Users.Where(x => x.Id != userId).Select(x => x.Email).ToListAsync();
-            if (emails != null && emails.Any() && emails.Contains(email))
-            {
-                return false;
-            }
-            return true;
-        }
-        public async Task<bool> IsDuplicatePhone(Guid userId, string phoneNumber)
-        {
-            string regexPhone = @"^0\d{9}$";
-            if (!Regex.IsMatch(phoneNumber, regexPhone)) return false;
-            var phones = await _context.Users.Where(x => x.Id != userId).Select(x => x.PhoneNumber).ToListAsync();
-            if (phones != null && phones.Any() && phones.Contains(phoneNumber)) return false;
-            return true;
-        }
-        public async Task<List<User>> GetUsersByIds(List<Guid> userIds)
-        {
-            var result = await _context.Users.Where(x => userIds.Contains(x.Id)).ToListAsync();
-            return result;
         }
         #region private method
         private DateTime ConverUnixTimeToDateTime(long utcExpireDate)
@@ -244,7 +218,12 @@ namespace ElectronicMedia.Core.Services.Service
             return isValid;
         }
 
-        public Task<IEnumerable<User>> GetAllAsync()
+        public Task<IEnumerable<UserIdentity>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<UserIdentity>> GetUsersByIds(List<Guid> userIds)
         {
             throw new NotImplementedException();
         }

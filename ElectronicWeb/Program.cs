@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ElectronicMedia.Core.Repository.DataContext;
 /*********************************************************************
  *
  * PROPRIETARY and CONFIDENTIAL
@@ -21,7 +24,7 @@
  * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
  *
  *
- * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
+ * Copy right 2023 ï¿½ PRN231 - SU23 - Group 10 ï¿½. All Rights Reserved
  *
  * Unpublished - All rights reserved under the copyright laws
  * of the Government of Viet Nam
@@ -30,6 +33,12 @@
 using ElectronicWeb.Service;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("ElectronicMediaDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ElectronicMediaDbContextConnection' not found.");
+
+builder.Services.AddDbContext<ElectronicMediaDbContext>(options =>
+    options.UseSqlServer(connectionString));
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ElectronicMediaDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -45,6 +54,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 

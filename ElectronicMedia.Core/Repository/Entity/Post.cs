@@ -40,9 +40,9 @@ namespace ElectronicMedia.Core.Repository.Entity
     public class Post
     {
         public Guid Id { get; set; }
-        public virtual User User { get; set; }
+        public virtual UserIdentity User { get; set; }
         [Column("AuthorId")]
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreatedDate { get; set; }

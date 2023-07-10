@@ -61,7 +61,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new ResultDto<PagedList<User>>
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
                 {
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message
@@ -95,7 +95,7 @@ namespace ElectronicMediaAPI.Controllers
             catch(Exception ex)
             {
                 _logger.Error("error when get category", ex);
-                return new JsonResult(new ResultDto<PagedList<User>>
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
                 {
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message
@@ -114,7 +114,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new ResultDto<PagedList<User>>
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
                 {
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message
@@ -131,7 +131,7 @@ namespace ElectronicMediaAPI.Controllers
                 return Ok(_postCategoryService.Delete(id));
             }catch(Exception ex)
             {
-                return new JsonResult(new ResultDto<PagedList<User>>
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
                 {
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message

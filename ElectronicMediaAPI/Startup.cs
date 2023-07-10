@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Common.Logger;
 using ElectronicMedia.Core.Repository.DataContext;
@@ -136,9 +137,20 @@ namespace ElectronicMediaAPI
 
             var secretKey = ConfigRoot["AppSettings:SecretKey"];
             var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-            services.AddIdentity<UserIdentity, IdentityRole>()
-            .AddEntityFrameworkStores<ElectronicMediaDbContext>()
+            services.AddIdentity<UserIdentity, IdentityRole>(options =>{
+                options.SignIn.RequireConfirmedAccount = false;
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+                options.Lockout.AllowedForNewUsers = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            }).AddEntityFrameworkStores<ElectronicMediaDbContext>()
             .AddDefaultTokenProviders();
+
             services.AddIdentityCore<UserIdentity>();
             services.AddAuthentication(options =>
             {
@@ -159,7 +171,7 @@ namespace ElectronicMediaAPI
                     ClockSkew = TimeSpan.Zero,
                 };
             });
-            
+
             // services.Configure<GoogleCredential>(ConfigRoot.GetSection("GoogleCredential"));
             // var clientId = ConfigRoot["GoogleCredential:ClientId"];
             // var clientSecret = ConfigRoot["GoogleCredential:ClientSecret"];
@@ -173,7 +185,7 @@ namespace ElectronicMediaAPI
             //    options.ClientId = clientId;
             //    options.ClientSecret = clientSecret;
             //});
-            
+
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
                 build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();

@@ -67,7 +67,7 @@ namespace ElectronicMedia.Core.Services.Service
             }
             var entity = new Comment()
             {
-                UserId = userId,
+                UserId = userId.ToString(),
                 PostId = postId,
                 CreatedDate = DateTime.UtcNow,
                 Content = content
