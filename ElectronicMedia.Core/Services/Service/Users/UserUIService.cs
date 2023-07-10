@@ -49,7 +49,7 @@ namespace ElectronicMedia.Core.Services.Service
     public partial class UserService
     {
 
-        public async Task<string> GenerateToken(User us)
+        public async Task<string> GenerateToken(UserIdentity us)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
@@ -70,28 +70,15 @@ namespace ElectronicMedia.Core.Services.Service
             };
             var token = jwtTokenHandler.CreateToken(tokenDecription);
             string accessToken = jwtTokenHandler.WriteToken(token);
-            var userToken = new UserToken()
-            {
-                UserId = us.Id,
-                IsRevoked = false,
-                IsUsed = false,
-                IssuedAt = DateTime.UtcNow,
-                ExpiredAt = DateTime.UtcNow.AddMinutes(30),
-                AccessToken = accessToken,
-                RefreshToken = GenerateRefreshToken(),
-                JwtId = token.Id,
-            };
-            await _context.AddAsync(userToken);
-            await _context.SaveChangesAsync();
             return accessToken;
         }
 
         public async Task<APIResponeModel> Login(UserLoginModel model)
         {
+            var user = await _userManager.FindByNameAsync(model.Username);
             var result = new APIResponeModel();
-            var userLogin = await _context.Users.SingleOrDefaultAsync(x => x.UserName == model.Username
-            || x.Email == model.Username);
-            if (userLogin == null)
+            
+            if (user == null)
             {
                 result.Code = 404;
                 result.Message = "Username or password is not correct!";
@@ -99,19 +86,12 @@ namespace ElectronicMedia.Core.Services.Service
             }
             else
             {
-                if (!CommonService.VerifyPassword(model.Password, userLogin.Password))
-                {
-                    return new APIResponeModel()
-                    {
-                        Code = 404,
-                        Message = "Username or password is not correct!",
-                        IsSucceed = false
-                    };
-                }
+                var loginResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: true);
+                
                 result.Code = 200;
                 result.Message = "Login successfully!";
                 result.IsSucceed = true;
-                result.Data = await GenerateToken(userLogin);
+                result.Data = await GenerateToken(user);
             }
             return result;
         }
@@ -124,21 +104,14 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 return result;
             }
-            var user = model.MapTo<User>();
-            UserIdentity u = new UserIdentity()
-            {
-                Id = user.Id.ToString(),
-                Email = user.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = user.UserName
-            };
-            var resultAddUser = await _userManager.CreateAsync(u, model.Password);
+            var user = model.MapTo<UserIdentity>();
+            
+            var resultAddUser = await _userManager.CreateAsync(user, model.Password);
             if (resultAddUser.Succeeded == true)
             {
                 if (await _roleManager.RoleExistsAsync(UserRole.NormalUser))
                 {
-                    await Add(user);
-                    await _userManager.AddToRoleAsync(u, UserRole.NormalUser);
+                    await _userManager.AddToRoleAsync(user, UserRole.NormalUser);
                 }
             }
             else
@@ -157,118 +130,6 @@ namespace ElectronicMedia.Core.Services.Service
             }
 
             return result;
-        }
-        public async Task<APIResponeModel> RenewToken(TokenModel model)
-        {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
-            var tokenValidateParam = new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
-                ClockSkew = TimeSpan.Zero,
-                ValidateLifetime = false, //không kiểm tra token hết hạn
-            };
-            try
-            {
-                // Check 1: AccessToken valid format
-                var tokenInVerification = jwtTokenHandler.ValidateToken(model.AccessToken, tokenValidateParam, out var validatedToken);
-
-                // Check 2: Check alg
-                if (validatedToken is JwtSecurityToken jwtSecurityToken)
-                {
-                    var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase);
-                    if (!result)
-                    {
-                        return new APIResponeModel
-                        {
-                            IsSucceed = false,
-                            Message = "Invalid Token",
-                        };
-                    }
-                }
-
-                // Check 3: Check access expire
-                var UtcExpireDate = long.Parse(tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-                var expireDate = ConverUnixTimeToDateTime(UtcExpireDate);
-                if (expireDate > DateTime.UtcNow)
-                {
-                    return new APIResponeModel
-                    {
-                        IsSucceed = false,
-                        Message = "Access token has not yet expired",
-                    };
-                }
-
-                // Check 4: Check refresh token exist in db
-                var storedToken = _context.UserTokens.FirstOrDefault(x => x.RefreshToken == model.RefreshToken);
-                if (storedToken == null)
-                {
-                    return new APIResponeModel
-                    {
-                        IsSucceed = false,
-                        Message = "Refresh token does not exist"
-                    };
-                }
-
-                // Check 5: Check refresh token isUsed/revoked
-                if (storedToken.IsUsed)
-                {
-                    return new APIResponeModel
-                    {
-                        IsSucceed = false,
-                        Message = "Refresh token has been used"
-                    };
-                }
-                if (storedToken.IsRevoked)
-                {
-                    return new APIResponeModel
-                    {
-                        IsSucceed = false,
-                        Message = "Refresh token has been revoked"
-                    };
-                }
-
-                // Check 6: Check refresh token isUsed/revoked
-                var jti = tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
-                if (storedToken.JwtId != jti)
-                {
-                    return new APIResponeModel
-                    {
-                        IsSucceed = false,
-                        Message = "Token doesn't match"
-                    };
-                }
-
-                // Update token is used
-                storedToken.IsUsed = true;
-                storedToken.IsRevoked = true;
-                _context.Update(storedToken);
-                await _context.SaveChangesAsync();
-
-                //Create new token
-                var user = await GetByIdAsync(storedToken.UserId);
-                var token = await GenerateToken(user);
-
-                return new APIResponeModel
-                {
-                    IsSucceed = true,
-                    Message = "Renew token Success",
-                    Data = token
-                };
-            }
-            catch (Exception ex)
-            {
-                //_logger.LogError(ex.Message);
-                return new APIResponeModel
-                {
-                    IsSucceed = false,
-                    Message = ex.Message,
-                };
-            }
         }
     }
 }

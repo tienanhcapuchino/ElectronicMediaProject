@@ -42,8 +42,8 @@ namespace ElectronicMedia.Core.Repository.Entity
         public virtual Comment Comment { get; set; }
         public Guid ParentId { get; set; }
         public string Content { get; set; }
-        public User User { get; set; }
-        public Guid UserId { get; set; }
+        public UserIdentity User { get; set; }
+        public string UserId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; } = null;
     }

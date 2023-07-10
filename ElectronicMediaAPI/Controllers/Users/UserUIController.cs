@@ -50,42 +50,6 @@ namespace ElectronicMediaAPI.Controllers
                 return null;
             }
         }
-        [HttpGet("duplicateemail/{userId}")]
-        public async Task<bool> CheckDupicateEmail([FromRoute] Guid userId, string email)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(email))
-                {
-                    throw new Exception("Cannot leave email is empty!");
-                }
-                var result = await _userService.IsDuplicateEmail(userId, email);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"Error when check duplicate email with userId: {userId}", ex);
-                return false;
-            }
-        }
-        [HttpGet("duplicatephone/{userId}")]
-        public async Task<bool> CheckDupicatePhone([FromRoute] Guid userId, string phone)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(phone))
-                {
-                    throw new Exception("Cannot leave phone is empty!");
-                }
-                var result = await _userService.IsDuplicatePhone(userId, phone);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"Error when check duplicate phone with userId: {userId}", ex);
-                return false;
-            }
-        }
         [HttpPost("update/profile/{userId}")]
         public async Task<bool> UpdateProfile([FromRoute] Guid userId, [FromBody] UserProfileModel profile)
         {

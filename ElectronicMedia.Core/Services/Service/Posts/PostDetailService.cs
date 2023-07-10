@@ -74,7 +74,7 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<bool> DeleteByUserIdAndPostId(Guid userId, Guid postId)
         {
-            var postDetail = await _dbContext.PostDetails.SingleOrDefaultAsync(x => x.PostId == postId && x.UserId == userId);
+            var postDetail = await _dbContext.PostDetails.SingleOrDefaultAsync(x => x.PostId == postId && x.UserId.Equals(userId.ToString()));
             if (postDetail == null) return false;
             _dbContext.PostDetails.Remove(postDetail);
             bool result = await _dbContext.SaveChangesAsync() > 0;
@@ -83,7 +83,7 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<PostDetail> FindByUserId(Guid userId, Guid postId)
         {
-            return await _dbContext.PostDetails.SingleOrDefaultAsync(x => x.PostId == postId && x.UserId == userId);
+            return await _dbContext.PostDetails.SingleOrDefaultAsync(x => x.PostId == postId && x.UserId.Equals(userId.ToString()));
         }
 
         public async Task<IEnumerable<PostDetail>> GetAllAsync()

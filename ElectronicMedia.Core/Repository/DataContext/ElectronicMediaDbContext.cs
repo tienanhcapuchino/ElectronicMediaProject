@@ -49,13 +49,11 @@ namespace ElectronicMedia.Core.Repository.DataContext
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new PostCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new PostDetailConfiguration());
             modelBuilder.ApplyConfiguration(new CommentConfiguration());
             modelBuilder.ApplyConfiguration(new ReplyCommentConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
-            modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
             modelBuilder.ApplyConfiguration(new EmailSettingConfiguration());
             modelBuilder.ApplyConfiguration(new EmailTemplateConfiguration());
@@ -73,8 +71,6 @@ namespace ElectronicMedia.Core.Repository.DataContext
             }
         }
         #region entity
-        public DbSet<User> Users { get; set; }
-        public DbSet<UserToken> UserTokens { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostCategory> PostCategories { get; set; }
         public DbSet<PostDetail> PostDetails { get; set; }

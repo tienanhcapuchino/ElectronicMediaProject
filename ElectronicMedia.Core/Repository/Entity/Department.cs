@@ -41,6 +41,6 @@ namespace ElectronicMedia.Core.Repository.Entity
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
-        public virtual ICollection<User> Members { get; set; }
+        public virtual ICollection<UserIdentity> Members { get; set; }
     }
 }

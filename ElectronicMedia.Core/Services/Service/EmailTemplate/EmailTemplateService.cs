@@ -84,8 +84,15 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<EmailTemplate> GetByIdAsync(Guid id)
         {
-            var result = await _context.EmailTemplates.FirstOrDefaultAsync(x => x.Id == id);
-            return result;
+            try
+            {
+                var result = await _context.EmailTemplates.FirstOrDefaultAsync(x => x.Id == id);
+                return result;
+            }
+            catch(Exception ex)
+            {
+            }
+            return null;
         }
 
         public async Task<bool> Update(EmailTemplate entity, bool saveChange = true)

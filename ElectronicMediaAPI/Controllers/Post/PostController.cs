@@ -150,7 +150,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
             catch (Exception ex)
             {
-                return new JsonResult(new ResultDto<PagedList<User>>
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
                 {
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message
