@@ -47,7 +47,7 @@ namespace ElectronicMedia.Core.Services.Service
         }
         public void DeleteImageFile(string fileName)
         {
-            string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "Images", fileName);
+            string filePath = Path.Combine("..\\..\\ElectronicMediaProject\\ElectronicUI\\public\\assets", "images", fileName);
 
             if (File.Exists(filePath))
             {
@@ -57,7 +57,7 @@ namespace ElectronicMedia.Core.Services.Service
 
         public void SaveImageFile(IFormFile file)
         {
-            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "Images", file.FileName);
+            var filePath = Path.Combine("..\\..\\ElectronicMediaProject\\ElectronicUI\\public\\assets", "images", file.FileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 file.CopyTo(fileStream);
