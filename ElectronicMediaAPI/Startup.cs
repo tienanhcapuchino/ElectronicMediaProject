@@ -40,6 +40,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -58,7 +59,34 @@ namespace ElectronicMediaAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Bearer token for JWT Authorization",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = JwtBearerDefaults.AuthenticationScheme
+                    }
+                };
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+
+                // Cấu hình requirement để yêu cầu JWT
+                var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    {
+                        securityScheme,
+                        new string[] {}
+                    }
+                };
+                c.AddSecurityRequirement(securityRequirement);
+            });
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
