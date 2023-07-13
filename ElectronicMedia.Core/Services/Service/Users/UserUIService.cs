@@ -132,13 +132,15 @@ namespace ElectronicMedia.Core.Services.Service
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = user.UserName
             };
-            var resultAddUser = await _userManager.CreateAsync(u, model.Password);
+
+            var resultAddUser = await userManager.CreateAsync(u, model.Password);
+
             if (resultAddUser.Succeeded == true)
             {
-                if (await _roleManager.RoleExistsAsync(UserRole.NormalUser))
+                if (await roleManager.RoleExistsAsync(UserRole.NormalUser))
                 {
                     await Add(user);
-                    await _userManager.AddToRoleAsync(u, UserRole.NormalUser);
+                    await userManager.AddToRoleAsync(u, UserRole.NormalUser);
                 }
             }
             else

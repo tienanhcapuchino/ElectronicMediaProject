@@ -88,6 +88,7 @@ namespace ElectronicMediaAPI
                 c.AddSecurityRequirement(securityRequirement);
             });
             services.AddAuthentication();
+
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
@@ -152,7 +153,6 @@ namespace ElectronicMediaAPI
                     ClockSkew = TimeSpan.Zero,
                 };
             });
-            
             // services.Configure<GoogleCredential>(ConfigRoot.GetSection("GoogleCredential"));
             // var clientId = ConfigRoot["GoogleCredential:ClientId"];
             // var clientSecret = ConfigRoot["GoogleCredential:ClientSecret"];
@@ -166,7 +166,6 @@ namespace ElectronicMediaAPI
             //    options.ClientId = clientId;
             //    options.ClientSecret = clientSecret;
             //});
-            
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
                 build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
