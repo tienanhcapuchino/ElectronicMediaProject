@@ -33,6 +33,8 @@ import Login from '~/pages/SignIn';
 import Reading from '~/pages/Reading';
 import { SideBarOnly } from '~/components/Layout';
 import Admin from '~/pages/Admin';
+import User from '~/pages/Admin/Users/user';
+import LayoutAdmin from '~/components/Layout/LayoutAdmin';
 
 // don't need login
 const publishRoute = [
@@ -41,6 +43,12 @@ const publishRoute = [
     { path: '/reading', component: Reading, layout: SideBarOnly },
 ];
 // need login
-const privateRoute = [{ path: '/admin', component: Admin, layout: Fragment }];
+const privateRoute = [
+{ 
+    path: '/admin', component: Admin, layout: LayoutAdmin,
+},
+{
+    path: '/admin/users', component: User, layout: LayoutAdmin
+}];
 
 export { privateRoute, publishRoute };

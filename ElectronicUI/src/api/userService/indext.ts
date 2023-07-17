@@ -36,6 +36,10 @@ export class UserService {
     public static login: IFunc1<any, Promise<any>> = (object) => {
         return axios.post(`${api.userLogin}`, object).then((result) => result);
     };
+
+    public static getAllUsersPaging: IFunc1<any, Promise<any>>  = (object) => {
+        return instance.post(`${api.getAllUsersPaging}`, object).then((result) => result);
+    }
 }
 
 export default UserService;

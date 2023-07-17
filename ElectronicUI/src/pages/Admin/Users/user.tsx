@@ -27,16 +27,32 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-import * as React from "react";
+import { initializeIcons } from '@fluentui/react/lib/Icons';
+import { DetailsList, SelectionMode } from '@fluentui/react/lib/DetailsList';
+import { IColumn } from '@fluentui/react/lib/DetailsList';
+initializeIcons();
 
-// Component trang Admin
-function Admin() {
+const data = [
+    { key: '1', name: 'John Doe', age: 30, occupation: 'Engineer' },
+    { key: '2', name: 'Jane Smith', age: 25, occupation: 'Designer' },
+];
+
+const columns: IColumn[] = [
+    { key: 'column1', name: 'Name', fieldName: 'name', minWidth: 100 },
+    { key: 'column2', name: 'Age', fieldName: 'age', minWidth: 100 },
+    { key: 'column3', name: 'Occupation', fieldName: 'occupation', minWidth: 100 },
+];
+function User() {
     return (
-        <div>
-            <h1>This is admin page!</h1>
+        <div style={{ display: 'flex' }}>
+            <h1>User Management</h1> <br></br>
+            <DetailsList
+                items={data}
+                columns={columns}
+                selectionMode={SelectionMode.none}
+            />
         </div>
     );
 };
 
-export default Admin;
-
+export default User;
