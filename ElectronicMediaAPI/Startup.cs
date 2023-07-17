@@ -88,6 +88,7 @@ namespace ElectronicMediaAPI
                 c.AddSecurityRequirement(securityRequirement);
             });
             services.AddAuthentication();
+
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
