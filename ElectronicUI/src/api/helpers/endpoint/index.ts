@@ -46,4 +46,8 @@ export default class Endpoint {
     static get userLogin(): string {
         return Endpoint.baseUrl + 'User/login';
     }
+
+    static get getAllUsersPaging(): string {
+        return Endpoint.baseUrl + "User/getall";
+    }
 }

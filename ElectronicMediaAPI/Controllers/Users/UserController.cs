@@ -60,7 +60,7 @@ namespace ElectronicMediaAPI.Controllers
                 return null;
             }
         }
-        [HttpGet]
+        [HttpGet("getall")]
         public IActionResult GetAllUser(PageRequestBody requestBody)
         {
             try

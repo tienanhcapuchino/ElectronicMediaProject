@@ -27,16 +27,9 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-import * as React from "react";
-
-// Component trang Admin
-function Admin() {
-    return (
-        <div>
-            <h1>This is admin page!</h1>
-        </div>
-    );
-};
-
-export default Admin;
-
+.nav-admin {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}

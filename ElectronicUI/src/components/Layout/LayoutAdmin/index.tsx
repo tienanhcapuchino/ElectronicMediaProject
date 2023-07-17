@@ -27,16 +27,34 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-import * as React from "react";
+import navLinkGroups from "~/helper/layoutAdmin";
+import { Nav, INavLink, INavStyles, INavLinkGroup, initializeIcons } from '@fluentui/react';
+import './layoutAdmin.scss'
 
-// Component trang Admin
-function Admin() {
+initializeIcons();
+const navStyles: Partial<INavStyles> = {
+    root: {
+        width: 200,
+        height: '100vh',
+        boxSizing: 'border-box',
+        border: '1px solid #eee',
+        overflowY: 'auto',
+    },
+};
+function LayoutAdmin({ children }: any) {
     return (
-        <div>
-            <h1>This is admin page!</h1>
+        <div className="nav-admin">
+            <div>
+                <Nav
+                    groups={navLinkGroups}
+                    styles={navStyles}
+                />
+            </div>
+            <div>
+                {children}
+            </div>
         </div>
-    );
+    )
 };
 
-export default Admin;
-
+export default LayoutAdmin;
