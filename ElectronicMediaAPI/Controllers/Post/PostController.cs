@@ -39,7 +39,7 @@ namespace ElectronicMediaAPI.Controllers.Post
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostController));
@@ -51,8 +51,8 @@ namespace ElectronicMediaAPI.Controllers.Post
             _postService = postService;
             _fileStorageService = fileStorageService;
         }
-        [HttpGet("id")]
-        [Authorize(Roles = UserRole.NormalUser)]
+        [HttpGet("{id}")]
+        [Authorize(Roles = "NormalUser,Admin")]
         public async Task<IActionResult> GetPostById(Guid id)
         {
             try

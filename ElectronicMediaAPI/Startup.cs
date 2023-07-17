@@ -40,6 +40,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -58,7 +59,35 @@ namespace ElectronicMediaAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Bearer token for JWT Authorization",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = JwtBearerDefaults.AuthenticationScheme
+                    }
+                };
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+
+                // Cấu hình requirement để yêu cầu JWT
+                var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    {
+                        securityScheme,
+                        new string[] {}
+                    }
+                };
+                c.AddSecurityRequirement(securityRequirement);
+            });
+            services.AddAuthentication();
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
@@ -100,20 +129,30 @@ namespace ElectronicMediaAPI
 
             var secretKey = ConfigRoot["AppSettings:SecretKey"];
             var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            services.AddIdentity<UserIdentity, IdentityRole>()
+            .AddEntityFrameworkStores<ElectronicMediaDbContext>()
+            .AddDefaultTokenProviders();
+            services.AddIdentityCore<UserIdentity>();
+            services.AddAuthentication(options =>
             {
-                opt.TokenValidationParameters = new TokenValidationParameters
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = false,
                     ValidateAudience = false,
-
-                    //sign to token
+                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
-
                     ClockSkew = TimeSpan.Zero,
                 };
             });
+            
             // services.Configure<GoogleCredential>(ConfigRoot.GetSection("GoogleCredential"));
             // var clientId = ConfigRoot["GoogleCredential:ClientId"];
             // var clientSecret = ConfigRoot["GoogleCredential:ClientSecret"];
@@ -127,9 +166,7 @@ namespace ElectronicMediaAPI
             //    options.ClientId = clientId;
             //    options.ClientSecret = clientSecret;
             //});
-            services.AddIdentity<UserIdentity, IdentityRole>()
-            .AddEntityFrameworkStores<ElectronicMediaDbContext>()
-            .AddDefaultTokenProviders();
+            
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
                 build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
@@ -157,7 +194,6 @@ namespace ElectronicMediaAPI
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.MapControllers();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
