@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ClosedXML.Excel;
 using ElectronicMedia.Core;
 using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.Entity;
@@ -39,7 +40,7 @@ namespace ElectronicMediaAPI.Controllers.Post
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PostController : ControllerBase
     {
         private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostController));
@@ -196,6 +197,30 @@ namespace ElectronicMediaAPI.Controllers.Post
                     IsSucceed = false,
                     Data = postId
                 };
+            }
+        }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportPost()
+        {
+            try
+            {
+                var dt = await _postService.ExportPosts();
+                using (XLWorkbook wb = new XLWorkbook())
+                {
+                    wb.Worksheets.Add(dt);
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        wb.ColumnWidth = 25;
+                        wb.SaveAs(stream);
+                        return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Export_Posts.xlsx");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("error when export posts to excel!", ex);
+                return BadRequest(ex.ToString());
             }
         }
     }

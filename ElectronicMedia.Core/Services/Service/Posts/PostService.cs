@@ -36,6 +36,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,15 +49,18 @@ namespace ElectronicMedia.Core.Services.Service
         private readonly IPostDetailService _postDetailService;
         private readonly ICommentService _commentService;
         private readonly IReplyCommentService _replyCommentService;
+        private readonly IExcelService<Post> _excelService;
         public PostService(ElectronicMediaDbContext context,
             IPostDetailService postDetailService,
             ICommentService commentService,
-            IReplyCommentService replyCommentService)
+            IReplyCommentService replyCommentService,
+            IExcelService<Post> excelService)
         {
             _context = context;
             _postDetailService = postDetailService;
             _commentService = commentService;
             _replyCommentService = replyCommentService;
+            _excelService = excelService;
         }
 
         public async Task<bool> Add(Post entity, bool saveChange = true)
@@ -102,9 +106,10 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public Task<IEnumerable<Post>> GetAllAsync()
+        public async Task<IEnumerable<Post>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var result = await _context.Posts.ToListAsync();
+            return result;
         }
 
         public async Task<PagedList<Post>> GetAllWithPaging(PageRequestBody requestBody)
@@ -213,6 +218,12 @@ namespace ElectronicMedia.Core.Services.Service
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
             return true;
+        }
+        public async Task<DataTable> ExportPosts()
+        {
+            var posts = await _context.Posts.Include(x => x.User).Include(x => x.SubCategory).Include(x => x.Category).ToListAsync();
+            DataTable dt = _excelService.ExportToExcel(posts);
+            return dt;
         }
         #region private method
         private async Task<bool> UpdateLikeDelete(Guid postId, bool liked)
