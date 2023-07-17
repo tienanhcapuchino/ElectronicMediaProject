@@ -87,6 +87,8 @@ namespace ElectronicMediaAPI
                 };
                 c.AddSecurityRequirement(securityRequirement);
             });
+            services.AddAuthentication();
+
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
@@ -128,20 +130,30 @@ namespace ElectronicMediaAPI
 
             var secretKey = ConfigRoot["AppSettings:SecretKey"];
             var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            services.AddIdentity<UserIdentity, IdentityRole>()
+            .AddEntityFrameworkStores<ElectronicMediaDbContext>()
+            .AddDefaultTokenProviders();
+            services.AddIdentityCore<UserIdentity>();
+            services.AddAuthentication(options =>
             {
-                opt.TokenValidationParameters = new TokenValidationParameters
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = false,
                     ValidateAudience = false,
-
-                    //sign to token
+                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
-
                     ClockSkew = TimeSpan.Zero,
                 };
             });
+            
             // services.Configure<GoogleCredential>(ConfigRoot.GetSection("GoogleCredential"));
             // var clientId = ConfigRoot["GoogleCredential:ClientId"];
             // var clientSecret = ConfigRoot["GoogleCredential:ClientSecret"];
@@ -155,9 +167,7 @@ namespace ElectronicMediaAPI
             //    options.ClientId = clientId;
             //    options.ClientSecret = clientSecret;
             //});
-            services.AddIdentity<UserIdentity, IdentityRole>()
-            .AddEntityFrameworkStores<ElectronicMediaDbContext>()
-            .AddDefaultTokenProviders();
+            
             services.AddCors(p => p.AddDefaultPolicy(build =>
             {
                 build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
@@ -185,7 +195,6 @@ namespace ElectronicMediaAPI
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.MapControllers();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

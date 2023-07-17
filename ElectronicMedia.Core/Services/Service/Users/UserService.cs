@@ -53,15 +53,15 @@ namespace ElectronicMedia.Core.Services.Service
     {
         private readonly ElectronicMediaDbContext _context;
         private readonly AppSetting _appSettings;
-        private readonly UserManager<UserIdentity> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<UserIdentity> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor,
-           UserManager<UserIdentity> _userManager, RoleManager<IdentityRole> roleManager)
+           UserManager<UserIdentity> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _appSettings = optionsMonitor.CurrentValue;
-            userManager = _userManager;
-            this.roleManager = roleManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<User> GetByIdAsync(Guid id)

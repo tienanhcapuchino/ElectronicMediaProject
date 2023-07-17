@@ -54,11 +54,14 @@ namespace ElectronicMedia.Core.Services.Service
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
             var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
+            var userIdentity = await _userManager.FindByIdAsync(us.Id.ToString());
+            var roles = await _userManager.GetRolesAsync(userIdentity);
+            string role = roles[0].ToString();
             var tokenDecription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]{
                 new Claim(ClaimTypes.Name, us.UserName),
-                new Claim(ClaimTypes.Role, us.Role.ToString()),
+                new Claim(ClaimTypes.Role, role),
                 new Claim(ClaimTypes.Email, us.Email),
                 new Claim("UserId", us.Id.ToString()),
                 new Claim("TokenId", Guid.NewGuid().ToString())}),
@@ -129,14 +132,13 @@ namespace ElectronicMedia.Core.Services.Service
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = user.UserName
             };
-            var resultAddUser = await userManager.CreateAsync(u, model.Password);
-
+            var resultAddUser = await _userManager.CreateAsync(u, model.Password);
             if (resultAddUser.Succeeded == true)
             {
-                if (await roleManager.RoleExistsAsync(UserRole.NormalUser))
+                if (await _roleManager.RoleExistsAsync(UserRole.NormalUser))
                 {
                     await Add(user);
-                    await userManager.AddToRoleAsync(u, UserRole.NormalUser);
+                    await _userManager.AddToRoleAsync(u, UserRole.NormalUser);
                 }
             }
             else
