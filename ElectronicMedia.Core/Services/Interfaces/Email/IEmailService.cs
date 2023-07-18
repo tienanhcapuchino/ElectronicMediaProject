@@ -38,6 +38,6 @@ namespace ElectronicMedia.Core.Services.Interfaces.Email
 {
     public interface IEmailService
     {
-        Task<bool> SendEmailAsync(EmailModel emailModel);
+        Task SendEmailAsync(EmailModel emailModel);
     }
 }

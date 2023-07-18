@@ -141,35 +141,31 @@ namespace ElectronicMediaAPI.Controllers
                 };
             }
         }
-        [HttpPost("sendMail")]
-        public async Task<APIResponeModel> SendMail(EmailModel emailModel)
+        [HttpPost("testSendMail")]
+        public async Task<APIResponeModel> TestSendMail(EmailModel emailModel)
         {
-          
+
             try
             {
-                if (await _emailService.SendEmailAsync(emailModel))
+                await _emailService.SendEmailAsync(emailModel);
+                return new APIResponeModel()
                 {
-                    return new APIResponeModel()
-                    {
-                        Code = 200,
-                        Message = "OK",
-                        IsSucceed = true,
-                        Data = "Send email success"
-                    };
-                }
-                else
-                {
-                    return new APIResponeModel()
-                    {
-                        Code = 400,
-                        Message = "Send failed"
-                    };
-                }
+                    Code = 200,
+                    Message = "OK",
+                    IsSucceed = true,
+                    Data = "Send email success"
+                };
+
             }
             catch (Exception ex)
             {
-                
-                throw;
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = "Error: " + ex.Message,
+                    IsSucceed = false,
+                    Data = ex.ToString(),
+                };
             }
 
         }
