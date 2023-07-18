@@ -30,7 +30,9 @@
 using ElectronicMedia.Core;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
+using ElectronicMedia.Core.Repository.Models.Email;
 using ElectronicMedia.Core.Services.Interfaces;
+using ElectronicMedia.Core.Services.Interfaces.Email;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicMediaAPI.Controllers
@@ -40,10 +42,12 @@ namespace ElectronicMediaAPI.Controllers
     public partial class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        public IEmailService _emailService;
         private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(UserController));
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IEmailService mailService)
         {
             _userService = userService;
+            _emailService = mailService;
         }
 
         [HttpGet("{userId}")]
@@ -134,6 +138,12 @@ namespace ElectronicMediaAPI.Controllers
                     IsSucceed = false
                 };
             }
+        }
+        [HttpPost("sendMail")]
+        public async Task<bool> SendMail(EmailModel emailModel)
+        {
+            return await _emailService.SendEmailAsync(emailModel);
+
         }
     }
 }
