@@ -49,14 +49,19 @@ namespace ElectronicMedia.Core.Services.Service.Email
         }
         public async Task<bool> SendEmailAsync(EmailModel emailModel)
         {
+
             try
             {
                 using (var emailMessage = new MimeMessage())
                 {
                     MailboxAddress emailFrom = new MailboxAddress(_emailSetting.SenderName, _emailSetting.SenderEmail);
                     emailMessage.From.Add(emailFrom);
-                    MailboxAddress emailTo = new MailboxAddress("Receiver", emailModel.To);
-                    emailMessage.To.Add(emailTo);
+                    foreach (var receiver in emailModel.To)
+                    {
+                        MailboxAddress emailTo = new MailboxAddress("Receiver", receiver);
+                        emailMessage.To.Add(emailTo);
+                    }
+
                     emailMessage.Subject = emailModel.Subject;
                     BodyBuilder bodyBuilder = new BodyBuilder();
                     bodyBuilder.TextBody = emailModel.Body;
@@ -76,6 +81,7 @@ namespace ElectronicMedia.Core.Services.Service.Email
 
                 return false;
             }
+
         }
     }
 }

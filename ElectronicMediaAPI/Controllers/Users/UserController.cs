@@ -27,12 +27,14 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Repository.Models.Email;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Interfaces.Email;
+using ElectronicMedia.Core.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicMediaAPI.Controllers
@@ -140,9 +142,35 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
         [HttpPost("sendMail")]
-        public async Task<bool> SendMail(EmailModel emailModel)
+        public async Task<APIResponeModel> SendMail(EmailModel emailModel)
         {
-            return await _emailService.SendEmailAsync(emailModel);
+          
+            try
+            {
+                if (await _emailService.SendEmailAsync(emailModel))
+                {
+                    return new APIResponeModel()
+                    {
+                        Code = 200,
+                        Message = "OK",
+                        IsSucceed = true,
+                        Data = "Send email success"
+                    };
+                }
+                else
+                {
+                    return new APIResponeModel()
+                    {
+                        Code = 400,
+                        Message = "Send failed"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                throw;
+            }
 
         }
     }
