@@ -32,8 +32,11 @@ using ElectronicMedia.Core.Common.Logger;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
+using ElectronicMedia.Core.Repository.Models.Email;
 using ElectronicMedia.Core.Services.Interfaces;
+using ElectronicMedia.Core.Services.Interfaces.Email;
 using ElectronicMedia.Core.Services.Service;
+using ElectronicMedia.Core.Services.Service.Email;
 //using Microsoft.AspNetCore.Authentication.Cookies;
 //using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -111,6 +114,7 @@ namespace ElectronicMediaAPI
             services.AddTransient<IFileStorageService, FileStorageService>();
             services.AddTransient<IEmailTemplateService, EmailTemplateService>();
             services.AddTransient<IExcelService<Post>, PostExcelService>();
+            services.AddTransient<IEmailService, EmailService>();
             #endregion
 
             #region data upgrade service
@@ -128,6 +132,7 @@ namespace ElectronicMediaAPI
             //configure JWT token
 
             services.Configure<AppSetting>(ConfigRoot.GetSection("AppSettings"));
+            services.Configure<EmailSettingModel>(ConfigRoot.GetSection("MailSettings"));
 
             var secretKey = ConfigRoot["AppSettings:SecretKey"];
             var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
