@@ -36,7 +36,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Common
 {
-    public static class CommonService
+    public static class CommonUIService
     {
         public static HttpResponseMessage GetDataAPI(string url, MethodAPI method, string token, string? jsonData = null)
         {
