@@ -46,5 +46,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<PostViewModel> GetById(Guid id);
         Task<bool> DeletePost(Guid postId);
         Task<DataTable> ExportPosts();
+        Task<List<Post>> GetPostByCateId(Guid cateId);
     }
 }
