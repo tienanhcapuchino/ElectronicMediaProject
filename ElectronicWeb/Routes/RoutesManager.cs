@@ -27,15 +27,28 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using Microsoft.AspNetCore.Mvc;
-
-namespace ElectronicWeb.Controllers.Admin
+namespace ElectronicWeb.Routes
 {
-    public class UserController : Controller
+    public static class RoutesManager
     {
-        public IActionResult UserManager()
+        private const string LocalHostDomain = "http://localhost:5243/api/";
+        public static string GetUrlPattern(EndPoint endpoint)
         {
-            return View();
+            return LocalHostDomain + "/" + endpoint;
         }
+        #region post
+        public static string GetPostsWithPaging = $"{GetUrlPattern(EndPoint.Post)}/page";
+        #endregion
+
+        #region user
+        public static string GetUerssWithPaging = $"{GetUrlPattern(EndPoint.User)}/getall";
+        #endregion
+    }
+
+    public enum EndPoint
+    {
+        Post,
+        User,
+        Category,
     }
 }
