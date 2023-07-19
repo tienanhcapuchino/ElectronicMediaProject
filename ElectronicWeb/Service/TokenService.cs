@@ -27,12 +27,56 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+
+using ElectronicWeb.Models;
+using System.IdentityModel.Tokens.Jwt;
+
 namespace ElectronicWeb.Service
 {
-    public static class TokenService
+    public class TokenService : ITokenService
     {
-        public static string GetToken()
+        private IHttpContextAccessor _contextAccessor;
+        public TokenService(IHttpContextAccessor contextAccessor)
         {
+            _contextAccessor = contextAccessor;
+        }
+        public string GetToken()
+        {
+            var token = _contextAccessor.HttpContext.Request.Cookies["token"];
+            return token;
+        }
+
+        public async Task<TokenOutputModel> GetTokenModel()
+        {
+            var token = GetToken();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            if (!string.IsNullOrEmpty(token))
+            {
+                var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+                if (jwtToken != null)
+                {
+                    var claims = jwtToken.Claims.ToList();
+                    var expTime = claims.Where(c => c.Type.Equals("exp")).FirstOrDefault().Value;
+                    var roleClaim = claims.Where(c => c.Type.Equals("role")).FirstOrDefault().Value;
+                    var claimMail = claims.Where(c => c.Type.Equals("email")).FirstOrDefault().Value;
+                    var claimUsername = claims.Where(c => c.Type.Equals("unique_name")).FirstOrDefault().Value;
+                    long expDate = long.Parse(expTime);
+                    TokenOutputModel result = new TokenOutputModel()
+                    {
+                        Email = claimMail,
+                        ExpiredTime = expDate,
+                        RoleName = roleClaim,
+                        Username = claimUsername,
+                    };
+
+                    var userIdClaims = claims.Where(c => c.Type.Equals("UserId")).FirstOrDefault();
+                    if (userIdClaims != null)
+                    {
+                        result.UserId = userIdClaims.Value;
+                    }
+                    return await Task.FromResult(result);
+                }
+            }
             return null;
         }
     }
