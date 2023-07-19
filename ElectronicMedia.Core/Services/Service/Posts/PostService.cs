@@ -245,6 +245,11 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Update(post);
             return result;
         }
+
+        public async Task<List<Post>> GetPostByCateId(Guid cateId)
+        {
+            return await _context.Posts.Where(x => x.CategoryId.Equals(cateId)).ToListAsync();
+        }
         #endregion
     }
 }

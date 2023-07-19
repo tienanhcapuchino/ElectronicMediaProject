@@ -33,6 +33,7 @@ using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using ElectronicMedia.Core.Services.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -221,6 +222,20 @@ namespace ElectronicMediaAPI.Controllers.Post
             {
                 _logger.Error("error when export posts to excel!", ex);
                 return BadRequest(ex.ToString());
+            }
+        }
+
+        [HttpGet("/category/{cateId}")]
+        public async Task<IActionResult> GetPostByCateId(Guid cateId)
+        {
+            try
+            {
+                var result = await _postService.GetPostByCateId(cateId);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
     }
