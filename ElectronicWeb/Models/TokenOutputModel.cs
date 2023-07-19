@@ -1,4 +1,4 @@
-/*********************************************************************
+ï»¿/*********************************************************************
  *
  * PROPRIETARY and CONFIDENTIAL
  *
@@ -21,35 +21,20 @@
  * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
  *
  *
- * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
+ * Copy right 2023 Â© PRN231 - SU23 - Group 10 Â®. All Rights Reserved
  *
  * Unpublished - All rights reserved under the copyright laws
  * of the Government of Viet Nam
 *********************************************************************/
 
-using ElectronicWeb.Service;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient<ITokenService, TokenService>();
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+namespace ElectronicWeb.Models
 {
-    app.UseExceptionHandler("/Home/Error");
+    public class TokenOutputModel
+    {
+        public string Email { get; set; }
+        public string Username { get; set; }
+        public long ExpiredTime { get; set; }
+        public string RoleName { get; set; }
+        public string UserId { get; set; }
+    }
 }
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();

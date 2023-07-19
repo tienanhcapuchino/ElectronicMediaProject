@@ -28,35 +28,60 @@
  * of the Government of Viet Nam
 *********************************************************************/
 *@
-
+@{
+    Layout = "_AdminLayout";
+}
 <h1>User management</h1>
 <table class="table">
     <thead>
         <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th>No</th>
+            <th>FullName</th>
+            <th>Email</th>
+            <th>UserName</th>
+            <th>PhoneNumber</th>
+            <th>Dob</th>
+            <th>Role</th>
+            <th>Image</th>
+            <th>IsActivate</th>
+            <th>Gender</th>
+            <th>Department</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
+        @{
+            int i = 1;
+            //foreach (var item in Model)
+            //{
+                <tr>
+                    <td>@i</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <form asp-controller="User" asp-action="ChangeRole">
+                            <select onchange="this.form.submit()">
+                                <option>UserNormal</option>
+                                <option>Writer</option>
+                                <option>Leader</option>
+                                <option>EditorDirector</option>
+                                <option>Admin</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a class="btn btn-primary" asp-controller="User" asp-action="DeactiveUser"></a>
+                    </td>
+                </tr>
+            //    i++;
+            //}
+        }
     </tbody>
 </table>
