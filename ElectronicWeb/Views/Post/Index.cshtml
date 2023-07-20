@@ -1,8 +1,95 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
-}
+@using ElectronicMedia.Core.Repository.Entity;
+@using ElectronicWeb.Models;
 @{
     Layout = "_AdminLayout";
 }
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Image</th>
+            <th>CreatedDate</th>
+            <th>PublishedDate</th>
+@*            <th>UpdatedDate</th>*@
+            <th>Rate</th>
+            <th>Like</th>
+            <th>Dislike</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Post p in Model.Values)
+        {
+            <tr>
+                <td>@p.Title</td>
+                <td>@p.Content</td>
+                <td></td>
+                <td>@p.CreatedDate.ToString("dd/MM/yyyy")</td>
+                <td>@p.PublishedDate.Value.ToString("dd/MM/yyyy")</td>
+               @* <td>@p.UpdatedDate.Value.ToString("dd/MM/yyyy")</td>*@
+                <td>@p.Rate</td>
+                <td>@p.Like</td>
+                <td>@p.Dislike</td>
+                <td>@p.Status</td>
+                <td><a asp-controller="Post" asp-action="Update" asp-route-pid="@p.Id" type="button" class="btn btn-primary">Update</a></td>
+                <td><a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<div>
+    @if (Model.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-center">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Post" asp-action="Index" asp-route-currentPage="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" aria-label="Previous" asp-controller="Post" asp-action="Index" asp-route-currentPage="@(Model.CurrentPage -1)"> <span aria-hidden="true">&laquo;</span></a>
+                </li>
+            }
+            @{
+                int start = Model.CurrentPage - 5;
+                int end = Model.CurrentPage + 4;
+                if (start <= 0)
+                {
+                    end = end - (start - 1);
+                    start = 1;
+                }
+                if (end > Model.TotalPages)
+                {
+                    end = Model.TotalPages;
+                    if (end > 10)
+                    {
+                        start = end - 9;
+                    }
+                }
+            }
+            @for (int i = start; i <= end; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage?"active":"")">
+                    <a class="page-link" asp-controller="Post" asp-action="Index" asp-route-currentPage="@i">@i</a>
+                </li>
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" aria-label="Next" asp-controller="Post" asp-action="Index" asp-route-currentPage="@(Model.CurrentPage + 1)"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Post" asp-action="Index" asp-route-currentPage="@(Model.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+</div>

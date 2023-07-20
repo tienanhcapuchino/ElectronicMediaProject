@@ -41,20 +41,19 @@ namespace ElectronicMediaAPI.Controllers.Post
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class PostController : ControllerBase
     {
         private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostController));
         private readonly IPostService _postService;
         private readonly IFileStorageService _fileStorageService;
-        public PostController(IPostService postService,
+        public PostController(IPostService postService, 
             IFileStorageService fileStorageService)
         {
             _postService = postService;
             _fileStorageService = fileStorageService;
+            
         }
         [HttpGet("{id}")]
-        [Authorize(Roles = "NormalUser,Admin")]
         public async Task<IActionResult> GetPostById(Guid id)
         {
             try
@@ -238,5 +237,41 @@ namespace ElectronicMediaAPI.Controllers.Post
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost("update")]
+        public async Task<APIResponeModel> UpdateProfile([FromBody] PostViewModel model)
+        {
+            try
+            {
+                /*  if (await _postService.UpdatePost(model))
+                  {
+
+                      return new APIResponeModel()
+                      {
+                          Code = 200,
+                          Message = "OK",
+                          IsSucceed = true,
+                          Data = model
+                      };
+                  }
+                  else
+                  {
+                      return new APIResponeModel()
+                      {
+                          Code = 400,
+                          IsSucceed = false,
+                          Message = "update failed"
+                      };
+                  }*/
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("error when update post", ex);
+                throw;
+            }
+        }
     }
 }
+
