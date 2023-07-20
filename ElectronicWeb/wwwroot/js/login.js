@@ -15,10 +15,14 @@
         success: function (response) {
             // Xử lý phản hồi thành công
             if (response.isSucceed) {
+
                 var serializedtoken = JSON.stringify(response.data);
                 $.cookie("token", serializedtoken);
                 setCookie("token", serializedtoken, 1);
                 var token = getCookie("token")
+                var user = decodeToken(token)
+                setCookie("user", JSON.stringify(user), 1);
+
                 var allowedRoles = ["Leader", "EditorDirector", "Admin", "Writer"];
                 if (allowedRoles.includes(token.role)) {
                     window.location.href = "/admin";
