@@ -16,6 +16,7 @@
             // Xử lý phản hồi thành công
             var serializedtoken = JSON.stringify(response.data);
             $.cookie("token", serializedtoken);
+            setCookie("token", serializedtoken, 1);
             var token = getCookie("token")
             var allowedRoles = ["Leader", "EditorDirector", "Admin", "Writer"];
             if (allowedRoles.includes(token.role)) {
@@ -29,4 +30,13 @@
             console.error(error);
         }
     });
+}
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + value + expires + "; path=/";
 }
