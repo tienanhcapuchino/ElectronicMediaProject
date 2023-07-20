@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core.Automaper;
 using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Common.Extension;
@@ -65,7 +66,7 @@ namespace ElectronicMedia.Core.Services.Service
                 new Claim(ClaimTypes.Email, us.Email),
                 new Claim("UserId", us.Id.ToString()),
                 new Claim("TokenId", Guid.NewGuid().ToString())}),
-                Expires = DateTime.UtcNow.AddMinutes(30),
+                Expires = DateTime.UtcNow.AddHours(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha512Signature)
             };
             var token = jwtTokenHandler.CreateToken(tokenDecription);
@@ -77,7 +78,7 @@ namespace ElectronicMedia.Core.Services.Service
         {
             var user = await _userManager.FindByNameAsync(model.Username);
             var result = new APIResponeModel();
-            
+
             if (user == null)
             {
                 result.Code = 404;
@@ -87,7 +88,7 @@ namespace ElectronicMedia.Core.Services.Service
             else
             {
                 var loginResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: true);
-                
+
                 result.Code = 200;
                 result.Message = "Login successfully!";
                 result.IsSucceed = true;
@@ -98,14 +99,15 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<APIResponeModel> Register(UserRegisterModel model)
         {
-            var result = new APIResponeModel();
-            result = IsValidUserRegister(model);
-            if (!result.IsSucceed)
+            var result = new APIResponeModel()
             {
-                return result;
-            }
+                Code = 200,
+                IsSucceed = true,
+                Message = "Register successfully!",
+                Data = model
+            };
             var user = model.MapTo<UserIdentity>();
-            
+
             var resultAddUser = await _userManager.CreateAsync(user, model.Password);
             if (resultAddUser.Succeeded == true)
             {
@@ -130,6 +132,24 @@ namespace ElectronicMedia.Core.Services.Service
             }
 
             return result;
+        }
+
+        public async Task<bool> UpdateRole(Guid userId, string roleType)
+        {
+            var userEntity = await GetByIdAsync(userId);
+            if (userEntity == null) return false;
+            //Retrieve the user's current roles
+            var currentRoles = await _userManager.GetRolesAsync(userEntity);
+            //Update the user's roles
+            foreach (var role in currentRoles)
+            {
+                if (role != roleType)
+                {
+                    await _userManager.RemoveFromRoleAsync(userEntity, role);
+                }
+            }
+            await _userManager.AddToRoleAsync(userEntity, roleType);
+            return true;
         }
     }
 }
