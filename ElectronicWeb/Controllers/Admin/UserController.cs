@@ -27,15 +27,22 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ElectronicWeb.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicWeb.Controllers.Admin
 {
     public class UserController : Controller
     {
+        private readonly ITokenService _tokenService;
+        public UserController(ITokenService tokenService)
+        {
+            _tokenService = tokenService;
+        }
         public IActionResult UserManager()
         {
-            return View();
+            var token = _tokenService.GetToken();
+            return View(token);
         }
     }
 }

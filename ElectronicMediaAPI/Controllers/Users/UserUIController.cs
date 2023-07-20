@@ -28,6 +28,7 @@
 *********************************************************************/
 
 using ElectronicMedia.Core.Repository.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,6 +63,46 @@ namespace ElectronicMediaAPI.Controllers
             {
                 _logger.Error($"Error when update profile user with userId: {userId}", ex);
                 return false;
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("roleupdate/{userId}")]
+        public async Task<APIResponeModel> UpdateRole([FromRoute] Guid userId, string newRole)
+        {
+            try
+            {
+                var result = await _userService.UpdateRole(userId, newRole);
+                if (result)
+                {
+                    return new APIResponeModel()
+                    {
+                        IsSucceed = true,
+                        Code = 200,
+                        Message = "update successfully",
+                        Data = userId.ToString()
+                    };
+                }
+                else
+                {
+                    return new APIResponeModel()
+                    {
+                        IsSucceed = false,
+                        Code = 400,
+                        Message = "update failed!",
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error when update role of user with userId: {userId}", ex);
+                return new APIResponeModel()
+                {
+                    Data = ex.ToString(),
+                    Message = ex.Message,
+                    IsSucceed = false,
+                    Code = 400
+                };
             }
         }
     }

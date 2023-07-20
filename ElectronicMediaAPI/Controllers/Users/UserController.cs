@@ -35,6 +35,7 @@ using ElectronicMedia.Core.Repository.Models.Email;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Interfaces.Email;
 using ElectronicMedia.Core.Services.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicMediaAPI.Controllers
@@ -52,7 +53,8 @@ namespace ElectronicMediaAPI.Controllers
             _emailService = mailService;
         }
 
-        [HttpGet("getall")]
+        [Authorize(Roles = "Admin")]
+        [HttpPost("getall")]
         public IActionResult GetAllUser(PageRequestBody requestBody)
         {
             try
