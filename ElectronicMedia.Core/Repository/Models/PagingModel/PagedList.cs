@@ -37,16 +37,15 @@ namespace ElectronicMedia.Core
 {
     public class PagedList<T>
     {
-        public int CurrentPage { get; private set; }
-        public int TotalPages { get; private set; }
-        public int PageSize { get; private set; }
-        public int TotalCount { get; private set; }
-        public List<T> Values { get; private set; }
+        public int CurrentPage { get;  set; }
+        public int TotalPages { get;  set; }
+        public int PageSize { get;  set; }
+        public int TotalCount { get;  set; }
+        public List<T> Values { get;  set; } = new List<T>();
         public bool HasPrevious => CurrentPage > 1;
         public bool HasNext => CurrentPage < TotalPages;
         public PagedList(List<T> items, int count, int pageNumber, int pageSize)
         {
-            Values = new List<T>();
             TotalCount = count;
             PageSize = pageSize;
             CurrentPage = pageNumber;

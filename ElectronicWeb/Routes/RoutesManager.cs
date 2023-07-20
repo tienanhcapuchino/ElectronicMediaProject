@@ -34,10 +34,11 @@ namespace ElectronicWeb.Routes
         private const string LocalHostDomain = "http://localhost:5243/api/";
         public static string GetUrlPattern(EndPoint endpoint)
         {
-            return LocalHostDomain + "/" + endpoint;
+            return LocalHostDomain  + endpoint;
         }
         #region post
         public static string GetPostsWithPaging = $"{GetUrlPattern(EndPoint.Post)}/page";
+        public static string GetPostById = $"{GetUrlPattern(EndPoint.Post)}/";
         #endregion
 
         #region user
