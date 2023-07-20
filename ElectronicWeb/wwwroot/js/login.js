@@ -14,15 +14,19 @@
         data: JSON.stringify(data),
         success: function (response) {
             // Xử lý phản hồi thành công
-            var serializedtoken = JSON.stringify(response.data);
-            $.cookie("token", serializedtoken);
-            setCookie("token", serializedtoken, 1);
-            var token = getCookie("token")
-            var allowedRoles = ["Leader", "EditorDirector", "Admin", "Writer"];
-            if (allowedRoles.includes(token.role)) {
-                window.location.href = "/admin";
+            if (response.isSucceed) {
+                var serializedtoken = JSON.stringify(response.data);
+                $.cookie("token", serializedtoken);
+                setCookie("token", serializedtoken, 1);
+                var token = getCookie("token")
+                var allowedRoles = ["Leader", "EditorDirector", "Admin", "Writer"];
+                if (allowedRoles.includes(token.role)) {
+                    window.location.href = "/admin";
+                } else {
+                    window.location.href = "/";
+                }
             } else {
-                window.location.href = "/";
+                alert("Login False!")
             }
         },
         error: function (xhr, status, error) {
