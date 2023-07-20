@@ -199,7 +199,6 @@ namespace ElectronicMediaAPI.Controllers.Post
                 };
             }
         }
-
         [HttpGet("export")]
         public async Task<IActionResult> ExportPost()
         {
@@ -237,39 +236,21 @@ namespace ElectronicMediaAPI.Controllers.Post
                 return BadRequest(e.ToString());
             }
         }
-
-        [HttpPost("update")]
-        public async Task<APIResponeModel> UpdateProfile([FromBody] PostViewModel model)
+        [HttpGet("newPost")]
+        public async Task<IActionResult> GetNewPost()
         {
             try
             {
-                /*  if (await _postService.UpdatePost(model))
-                  {
-
-                      return new APIResponeModel()
-                      {
-                          Code = 200,
-                          Message = "OK",
-                          IsSucceed = true,
-                          Data = model
-                      };
-                  }
-                  else
-                  {
-                      return new APIResponeModel()
-                      {
-                          Code = 400,
-                          IsSucceed = false,
-                          Message = "update failed"
-                      };
-                  }*/
-
-                return null;
+                var result = await _postService.GetNewPost();
+                return new JsonResult(result);
             }
             catch (Exception ex)
             {
-                _logger.Error("error when update post", ex);
-                throw;
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
             }
         }
     }

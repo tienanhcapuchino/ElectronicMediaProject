@@ -64,7 +64,6 @@ namespace ElectronicWeb.Controllers
                 var content = result.Content.ReadAsStringAsync().Result;
                 pageRequest = JsonConvert.DeserializeObject<PageList<Post>>(content);              
             }
-
             return View(pageRequest);
         }
 
