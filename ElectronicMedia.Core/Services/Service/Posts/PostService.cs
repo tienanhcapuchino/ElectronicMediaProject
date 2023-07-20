@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using AutoMapper;
 using ElectronicMedia.Core.Automaper;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
@@ -54,7 +55,8 @@ namespace ElectronicMedia.Core.Services.Service
             IPostDetailService postDetailService,
             ICommentService commentService,
             IReplyCommentService replyCommentService,
-            IExcelService<Post> excelService)
+            IExcelService<Post> excelService
+            )
         {
             _context = context;
             _postDetailService = postDetailService;
@@ -111,7 +113,19 @@ namespace ElectronicMedia.Core.Services.Service
             var result = await _context.Posts.ToListAsync();
             return result;
         }
+        public async Task<IEnumerable<PostView>> GetNewPost()
+        {
+            try
+            {
+                var post = await _context.Posts.Where(y => y.Status == PostStatusModel.Published).OrderBy(x => x.CreatedDate).Take(5).ToListAsync();
+                return post.MapToList<PostView>();
 
+            }catch(Exception ex)
+            {
+                throw;
+            }
+            
+        }
         public async Task<PagedList<Post>> GetAllWithPaging(PageRequestBody requestBody)
         {
             try

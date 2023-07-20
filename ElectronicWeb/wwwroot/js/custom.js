@@ -38,8 +38,6 @@
 		var postSlider = document.querySelectorAll('.post-slider');
 		var testimonialSlider = document.querySelectorAll('.testimonial-slider');
 		
-		
-		
 		if ( slider.length> 0 ) {
 			var tnsSlider = tns({
 				container: '.features-slider',
