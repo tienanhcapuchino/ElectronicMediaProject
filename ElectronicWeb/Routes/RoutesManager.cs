@@ -45,7 +45,8 @@ namespace ElectronicWeb.Routes
         public static string GetUerssWithPaging = $"{GetUrlPattern(EndPoint.User)}/getall";
         public static string UpdateRole = $"{GetUrlPattern(EndPoint.User)}/roleupdate";
         public static string Deactivate = $"{GetUrlPattern(EndPoint.User)}/deactivate";
-        public static string AddNewUser = $"{GetUrlPattern(EndPoint.User)}/register";
+        public static string AddNewUser = $"{GetUrlPattern(EndPoint.User)}/adduser";
+        public static string ExportUsers = $"{GetUrlPattern(EndPoint.User)}/export";
         #endregion
     }
 

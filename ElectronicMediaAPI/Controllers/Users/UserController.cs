@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core;
 using ElectronicMedia.Core.Repository.Entity;
@@ -136,7 +137,31 @@ namespace ElectronicMediaAPI.Controllers
                     Data = ex.ToString(),
                 };
             }
+        }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportUsers()
+        {
+            try
+            {
+                var dt = await _userService.ExportUsers();
+                using (XLWorkbook wb = new XLWorkbook())
+                {
+                    wb.Worksheets.Add(dt);
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        wb.ColumnWidth = 25;
+                        wb.SaveAs(stream);
+                        return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Export_Users.xlsx");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("error when export users to excel", ex);
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

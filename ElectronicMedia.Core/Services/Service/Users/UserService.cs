@@ -41,6 +41,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -59,10 +60,12 @@ namespace ElectronicMedia.Core.Services.Service
         private readonly SignInManager<UserIdentity> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
+        private readonly IExcelService<UserIdentity> _excelService;
         public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor,
            UserManager<UserIdentity> userManager, RoleManager<IdentityRole> roleManager,
             SignInManager<UserIdentity> signInManager,
-            IEmailService emailService)
+            IEmailService emailService, 
+            IExcelService<UserIdentity> excelService)
         {
             _context = context;
             _appSettings = optionsMonitor.CurrentValue;
@@ -70,6 +73,7 @@ namespace ElectronicMedia.Core.Services.Service
             _roleManager = roleManager;
             _signInManager = signInManager;
             _emailService = emailService;
+            _excelService = excelService;
         }
 
         public async Task<UserIdentity> GetByIdAsync(Guid id)
@@ -160,15 +164,29 @@ namespace ElectronicMedia.Core.Services.Service
             return await Task.FromResult(result);
         }
 
-        public Task<IEnumerable<UserIdentity>> GetAllAsync()
+        public async Task<IEnumerable<UserIdentity>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var result = await _userManager.Users.ToListAsync();
+            foreach (var user in result)
+            {
+                var department = await _context.Departments.FirstOrDefaultAsync(x => x.Id == user.DepartmentId);
+                if (department != null)
+                {
+                    user.Department = department;
+                }
+            }
+            return result;
         }
 
         public Task<List<UserIdentity>> GetUsersByIds(List<Guid> userIds)
         {
             throw new NotImplementedException();
         }
-
+        public async Task<DataTable> ExportUsers()
+        {
+            var users = (await GetAllAsync()).ToList();
+            var result = _excelService.ExportToExcel(users);
+            return result;
+        }
     }
 }
