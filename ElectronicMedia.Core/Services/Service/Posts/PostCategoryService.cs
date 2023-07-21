@@ -98,9 +98,18 @@ namespace ElectronicMedia.Core.Services.Service
             return await _context.PostCategories.SingleOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<List<PostCategory>> GetPostCateParent()
+        public async Task<IEnumerable<PostCategoryDto>> GetPostCateParent()
         {
-            return await _context.PostCategories.Where(x => x.ParentId == null).ToListAsync();
+            var categorys = await _context.PostCategories.Where(x => x.ParentId == null).ToListAsync();
+            var result = new List<PostCategoryDto>();
+            categorys.ForEach(parent =>
+            {
+                var category = parent.MapTo<PostCategoryDto>();
+                var chidrent = _context.PostCategories.Where(x => x.ParentId == parent.Id).ToList();
+                category.Childrens.AddRange(chidrent.MapToList<PostCategoryDto>());
+                result.Add(category);
+            });
+            return result;
         }
 
         public async Task<bool> Update(PostCategory entity, bool saveChange = true)

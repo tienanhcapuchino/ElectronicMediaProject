@@ -68,13 +68,13 @@ namespace ElectronicMediaAPI.Controllers
                 });
             }
         }
-        [HttpGet("category")]
+        [HttpGet("categoryParent")]
         //[Authorize(Roles = $"{UserRole.Admin},{UserRole.NormalUser}")]
-        public async Task<IActionResult> GetAllCate()
+        public async Task<IActionResult> GetAllCateParent()
         {
             try
             {
-                var result = await _postCategoryService.GetAllAsync();
+                var result = await _postCategoryService.GetPostCateParent();
                 return Ok(result);
             }
             catch (Exception e)
