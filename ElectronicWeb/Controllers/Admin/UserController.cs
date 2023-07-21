@@ -27,8 +27,14 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ElectronicMedia.Core;
+using ElectronicMedia.Core.Common;
+using ElectronicMedia.Core.Repository.Entity;
+using ElectronicWeb.Models;
+using ElectronicWeb.Routes;
 using ElectronicWeb.Service;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace ElectronicWeb.Controllers.Admin
 {
@@ -39,10 +45,61 @@ namespace ElectronicWeb.Controllers.Admin
         {
             _tokenService = tokenService;
         }
-        public IActionResult UserManager()
+        public IActionResult UserManager(int currentPage = 1)
         {
             var token = _tokenService.GetToken();
-            return View(token);
+            Request.Cookies.TryGetValue("user", out string tokenCookieModel);
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            //var tokenModel = JsonConvert.DeserializeObject<TokenOutputModel>(tokenCookieModel);
+            //if (tokenModel != null && tokenModel.exp >= DateTime.Now.Ticks)
+            //{
+            //    return Unauthorized();
+            //}
+            //if (tokenModel != null && tokenModel.role.Equals("Admin"))
+            //{
+            PageList<Post> pageRequest = null;
+            PageRequestBody pageRequestBody = new PageRequestBody()
+            {
+                Page = currentPage,
+                Top = 1,
+                Skip = 0,
+                SearchText = string.Empty,
+                SearchByColumn = new List<string>() { },
+                OrderBy = new PageRequestOrderBy()
+                {
+                    OrderByDesc = true,
+                    OrderByKeyWord = string.Empty,
+                },
+                Filter = new List<PageRequestFilter>
+                {
+                    new PageRequestFilter
+                    {
+                        ColumnName = "",
+                        IsNullValue = true,
+                        IncludeNullValue= true,
+                        Value = new List<string>()
+                    }
+
+                },
+                AdditionalFilters = new List<AdditionalFilter>
+                {
+                    new AdditionalFilter{}
+                },
+            };
+            string data = JsonConvert.SerializeObject(pageRequestBody);
+            string url = RoutesManager.GetUerssWithPaging;
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetUerssWithPaging, MethodAPI.POST, token, data);
+            if (respone.IsSuccessStatusCode)
+            {
+                var content = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                pageRequest = JsonConvert.DeserializeObject<PageList<Post>>(content);
+                return View(pageRequest);
+            }
+            //}
+            return View("Views/Account/Login.cshtml");
         }
     }
 }

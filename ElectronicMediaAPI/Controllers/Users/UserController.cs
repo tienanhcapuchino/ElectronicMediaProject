@@ -55,11 +55,11 @@ namespace ElectronicMediaAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("getall")]
-        public IActionResult GetAllUser(PageRequestBody requestBody)
+        public async Task<IActionResult> GetAllUser(PageRequestBody requestBody)
         {
             try
             {
-                var result = _userService.GetAllWithPaging(requestBody);
+                var result = await _userService.GetAllWithPaging(requestBody);
                 return new JsonResult(result);
             }
             catch (Exception ex)
