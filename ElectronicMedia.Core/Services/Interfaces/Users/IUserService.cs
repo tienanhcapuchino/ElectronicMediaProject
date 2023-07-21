@@ -46,5 +46,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<bool> UpdateUserProfile(Guid userId, UserProfileModel profile);
         Task<List<UserIdentity>> GetUsersByIds(List<Guid> userIds);
         Task<bool> UpdateRole(Guid userId, string roleType);
+        Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody);
     }
 }

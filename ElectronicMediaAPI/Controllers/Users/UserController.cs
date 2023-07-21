@@ -59,7 +59,7 @@ namespace ElectronicMediaAPI.Controllers
         {
             try
             {
-                var result = await _userService.GetAllWithPaging(requestBody);
+                var result = await _userService.GetAllWithPagingModels(requestBody);
                 return new JsonResult(result);
             }
             catch (Exception ex)

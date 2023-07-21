@@ -31,9 +31,10 @@
 @{
     Layout = "_AdminLayout";
 }
-@using ElectronicMedia.Core.Repository.Entity;
+@using ElectronicMedia.Core.Repository.Models;
 @using ElectronicWeb.Models;
 <h1>User management</h1>
+<a class="btn btn-primary">Add new user</a>
 <table class="table">
     <thead>
         <tr>
@@ -52,7 +53,7 @@
     </thead>
     <tbody>
         @{
-            foreach (UserIdentity item in Model.Values)
+            foreach (UsersModel item in Model.Values)
             {
                 <tr>
                     <td>@item.FullName</td>
@@ -62,12 +63,12 @@
                     <td>@item.Dob.ToString("dd/MM/yyyy")</td>
                     <td>
                         <form asp-controller="User" asp-action="ChangeRole">
-                            <select onchange="this.form.submit()">
-                                <option>UserNormal</option>
-                                <option>Writer</option>
-                                <option>Leader</option>
-                                <option>EditorDirector</option>
-                                <option>Admin</option>
+                            <select class="form-controll" onchange="this.form.submit()">
+                                <option class="form-controll text-success" value="@item.RoleName" selected="@(item.RoleName == "UserNormal")">UserNormal</option>
+                                <option class="form-controll text-black" value="@item.RoleName" selected="@(item.RoleName == "Writer")">Writer</option>
+                                <option class="form-controll text-primary" value="@item.RoleName" selected="@(item.RoleName == "Leader")">Leader</option>
+                                <option class="form-controll text-warning" value="@item.RoleName" selected="@(item.RoleName == "EditorDirector")">EditorDirector</option>
+                                <option class="form-controll text-info" value="@item.RoleName" selected="@(item.RoleName == "Admin")">Admin</option>
                             </select>
                         </form>
                     </td>
@@ -76,7 +77,7 @@
                         @{
                             if (item.IsActived)
                             {
-                                <p class="text text-success">Activate</p>
+                                <p class="text text-success">Active</p>
                             }
                             else
                             {
@@ -87,7 +88,21 @@
                     <td>@item.Gender</td>
                     <td>@item.Department?.Name</td>
                     <td>
-                        <a class="btn btn-primary" asp-controller="User" asp-action="DeactiveUser"></a>
+                        
+                        @{
+                            if (item.IsActived)
+                            {
+                                <a class="text-danger" asp-controller="User" asp-action="DeactiveUser">
+                                    Deactivate
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="text-success" asp-controller="User" asp-action="DeactiveUser">
+                                    Activate
+                                </a>
+                            }
+                        }
                     </td>
                 </tr>
             }

@@ -30,6 +30,7 @@
 using ElectronicMedia.Core;
 using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Repository.Models;
 using ElectronicWeb.Models;
 using ElectronicWeb.Routes;
 using ElectronicWeb.Service;
@@ -60,7 +61,7 @@ namespace ElectronicWeb.Controllers.Admin
             }
             if (tokenModel != null && tokenModel.RoleName.Equals("Admin"))
             {
-                PageList<UserIdentity> pageRequest = null;
+                PageList<UsersModel> pageRequest = null;
                 PageRequestBody pageRequestBody = new PageRequestBody()
                 {
                     Page = currentPage,
@@ -94,7 +95,7 @@ namespace ElectronicWeb.Controllers.Admin
                 if (respone.IsSuccessStatusCode)
                 {
                     var content = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                    pageRequest = JsonConvert.DeserializeObject<PageList<UserIdentity>>(content);
+                    pageRequest = JsonConvert.DeserializeObject<PageList<UsersModel>>(content);
                     return View(pageRequest);
                 }
             }
