@@ -53,27 +53,27 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            //var tokenModel = JsonConvert.DeserializeObject<TokenOutputModel>(tokenCookieModel);
-            //if (tokenModel != null && tokenModel.exp >= DateTime.Now.Ticks)
-            //{
-            //    return Unauthorized();
-            //}
-            //if (tokenModel != null && tokenModel.role.Equals("Admin"))
-            //{
-            PageList<Post> pageRequest = null;
-            PageRequestBody pageRequestBody = new PageRequestBody()
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel != null && tokenModel.ExpiredTime >= DateTime.Now.Ticks)
             {
-                Page = currentPage,
-                Top = 1,
-                Skip = 0,
-                SearchText = string.Empty,
-                SearchByColumn = new List<string>() { },
-                OrderBy = new PageRequestOrderBy()
+                return Unauthorized();
+            }
+            if (tokenModel != null && tokenModel.RoleName.Equals("Admin"))
+            {
+                PageList<UserIdentity> pageRequest = null;
+                PageRequestBody pageRequestBody = new PageRequestBody()
                 {
-                    OrderByDesc = true,
-                    OrderByKeyWord = string.Empty,
-                },
-                Filter = new List<PageRequestFilter>
+                    Page = currentPage,
+                    Top = 5,
+                    Skip = 0,
+                    SearchText = string.Empty,
+                    SearchByColumn = new List<string>() { },
+                    OrderBy = new PageRequestOrderBy()
+                    {
+                        OrderByDesc = true,
+                        OrderByKeyWord = string.Empty,
+                    },
+                    Filter = new List<PageRequestFilter>
                 {
                     new PageRequestFilter
                     {
@@ -84,22 +84,21 @@ namespace ElectronicWeb.Controllers.Admin
                     }
 
                 },
-                AdditionalFilters = new List<AdditionalFilter>
+                    AdditionalFilters = new List<AdditionalFilter>
                 {
                     new AdditionalFilter{}
                 },
-            };
-            string data = JsonConvert.SerializeObject(pageRequestBody);
-            string url = RoutesManager.GetUerssWithPaging;
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetUerssWithPaging, MethodAPI.POST, token, data);
-            if (respone.IsSuccessStatusCode)
-            {
-                var content = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                pageRequest = JsonConvert.DeserializeObject<PageList<Post>>(content);
-                return View(pageRequest);
+                };
+                string data = JsonConvert.SerializeObject(pageRequestBody);
+                HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetUerssWithPaging, MethodAPI.POST, token, data);
+                if (respone.IsSuccessStatusCode)
+                {
+                    var content = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    pageRequest = JsonConvert.DeserializeObject<PageList<UserIdentity>>(content);
+                    return View(pageRequest);
+                }
             }
-            //}
-            return View("Views/Account/Login.cshtml");
+            return Forbid();
         }
     }
 }
