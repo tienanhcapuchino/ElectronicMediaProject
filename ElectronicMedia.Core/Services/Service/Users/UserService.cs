@@ -34,6 +34,7 @@ using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using ElectronicMedia.Core.Services.Interfaces.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -57,15 +58,18 @@ namespace ElectronicMedia.Core.Services.Service
         private readonly UserManager<UserIdentity> _userManager;
         private readonly SignInManager<UserIdentity> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
         public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor,
            UserManager<UserIdentity> userManager, RoleManager<IdentityRole> roleManager,
-            SignInManager<UserIdentity> signInManager)
+            SignInManager<UserIdentity> signInManager,
+            IEmailService emailService)
         {
             _context = context;
             _appSettings = optionsMonitor.CurrentValue;
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _emailService = emailService;
         }
 
         public async Task<UserIdentity> GetByIdAsync(Guid id)
@@ -155,7 +159,6 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Update(user);
             return await Task.FromResult(result);
         }
-        #region private method
 
         public Task<IEnumerable<UserIdentity>> GetAllAsync()
         {
@@ -167,6 +170,5 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        #endregion
     }
 }

@@ -33,6 +33,7 @@ using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
+using ElectronicMedia.Core.Repository.Models.Email;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -171,6 +172,64 @@ namespace ElectronicMedia.Core.Services.Service
             _context.Users.Update(user);
             bool result = await _context.SaveChangesAsync() > 0;
             return result;
+        }
+        public async Task<APIResponeModel> AddNewUser(UserAddModel model)
+        {
+            APIResponeModel result = new APIResponeModel()
+            {
+                Code = 200,
+                IsSucceed = true,
+                Message = "add successfully!",
+                Data = model
+            };
+            string passwordGen = CommonService.GeneratePassword(8);
+            var entity = model.MapTo<UserIdentity>();
+            var resultAdd = await _userManager.CreateAsync(entity, passwordGen);
+            if (resultAdd.Succeeded)
+            {
+                if (await _roleManager.RoleExistsAsync(model.RoleName))
+                {
+                    await _userManager.AddToRoleAsync(entity, model.RoleName);
+                }
+                var emailModel = await GetEmailForAddUser(model, passwordGen);
+                await _emailService.SendEmailAsync(emailModel);
+            }
+            else
+            {
+                string errorMesage = "";
+                foreach (var error in resultAdd.Errors)
+                {
+                    errorMesage += error.Description;
+                }
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = errorMesage,
+                    IsSucceed = false
+                };
+            }
+            return result;
+        }
+
+        private async Task<EmailModel> GetEmailForAddUser(UserAddModel model, string password)
+        {
+            EmailModel result = new EmailModel();
+            List<string> emailTos = new List<string>();
+            emailTos.Add(model.Email);
+            result.Subject = "ADDED TO ELECTRONIC MEDIA ONLINE SERVICE";
+            result.Body = @$"<p><strong><em>Welcome to Electronic Media Online Service</em></strong></p>
+                            <p><strong><em>&nbsp;</em></strong></p>
+                            <p>You have been added to Electronic Media Online Service, below is your account&lsquo;s information.</p>
+                            <p><span style=""color: #993300;"">Email</span>: <a href=""{model.Email}"">{model.Email}</a></p>
+                            <p><span style=""color: #993300;"">Username</span>: <span style=""background-color: #ff9900;"">{model.Username}</span></p>
+                            <p><span style=""color: #993300;"">Password</span>: <span style=""color: #0000ff;""><em><u>{password} </u></em></span></p>
+                            <p><span style=""color: #993300;"">Your role</span>: <span style=""background-color: #ff9900;"">{model.RoleName}</span></p>
+                            <p>&nbsp;Please login to the website with your <strong><em>Username</em></strong> and <em><strong>Password</strong></em></p>
+                            <p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below: <a href=""mailto:tienanhcapuchino@gmail.com"">tienanhcapuchino@gmail.com</a></p>
+                            <p>This email is sent automatically, please don&rsquo;t reply.</p>
+                            <p><em>HAVE A GOOD EXPERIENCE.</em></p>";
+            result.To = emailTos;
+            return await Task.FromResult(result);
         }
     }
 }

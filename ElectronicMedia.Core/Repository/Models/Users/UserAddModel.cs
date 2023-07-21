@@ -27,32 +27,33 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-namespace ElectronicWeb.Routes
+using ElectronicMedia.Core.Common;
+using ElectronicMedia.Core.Repository.Entity;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ElectronicMedia.Core.Repository.Models
 {
-    public static class RoutesManager
+    public class UserAddModel
     {
-        private const string LocalHostDomain = "http://localhost:5243/api/";
-        public static string GetUrlPattern(EndPoint endpoint)
-        {
-            return LocalHostDomain  + endpoint;
-        }
-        #region post
-        public static string GetPostsWithPaging = $"{GetUrlPattern(EndPoint.Post)}/page";
-        public static string GetPostById = $"{GetUrlPattern(EndPoint.Post)}/";
-        #endregion
-
-        #region user
-        public static string GetUerssWithPaging = $"{GetUrlPattern(EndPoint.User)}/getall";
-        public static string UpdateRole = $"{GetUrlPattern(EndPoint.User)}/roleupdate";
-        public static string Deactivate = $"{GetUrlPattern(EndPoint.User)}/deactivate";
-        public static string AddNewUser = $"{GetUrlPattern(EndPoint.User)}/register";
-        #endregion
-    }
-
-    public enum EndPoint
-    {
-        Post,
-        User,
-        Category,
+        [Required]
+        public string FullName { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+        [Required]
+        public string Username { get; set; }
+        public DateTime Dob { get; set; }
+        [DefaultValue(Gender.Unknown)]
+        public Gender Gender { get; set; }
+        [Required]
+        public string PhoneNumber { get; set; }
+        [DefaultValue(UserRole.NormalUser)]
+        public string? RoleName { get; set; }
     }
 }
