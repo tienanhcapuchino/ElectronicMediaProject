@@ -27,11 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ElectronicMedia.Core.Repository.Entity;
 
 namespace ElectronicMedia.Core.Repository.Models
 {
@@ -39,6 +35,13 @@ namespace ElectronicMedia.Core.Repository.Models
     {
         public Guid? ParentId { get; set; }
         public string Name { get; set; }
+        public string? Description { get; set; }
+    }
+    public class PostCategoryDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public List<PostCategoryDto> Childrens { get; set; } = new List<PostCategoryDto>();
         public string? Description { get; set; }
     }
 }

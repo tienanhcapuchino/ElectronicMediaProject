@@ -65,6 +65,18 @@ function login(event) {
         }
     });
 }
+function logout(event) {
+    event.preventDefault();
+    document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    var token = getCookie("token")
+    if (token == null) {
+        window.location.href = "/";
+    }
+}
+function redirect(event) {
+    event.preventDefault();
+    window.location.href = "/account/login";
+}
 function setCookie(name, value, days) {
     var expires = "";
     if (days) {

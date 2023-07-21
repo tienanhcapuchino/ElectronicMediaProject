@@ -79,7 +79,7 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId == null ? null : src.ParentId))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.SubCategories, opt => opt.MapFrom(src => new List<PostCategory>()));
+                .ForMember(dest => dest.SubCategories, opt => opt.MapFrom(src => new List<PostCategory>())).ReverseMap();
             CreateMap<PostDetailModel, PostDetail>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.AuthorId))
@@ -87,6 +87,8 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.Liked));
             CreateMap<Post, PostViewModel>();
             CreateMap<Post, PostView>();
+            CreateMap<PostCategory, PostCategoryDto>();
+            
             #endregion
         }
     }
