@@ -77,6 +77,15 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<APIResponeModel> Login(UserLoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
+            if (user != null && !user.IsActived)
+            {
+                return new APIResponeModel()
+                {
+                    Code = 404,
+                    Message = "your account is deleted! Please try with another.",
+                    IsSucceed = false
+                };
+            }
             var result = new APIResponeModel
             {
                 Code = 404,
@@ -153,6 +162,15 @@ namespace ElectronicMedia.Core.Services.Service
             }
             await _userManager.AddToRoleAsync(userEntity, roleType);
             return true;
+        }
+        public async Task<bool> DeactivateOrActivateUser(bool isActive, Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return false;
+            user.IsActived = isActive;
+            _context.Users.Update(user);
+            bool result = await _context.SaveChangesAsync() > 0;
+            return result;
         }
     }
 }

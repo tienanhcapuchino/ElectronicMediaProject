@@ -59,6 +59,10 @@ namespace ElectronicMedia.Core.Common
                 HttpContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
                 respone = client.PostAsync(url, content).GetAwaiter().GetResult();
             }
+            else if (string.IsNullOrEmpty(jsonData) && method == MethodAPI.PUT)
+            {
+                respone = client.PutAsync(url, null).GetAwaiter().GetResult();
+            }
             else if (!string.IsNullOrEmpty(jsonData) && method == MethodAPI.PUT)
             {
                 HttpContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
