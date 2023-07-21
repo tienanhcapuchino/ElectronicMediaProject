@@ -259,10 +259,10 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Update(post);
             return result;
         }
-
-        public async Task<List<Post>> GetPostByCateId(Guid cateId)
+        public async Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId,int top)
         {
-            return await _context.Posts.Where(x => x.CategoryId.Equals(cateId)).ToListAsync();
+            var post = await _context.Posts.Include(x => x.User).Where(x => x.CategoryId == cateId && x.Status == PostStatusModel.Published).OrderBy(y => y.PublishedDate).Take(top).ToListAsync();
+            return post.MapToList<PostView>();
         }
         #endregion
     }

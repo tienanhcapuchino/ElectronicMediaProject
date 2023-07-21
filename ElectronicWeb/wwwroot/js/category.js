@@ -6,7 +6,6 @@
         dataType: 'json',
         contentType: 'application/json',
         success: function (response) {
-            console.log(response)
             const $navigationMenu = $("#parents");
             response.forEach(item => {
                 const $li = $("<li>");
@@ -31,7 +30,11 @@
                 $log.append($logIn)
             }
             $navigationMenu.append($log);
-            
+            generatePostsEntrySection(response[0]);
+            generatePostsEntrySectionSmall(response[1]);
+            generatePostsEntrySectionSecond(response[2]);
+            generateSectionPostsEntryList(response[3]);
+            generateSectionTravel(response[4]);
         },
         error: function (xhr, status, error) {
             // Xử lý lỗi

@@ -92,7 +92,10 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
                 .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.Liked));
             CreateMap<Post, PostViewModel>();
-            CreateMap<Post, PostView>();
+            CreateMap<Post, PostView>()
+                .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.ImageUser, opt => opt.MapFrom(src => src.User.Image))
+                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.User.UserName));
             CreateMap<PostCategory, PostCategoryDto>();
             
             #endregion

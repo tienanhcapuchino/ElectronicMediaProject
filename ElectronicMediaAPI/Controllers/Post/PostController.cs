@@ -224,11 +224,11 @@ namespace ElectronicMediaAPI.Controllers.Post
         }
 
         [HttpGet("/category/{cateId}")]
-        public async Task<IActionResult> GetPostByCateId(Guid cateId)
+        public async Task<IActionResult> GetPostByCateId(Guid cateId,int top)
         {
             try
             {
-                var result = await _postService.GetPostByCateId(cateId);
+                var result = await _postService.GetPostByCateId(cateId,top);
                 return Ok(result);
             }
             catch (Exception e)
