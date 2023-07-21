@@ -111,6 +111,14 @@ namespace ElectronicMedia.Core.Services.Service
             });
             return result;
         }
+        public async Task<List<PostCategory>> GetSubPostCateByParent(Guid parentId)
+        {
+            return await _context.PostCategories.Where(x => x.ParentId ==  parentId).ToListAsync();
+        }
+        public async Task<List<PostCategory>> GetAllSubCategory()
+        {
+            return await _context.PostCategories.Where(x => x.ParentId != null).ToListAsync();
+        }
 
         public async Task<bool> Update(PostCategory entity, bool saveChange = true)
         {
@@ -135,6 +143,10 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<IEnumerable<PostCategory>> GetAllAsync()
         {
             return await _context.PostCategories.ToListAsync();
+        }
+        public async Task<List<PostCategory>> GetCategoryParent()
+        {
+            return await _context.PostCategories.Where(x => x.ParentId == null).ToListAsync();
         }
     }
 }

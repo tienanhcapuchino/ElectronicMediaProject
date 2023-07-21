@@ -39,6 +39,7 @@ namespace ElectronicWeb.Routes
         #region post
         public static string GetPostsWithPaging = $"{GetUrlPattern(EndPoint.Post)}/page";
         public static string GetPostById = $"{GetUrlPattern(EndPoint.Post)}/";
+        public static string UpdatePost = $"{GetUrlPattern(EndPoint.Post)}/update";
         #endregion
 
         #region user
@@ -54,6 +55,11 @@ namespace ElectronicWeb.Routes
         public static string AddDepartment = $"{GetUrlPattern(EndPoint.Department)}/add";
         public static string UpdateDepartment = $"{GetUrlPattern(EndPoint.Department)}/update";
         public static string DeleteDepartment = $"{GetUrlPattern(EndPoint.Department)}/delete";
+        #endregion
+
+        #region category
+        public static string GetAllCategory = $"{GetUrlPattern(EndPoint.Category)}/category";
+        public static string GetAllSubCategory = $"{GetUrlPattern(EndPoint.Category)}/subcategory/getall";
         #endregion
     }
 

@@ -76,6 +76,7 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
+
         public async Task<bool> CreatePost(PostModel post)
         {
             var categoryIds = await _context.PostCategories.Select(c => c.Id).ToListAsync();
@@ -91,7 +92,21 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Add(entity);
             return result;
         }
+        public async Task<bool> UpdatePost(PostViewModel post)
+        {
+            var categoryIds = await _context.PostCategories.Select(c => c.Id).ToListAsync();
+            if (string.IsNullOrEmpty(post.Title)
+                || string.IsNullOrEmpty(post.Content)
+                || categoryIds == null || !categoryIds.Any()
+                || !categoryIds.Contains(post.CategoryId))
 
+            {
+                return false;
+            }
+            var entity = post.MapTo<Post>();
+            bool result = await Update(entity);
+            return result;
+        }
         public async Task<bool> Delete(Guid id, bool saveChange = true)
         {
             bool result = true;
@@ -120,19 +135,21 @@ namespace ElectronicMedia.Core.Services.Service
                 var post = await _context.Posts.Where(y => y.Status == PostStatusModel.Published).OrderBy(x => x.CreatedDate).Take(5).ToListAsync();
                 return post.MapToList<PostView>();
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw;
             }
-            
+
         }
-        public async Task<PagedList<Post>> GetAllWithPaging(PageRequestBody requestBody)
+        public async Task<PagedList<PostViewModel>> GetAllWithPaging(PageRequestBody requestBody)
         {
             try
             {
-                var posts = await _context.Posts.ToListAsync();
-                var result = QueryData<Post>.QueryForModel(requestBody, posts).ToList();
-                return PagedList<Post>.ToPagedList(result, requestBody.Page, requestBody.Top);
+                var posts = await _context.Posts.Include(x => x.User).ToListAsync();
+                var postModels = posts.MapTo<List<PostViewModel>>();
+                var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
+                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
             }
             catch (Exception ex)
             {
@@ -142,7 +159,7 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<Post> GetByIdAsync(Guid id)
         {
-            var post = await _context.Posts.Where(x => x.Id == id).SingleOrDefaultAsync();
+            var post = await _context.Posts.Include(x => x.User).Where(x => x.Id == id).SingleOrDefaultAsync();
             return post;
         }
         public async Task<PostViewModel> GetById(Guid id)
@@ -259,11 +276,22 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Update(post);
             return result;
         }
-        public async Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId,int top)
+        public async Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId, int top)
         {
             var post = await _context.Posts.Include(x => x.User).Where(x => x.CategoryId == cateId && x.Status == PostStatusModel.Published).OrderBy(y => y.PublishedDate).Take(top).ToListAsync();
             return post.MapToList<PostView>();
         }
+
+        Task<PagedList<Post>> ICoreRepository<Post>.GetAllWithPaging(PageRequestBody requestBody)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Post>> GetPostByCateId(Guid cateId)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

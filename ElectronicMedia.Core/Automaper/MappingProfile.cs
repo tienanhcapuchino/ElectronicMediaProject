@@ -102,6 +102,9 @@ namespace ElectronicMedia.Core.Automaper
 
             #region departments
             CreateMap<Department, DepartmentModel>().ReverseMap();
+            CreateMap<PostViewModel, Post>().ReverseMap()
+            .ForMember(dest => dest.AuthorName, otp => otp.MapFrom(src => src.User.UserName));
+                //.ForMember(dest => dest.Image, otp => otp.MapFrom(src => "data:image/jpeg;base64," + CommonFunct.Decode(src.Image)));
             #endregion
         }
     }

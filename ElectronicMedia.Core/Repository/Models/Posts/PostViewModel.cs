@@ -42,6 +42,7 @@ namespace ElectronicMedia.Core.Repository.Models
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
+        public string? AuthorName { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Content { get; set; }
@@ -53,7 +54,7 @@ namespace ElectronicMedia.Core.Repository.Models
         public double? Rate { get; set; }
         public int Like { get; set; }
         public int Dislike { get; set; }
-        public string Image { get; set; }
+        public string? Image { get; set; }
         public PostStatusModel Status { get; set; }
     }
     public class PostView

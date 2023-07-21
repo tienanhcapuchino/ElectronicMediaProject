@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using AutoMapper;
 using ClosedXML.Excel;
 using ElectronicMedia.Core;
 using ElectronicMedia.Core.Common;
@@ -51,7 +52,6 @@ namespace ElectronicMediaAPI.Controllers.Post
         {
             _postService = postService;
             _fileStorageService = fileStorageService;
-            
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPostById(Guid id)
@@ -237,8 +237,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
         [HttpGet("newPost")]
-        public async Task<IActionResult> GetNewPost()
-        {
+        public async Task<IActionResult> GetNewPost() {
             try
             {
                 var result = await _postService.GetNewPost();
@@ -251,8 +250,46 @@ namespace ElectronicMediaAPI.Controllers.Post
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message
                 });
+
             }
         }
+
+        [HttpPost("update")]
+        public async Task<APIResponeModel> UpdatePost([FromBody] PostViewModel model)
+            {
+                try
+                {
+                    if (await _postService.UpdatePost(model))
+                    {
+
+                        return new APIResponeModel()
+                        {
+                            Code = 200,
+                            Message = "OK",
+                            IsSucceed = true,
+                            Data = model
+                        };
+                    }
+                    else
+                    {
+                        return new APIResponeModel()
+                        {
+                            Code = 400,
+                            IsSucceed = false,
+                            Message = "update failed"
+                        };
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("error when update post", ex);
+                    throw;
+
+                }
+
+            } 
+        }
     }
-}
+
 

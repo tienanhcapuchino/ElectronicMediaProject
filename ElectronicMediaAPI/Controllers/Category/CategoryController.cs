@@ -68,6 +68,20 @@ namespace ElectronicMediaAPI.Controllers
                 });
             }
         }
+        [HttpGet("category")]
+        //[Authorize(Roles = $"{UserRole.Admin},{UserRole.NormalUser}")]
+        public async Task<IActionResult> GetAllCate()
+        {
+            try
+            {
+                var result = await _postCategoryService.GetCategoryParent();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
         [HttpGet("categoryParent")]
         //[Authorize(Roles = $"{UserRole.Admin},{UserRole.NormalUser}")]
         public async Task<IActionResult> GetAllCateParent()
@@ -82,7 +96,33 @@ namespace ElectronicMediaAPI.Controllers
                 return BadRequest(e.ToString());
             }
         }
-
+        [HttpGet("subcategory/getall")]
+        //[Authorize(Roles = $"{UserRole.Admin},{UserRole.NormalUser}")]
+        public async Task<IActionResult> GetAllCategory()
+        {
+            try
+            {
+                var result = await _postCategoryService.GetAllSubCategory();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+        [HttpGet("subcategory/{parentId}")]
+        public async Task<IActionResult> GetAllSubCategory(Guid parentId)
+        {
+            try
+            {
+                var result = await _postCategoryService.GetSubPostCateByParent(parentId);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
         // GET api/<CategoryController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)

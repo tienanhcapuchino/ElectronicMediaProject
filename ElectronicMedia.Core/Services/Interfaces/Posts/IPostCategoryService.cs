@@ -42,5 +42,9 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<bool> CreatePostCate(PostCategoryModel model);
         Task<bool> UpdatePostCate(Guid id, PostCategoryModel model);
         Task<IEnumerable<PostCategoryDto>> GetPostCateParent();
+        Task<List<PostCategory>> GetSubPostCateByParent(Guid parentId);
+        Task<List<PostCategory>> GetAllSubCategory();
+        Task<List<PostCategory>> GetCategoryParent();
+
     }
 }
