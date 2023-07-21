@@ -17,7 +17,6 @@
             if (response.isSucceed) {
 
                 var serializedtoken = JSON.stringify(response.data);
-                $.cookie("token", serializedtoken);
                 setCookie("token", serializedtoken, 1);
                 var token = getCookie("token")
                 var user = decodeToken(token)

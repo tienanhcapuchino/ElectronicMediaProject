@@ -77,22 +77,25 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<APIResponeModel> Login(UserLoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-            var result = new APIResponeModel();
-
-            if (user == null)
+            var result = new APIResponeModel
             {
-                result.Code = 404;
-                result.Message = "Username or password is not correct!";
-                result.IsSucceed = false;
-            }
-            else
+                Code = 404,
+                Message = "Username or password is not correct!",
+                IsSucceed = false
+            };
+            var loginResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: true);
+            if (loginResult.Succeeded)
             {
-                var loginResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: true);
-
                 result.Code = 200;
                 result.Message = "Login successfully!";
                 result.IsSucceed = true;
                 result.Data = await GenerateToken(user);
+            }
+            else if (loginResult.IsLockedOut)
+            {
+                result.Code = 400;
+                result.Message = "Your account is loocked!";
+                result.IsSucceed = false;
             }
             return result;
         }
