@@ -31,6 +31,7 @@ using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,5 +50,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody);
         Task<bool> DeactivateOrActivateUser(bool isActive, Guid userId);
         Task<APIResponeModel> AddNewUser(UserAddModel model);
+        Task<DataTable> ExportUsers();
     }
 }

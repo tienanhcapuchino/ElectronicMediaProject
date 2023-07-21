@@ -96,6 +96,10 @@ namespace ElectronicWeb.Controllers.Admin
                 {
                     var content = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     pageRequest = JsonConvert.DeserializeObject<PageList<UsersModel>>(content);
+                    if (TempData["AddUserSuccess"] != null)
+                    {
+                        ViewBag.AddSuccess = TempData["AddUserSuccess"] as string;
+                    }
                     return View(pageRequest);
                 }
             }
@@ -139,15 +143,37 @@ namespace ElectronicWeb.Controllers.Admin
             return View("Views/User/Add.cshtml");
         }
 
-        public IActionResult DoAdd(UserRegisterModel user)
+        public IActionResult DoAdd(UserAddModel user)
         {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
             var jsonData = JsonConvert.SerializeObject(user);
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.AddNewUser, MethodAPI.POST, "");
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.AddNewUser, MethodAPI.POST, token, jsonData);
             if (respone.IsSuccessStatusCode)
             {
+                TempData["AddUserSuccess"] = "Add successfully";
                 return RedirectToAction("UserManager");
             }
             return BadRequest();
+        }
+        public IActionResult DownloadExcel()
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.ExportUsers, MethodAPI.GET, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                byte[] fileContent = respone.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                string fileName = "Export_Users.xlsx";
+                return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            return Content("Error when dowload excel!");
         }
     }
 }

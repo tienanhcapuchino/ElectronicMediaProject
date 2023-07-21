@@ -113,6 +113,7 @@ namespace ElectronicMediaAPI
             services.AddTransient<IEmailTemplateService, EmailTemplateService>();
             services.AddTransient<IExcelService<Post>, PostExcelService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IExcelService<UserIdentity>, UserExcelService>();
             #endregion
 
             #region data upgrade service

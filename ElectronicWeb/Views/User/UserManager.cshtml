@@ -34,7 +34,14 @@
 @using ElectronicMedia.Core.Repository.Models;
 @using ElectronicWeb.Models;
 <h1>User management</h1>
-<a class="btn btn-primary">Add new user</a>
+@{
+    if (ViewBag.AddSuccess != null)
+    {
+        <p class="text-success">@ViewBag.AddSuccess</p>
+    }
+}
+<a class="btn btn-primary" asp-controller="User" asp-action="AddUser">Add new user</a>
+@Html.ActionLink("Export to excel", "DownloadExcel", "User", null, new { @class = "btn btn-primary" })
 <table class="table">
     <thead>
         <tr>
