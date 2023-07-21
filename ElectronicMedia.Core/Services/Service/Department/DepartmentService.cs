@@ -27,9 +27,12 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ElectronicMedia.Core.Automaper;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -43,10 +46,14 @@ namespace ElectronicMedia.Core.Services.Service
     {
         private readonly IUserService _userService;
         private readonly ElectronicMediaDbContext _dbContext;
-        public DepartmentService(IUserService userService, ElectronicMediaDbContext dbContext)
+        private readonly UserManager<UserIdentity> _userManager;
+        public DepartmentService(IUserService userService, 
+            ElectronicMediaDbContext dbContext,
+            UserManager<UserIdentity> userManager)
         {
             _userService = userService;
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public async Task<bool> Add(Department entity, bool saveChange = true)
@@ -58,6 +65,40 @@ namespace ElectronicMedia.Core.Services.Service
                 result = await _dbContext.SaveChangesAsync() > 0;
             }
             return await Task.FromResult(result);
+        }
+
+        public async Task<APIResponeModel> AddDepartment(DepartmentModel department)
+        {
+            APIResponeModel result = new APIResponeModel()
+            {
+                Code = 200,
+                Message = "Add success",
+                Data = department,
+                IsSucceed = true
+            };
+            if (department == null || string.IsNullOrEmpty(department.Name))
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = "Cannot leave name is empty",
+                    Data = department,
+                    IsSucceed = false
+                };
+            }
+            if (await IsDuplicateName(department.Name))
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = "Department name is already exist!",
+                    Data = department,
+                    IsSucceed = false
+                };
+            }
+            var entity = department.MapTo<Department>();
+            await Add(entity);
+            return result;
         }
 
         public async Task<bool> AssignLeader(Guid depId, Guid leaderId)
@@ -97,7 +138,7 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<bool> Delete(Guid id, bool saveChange = true)
         {
-            var users = await _dbContext.Users.Where(x => x.DepartmentId == id).ToListAsync();
+            var users = await _userManager.Users.Where(x => x.DepartmentId == id).ToListAsync();
             if (users != null && users.Any())
             {
                 foreach (var item in users)
@@ -107,7 +148,8 @@ namespace ElectronicMedia.Core.Services.Service
                 }
             }
             bool result = true;
-            _dbContext.Departments.Remove(await GetByIdAsync(id));
+            var dep = await GetByIdAsync(id);
+            _dbContext.Departments.Remove(dep);
             if (saveChange) result = await _dbContext.SaveChangesAsync() > 0;
             return result;
         }
@@ -124,10 +166,22 @@ namespace ElectronicMedia.Core.Services.Service
             return PagedList<Department>.ToPagedList(result, requestBody.Page, requestBody.Top);
         }
 
+        public async Task<PagedList<DepartmentModel>> GetAllWithPagingModel(PageRequestBody requestBody)
+        {
+            var departments = await _dbContext.Departments.ToListAsync();
+            var result = departments.MapToList<DepartmentModel>();
+            return PagedList<DepartmentModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
+        }
+
         public async Task<Department> GetByIdAsync(Guid id)
         {
-            var result = await _dbContext.Departments.FirstOrDefaultAsync(x => x.Id == id);
+            var result = await _dbContext.Departments.Include(x => x.Members).FirstOrDefaultAsync(x => x.Id == id);
             return result;
+        }
+
+        public Task<APIResponeModel> KickMember(Guid departmentId, string userId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<bool> Update(Department entity, bool saveChange = true)
@@ -140,5 +194,62 @@ namespace ElectronicMedia.Core.Services.Service
             }
             return await Task.FromResult(result);
         }
+
+        public async Task<APIResponeModel> UpdateDepartment(DepartmentModel department)
+        {
+
+            APIResponeModel result = new APIResponeModel()
+            {
+                Code = 200,
+                Message = "update success",
+                Data = department,
+                IsSucceed = true
+            };
+            if (department == null || string.IsNullOrEmpty(department.Name))
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = "Cannot leave name is empty",
+                    Data = department,
+                    IsSucceed = false
+                };
+            }
+            if (await IsDuplicateNameUdate(department.Id, department.Name))
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = "Department name is already exist!",
+                    Data = department,
+                    IsSucceed = false
+                };
+            }
+            var entity = department.MapTo<Department>();
+            await Update(entity, false);
+            await _dbContext.SaveChangesAsync();
+            return result;
+        }
+
+        #region private method
+        private async Task<bool> IsDuplicateName(string name)
+        {
+            var department = await _dbContext.Departments.Where(x => x.Name.Equals(name)).FirstOrDefaultAsync();
+            if (department != null)
+            {
+                return true;
+            }
+            return false;
+        }
+        private async Task<bool> IsDuplicateNameUdate(Guid depId, string name)
+        {
+            var department = await _dbContext.Departments.Where(x => x.Id != depId && x.Name.Equals(name)).FirstOrDefaultAsync();
+            if (department != null)
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
     }
 }

@@ -1,0 +1,115 @@
+﻿@*
+ /*********************************************************************
+ *
+ * PROPRIETARY and CONFIDENTIAL
+ *
+ * This is licensed from, and is trade secret of:
+ *
+ *          Group 10 - PRN231 - SU23
+ *          FPT University, Education and Training zone
+ *          Hoa Lac Hi-tech Park, Km29, Thang Long Highway
+ *          Ha Noi, Viet Nam
+ *
+ * Refer to your License Agreement for restrictions on use,
+ * duplication, or disclosure
+ *
+ * RESTRICTED RIGHTS LEGEND
+ *
+ * Use, duplication or disclosure is the
+ * subject to restriction in Articles 736 and 738 of the
+ * 2005 Civil Code, the Intellectual Property Law and Decree
+ * No. 85/2011/ND-CP amending and supplementing a number of
+ * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
+ *
+ *
+ * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
+ *
+ * Unpublished - All rights reserved under the copyright laws
+ * of the Government of Viet Nam
+*********************************************************************/
+*@
+@{
+    Layout = "_AdminLayout";
+}
+@using ElectronicMedia.Core.Repository.Models;
+
+<a class="btn btn-primary">Create department</a>
+@{
+    if (ViewBag.DeleteSuccess != null)
+    {
+        <p class="text-success">@ViewBag.DeleteSuccess</p>
+    }
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (DepartmentModel dep in Model.Values)
+            {
+                <tr>
+                    <td>@dep.Name</td>
+                    <td>@dep.Description</td>
+                    <td>
+                        <a class="btn btn-primary">Update</a>
+                        <a asp-action="Delete" asp-route-depId="@dep.Id" asp-controller="Department" class="btn btn-primary">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<div>
+    @if (Model.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-center">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Department" asp-action="Index" asp-route-currentPage="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" aria-label="Previous" asp-controller="Department" asp-action="Index" asp-route-currentPage="@(Model.CurrentPage -1)"> <span aria-hidden="true">&laquo;</span></a>
+                </li>
+            }
+            @{
+                int start = Model.CurrentPage - 5;
+                int end = Model.CurrentPage + 4;
+                if (start <= 0)
+                {
+                    end = end - (start - 1);
+                    start = 1;
+                }
+                if (end > Model.TotalPages)
+                {
+                    end = Model.TotalPages;
+                    if (end > 10)
+                    {
+                        start = end - 9;
+                    }
+                }
+            }
+            @for (int i = start; i <= end; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage?"active":"")">
+                    <a class="page-link" asp-controller="Department" asp-action="Index" asp-route-currentPage="@i">@i</a>
+                </li>
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" aria-label="Next" asp-controller="Department" asp-action="Index" asp-route-currentPage="@(Model.CurrentPage + 1)"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Department" asp-action="Index" asp-route-currentPage="@(Model.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+</div>

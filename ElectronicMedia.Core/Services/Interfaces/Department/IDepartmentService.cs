@@ -28,6 +28,7 @@
 *********************************************************************/
 
 using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Repository.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,5 +41,9 @@ namespace ElectronicMedia.Core.Services.Interfaces
     {
         Task<bool> AssignMemberToDepartment(Guid depId, List<Guid> membersId);
         Task<bool> AssignLeader(Guid depId, Guid leaderId);
+        Task<APIResponeModel> AddDepartment(DepartmentModel department);
+        Task<APIResponeModel> UpdateDepartment(DepartmentModel department);
+        Task<APIResponeModel> KickMember(Guid departmentId, string userId);
+        Task<PagedList<DepartmentModel>> GetAllWithPagingModel(PageRequestBody requestBody);
     }
 }
