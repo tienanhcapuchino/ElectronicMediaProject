@@ -52,6 +52,9 @@ namespace ElectronicMedia.Core.Automaper
             CreateMap<UserIdentity, UsersModel>()
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
+            CreateMap<UserAddModel, UserIdentity>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true));
             #endregion
 
             #region comments

@@ -61,7 +61,7 @@ namespace ElectronicMedia.Core.Services.Service.Email
 
                 emailMessage.Subject = emailModel.Subject;
                 BodyBuilder bodyBuilder = new BodyBuilder();
-                bodyBuilder.TextBody = emailModel.Body;
+                bodyBuilder.HtmlBody = emailModel.Body;
                 emailMessage.Body = bodyBuilder.ToMessageBody();
                 using (var mailClient = new SmtpClient())
                 {

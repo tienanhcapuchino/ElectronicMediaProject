@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core.Repository.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -140,6 +141,41 @@ namespace ElectronicMediaAPI.Controllers
                 {
                     Data = ex.ToString(),
                     Message = ex.Message,
+                    IsSucceed = false,
+                    Code = 400
+                };
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("adduser")]
+        public async Task<APIResponeModel> AddNewUser([FromBody] UserAddModel userModel)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                         .Select(e => e.ErrorMessage)
+                                         .ToList();
+                    return new APIResponeModel()
+                    {
+                        Code = 400,
+                        Data = errors,
+                        IsSucceed = false,
+                        Message = string.Join(";", errors)
+                    };
+                }
+                var result = await _userService.AddNewUser(userModel);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error when add new user", ex);
+                return new APIResponeModel()
+                {
+                    Data = userModel,
+                    Message = ex.ToString(),
                     IsSucceed = false,
                     Code = 400
                 };

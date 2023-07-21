@@ -32,6 +32,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,7 +41,9 @@ namespace ElectronicMedia.Core.Common.Extension
     public static class CommonService
     {
         public static int memorySize = 1024;
-        public static int iterations = 10;
+        public static int iterations = 10; 
+        private static Random rng = new Random();
+
         public static byte[] InitAvatarUser()
         {
             try
@@ -133,6 +136,38 @@ namespace ElectronicMedia.Core.Common.Extension
             Array.Clear(salt, 0, salt.Length);
             Array.Clear(argon2.GetBytes(memorySize), 0, argon2.GetBytes(memorySize).Length);
             return true;
+        }
+        public static string GeneratePassword(int length)
+        {
+            const string lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+            const string uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string numericChars = "0123456789";
+            const string allChars = uppercaseChars + lowercaseChars + numericChars;
+
+            char[] password = new char[length];
+            int charIndex;
+
+            // Đảm bảo có ít nhất một chữ hoa, một chữ thường và một số trong mật khẩu
+            password[0] = uppercaseChars[rng.Next(uppercaseChars.Length)];
+            password[1] = lowercaseChars[rng.Next(lowercaseChars.Length)];
+            password[2] = numericChars[rng.Next(numericChars.Length)];
+
+            // Sinh các ký tự ngẫu nhiên cho các vị trí còn lại trong mật khẩu
+            for (int i = 3; i < length; i++)
+            {
+                password[i] = allChars[rng.Next(allChars.Length)];
+            }
+
+            // Trộn ngẫu nhiên các ký tự trong mật khẩu
+            for (int i = length - 1; i > 0; i--)
+            {
+                charIndex = rng.Next(i + 1);
+                char temp = password[i];
+                password[i] = password[charIndex];
+                password[charIndex] = temp;
+            }
+
+            return new string(password);
         }
     }
 }

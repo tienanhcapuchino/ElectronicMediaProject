@@ -116,8 +116,8 @@ namespace ElectronicWeb.Controllers.Admin
                 return RedirectToAction("UserManager");
             }
             return BadRequest();
-        } 
-        
+        }
+
         public IActionResult DeactiveUser(Guid id, bool isActive)
         {
             var token = _tokenService.GetToken();
@@ -127,6 +127,22 @@ namespace ElectronicWeb.Controllers.Admin
             }
             string url = $"{RoutesManager.Deactivate}/{id}?isActive={isActive}";
             HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.PUT, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                return RedirectToAction("UserManager");
+            }
+            return BadRequest();
+        }
+
+        public IActionResult AddUser()
+        {
+            return View("Views/User/Add.cshtml");
+        }
+
+        public IActionResult DoAdd(UserRegisterModel user)
+        {
+            var jsonData = JsonConvert.SerializeObject(user);
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.AddNewUser, MethodAPI.POST, "");
             if (respone.IsSuccessStatusCode)
             {
                 return RedirectToAction("UserManager");
