@@ -34,6 +34,6 @@ namespace ElectronicWeb.Service
     public interface ITokenService
     {
         string GetToken();
-        TokenOutputModel GetTokenModel();
+        TokenUIModel GetTokenModelUI(string token);
     }
 }

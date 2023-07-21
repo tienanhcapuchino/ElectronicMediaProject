@@ -30,8 +30,10 @@
 
 using ElectronicWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Ocsp;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ElectronicWeb.Service
 {
@@ -45,18 +47,39 @@ namespace ElectronicWeb.Service
         public string GetToken()
         {
             var token = _contextAccessor.HttpContext.Request.Cookies["token"];
+            if (!string.IsNullOrEmpty(token))
+                token = token.Trim('"');
             return token;
         }
-
-        public TokenOutputModel GetTokenModel()
+        
+        public TokenUIModel GetTokenModelUI(string token)
         {
-            var userToken = _contextAccessor.HttpContext.Request.Cookies["user"];
-            if (!string.IsNullOrEmpty(userToken))
+            if (!string.IsNullOrEmpty(token))
             {
-                var modelResult = JsonConvert.DeserializeObject<TokenOutputModel>(userToken);
-                if (modelResult != null)
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+                if (jwtToken != null)
                 {
-                    return modelResult;
+                    var claims = jwtToken.Claims.ToList();
+                    var expTime = claims.Where(c => c.Type.Equals("exp")).FirstOrDefault().Value;
+                    var roleClaim = claims.Where(c => c.Type.Equals("role")).FirstOrDefault().Value;
+                    var claimMail = claims.Where(c => c.Type.Equals("email")).FirstOrDefault().Value;
+                    var claimUsername = claims.Where(c => c.Type.Equals("unique_name")).FirstOrDefault().Value;
+                    long expDate = long.Parse(expTime);
+                    TokenUIModel result = new TokenUIModel()
+                    {
+                        Email = claimMail,
+                        ExpiredTime = expDate,
+                        RoleName = roleClaim,
+                        Username = claimUsername,
+                    };
+
+                    var userIdClaims = claims.Where(c => c.Type.Equals("UserId")).FirstOrDefault();
+                    if (userIdClaims != null)
+                    {
+                        result.UserId = userIdClaims.Value;
+                    }
+                    return result;
                 }
             }
             return null;

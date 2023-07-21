@@ -40,4 +40,12 @@ namespace ElectronicWeb.Models
         public long exp { get; set; }
         public long iat { get; set; }
     }
+    public class TokenUIModel
+    {
+        public string Email { get; set; }
+        public string Username { get; set; }
+        public long ExpiredTime { get; set; }
+        public string RoleName { get; set; }
+        public string UserId { get; set; }
+    }
 }

@@ -19,8 +19,6 @@
                 var serializedtoken = JSON.stringify(response.data);
                 setCookie("token", serializedtoken, 1);
                 var token = getCookie("token")
-                var user = decodeToken(token)
-                setCookie("user", JSON.stringify(user), 1);
 
                 var allowedRoles = ["Leader", "EditorDirector", "Admin", "Writer"];
                 if (allowedRoles.includes(token.role)) {
@@ -29,7 +27,7 @@
                     window.location.href = "/";
                 }
             } else {
-                alert("Login False!")
+                alert("Login failed!")
             }
         },
         error: function (xhr, status, error) {
