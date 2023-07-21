@@ -101,7 +101,7 @@ namespace ElectronicMedia.Core.Automaper
             #endregion
 
             #region departments
-            CreateMap<Department, DepartmentModel>();
+            CreateMap<Department, DepartmentModel>().ReverseMap();
             #endregion
         }
     }

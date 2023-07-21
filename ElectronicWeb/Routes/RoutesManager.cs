@@ -48,6 +48,13 @@ namespace ElectronicWeb.Routes
         public static string AddNewUser = $"{GetUrlPattern(EndPoint.User)}/adduser";
         public static string ExportUsers = $"{GetUrlPattern(EndPoint.User)}/export";
         #endregion
+
+        #region department
+        public static string GetAllDepartments = $"{GetUrlPattern(EndPoint.Department)}/page";
+        public static string AddDepartment = $"{GetUrlPattern(EndPoint.Department)}/add";
+        public static string UpdateDepartment = $"{GetUrlPattern(EndPoint.Department)}/update";
+        public static string DeleteDepartment = $"{GetUrlPattern(EndPoint.Department)}/delete";
+        #endregion
     }
 
     public enum EndPoint
@@ -55,5 +62,6 @@ namespace ElectronicWeb.Routes
         Post,
         User,
         Category,
+        Department,
     }
 }
