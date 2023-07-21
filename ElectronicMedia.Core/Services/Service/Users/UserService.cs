@@ -86,12 +86,29 @@ namespace ElectronicMedia.Core.Services.Service
             //if (profile == null) throw new Exception("cannot map profile from user");
             return await Task.FromResult(profile);
         }
+        public async Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody)
+        {
+            var user = await _userManager.Users.Include(x => x.Department).ToListAsync();
+            var result = user.MapToList<UsersModel>();
+            foreach (var item in user)
+            {
+                foreach (var model in result)
+                {
+                    if (item.Id.Equals(model.UserId))
+                    {
+                        var roles = await _userManager.GetRolesAsync(item);
+                        if (roles != null && roles.Any())
+                            model.RoleName = roles.First();
+                    }
+                }
+            }
+            return PagedList<UsersModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
+        }
         public async Task<PagedList<UserIdentity>> GetAllWithPaging(PageRequestBody requestBody)
         {
             var user = await _userManager.Users.ToListAsync();
             return PagedList<UserIdentity>.ToPagedList(user, requestBody.Page, requestBody.Top);
         }
-
         public Task<bool> Delete(Guid id, bool saveChange = true)
         {
             throw new NotImplementedException();
@@ -131,15 +148,15 @@ namespace ElectronicMedia.Core.Services.Service
             user.PhoneNumber = profile.PhoneNumber;
             user.Dob = profile.Dob;
             user.Gender = profile.Gender;
-          /*  if (string.IsNullOrEmpty(profile.Image))
-            {
-                user.Image = Convert.FromBase64String(profile.Image);
-            }*/
+            /*  if (string.IsNullOrEmpty(profile.Image))
+              {
+                  user.Image = Convert.FromBase64String(profile.Image);
+              }*/
             bool result = await Update(user);
             return await Task.FromResult(result);
         }
         #region private method
- 
+
         public Task<IEnumerable<UserIdentity>> GetAllAsync()
         {
             throw new NotImplementedException();

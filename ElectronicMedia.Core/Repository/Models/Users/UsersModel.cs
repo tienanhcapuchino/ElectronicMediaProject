@@ -27,15 +27,26 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ElectronicMedia.Core.Repository.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Repository.Models.Users
+namespace ElectronicMedia.Core.Repository.Models
 {
-    internal class UsersModel
+    public class UsersModel
     {
+        public string UserId { get; set; }
+        public string RoleName { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public DateTime Dob { get; set; }
+        public bool IsActived { get; set; }
+        public Gender Gender { get; set; }
+        public DepartmentModel Department { get; set; }
+        public string PhoneNumber { get; set; }
+        public string UserName { get; set; }
     }
 }
