@@ -43,6 +43,8 @@ namespace ElectronicWeb.Routes
 
         #region user
         public static string GetUerssWithPaging = $"{GetUrlPattern(EndPoint.User)}/getall";
+        public static string UpdateRole = $"{GetUrlPattern(EndPoint.User)}/roleupdate";
+        public static string Deactivate = $"{GetUrlPattern(EndPoint.User)}/deactivate";
         #endregion
     }
 

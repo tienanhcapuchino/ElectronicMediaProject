@@ -62,13 +62,13 @@
                     <td>@item.PhoneNumber</td>
                     <td>@item.Dob.ToString("dd/MM/yyyy")</td>
                     <td>
-                        <form asp-controller="User" asp-action="ChangeRole">
-                            <select class="form-controll" onchange="this.form.submit()">
-                                <option class="form-controll text-success" value="@item.RoleName" selected="@(item.RoleName == "UserNormal")">UserNormal</option>
-                                <option class="form-controll text-black" value="@item.RoleName" selected="@(item.RoleName == "Writer")">Writer</option>
-                                <option class="form-controll text-primary" value="@item.RoleName" selected="@(item.RoleName == "Leader")">Leader</option>
-                                <option class="form-controll text-warning" value="@item.RoleName" selected="@(item.RoleName == "EditorDirector")">EditorDirector</option>
-                                <option class="form-controll text-info" value="@item.RoleName" selected="@(item.RoleName == "Admin")">Admin</option>
+                        <form asp-controller="User" asp-route-userId="@item.UserId" asp-action="ChangeRole">
+                            <select class="form-controll" name="newRole" onchange="this.form.submit()">
+                                <option class="form-controll text-success" value="UserNormal" selected="@(item.RoleName == "UserNormal")">UserNormal</option>
+                                <option class="form-controll text-black" value="Writer" selected="@(item.RoleName == "Writer")">Writer</option>
+                                <option class="form-controll text-primary" value="Leader" selected="@(item.RoleName == "Leader")">Leader</option>
+                                <option class="form-controll text-warning" value="EditorDirector" selected="@(item.RoleName == "EditorDirector")">EditorDirector</option>
+                                <option class="form-controll text-info" value="Admin" selected="@(item.RoleName == "Admin")">Admin</option>
                             </select>
                         </form>
                     </td>
@@ -92,15 +92,23 @@
                         @{
                             if (item.IsActived)
                             {
-                                <a class="text-danger" asp-controller="User" asp-action="DeactiveUser">
-                                    Deactivate
-                                </a>
+                                <form asp-route-id="@item.UserId" asp-controller="User" asp-action="DeactiveUser">
+                                    <input type="hidden" name="isActive" value="false" />
+                                    <input class="text-danger" type="submit" value="Deactivate" />
+                                </form>
+                                //<a class="text-danger" name="isActive" value="false" asp-route-id="@item.UserId" asp-controller="User" asp-action="DeactiveUser">
+                                //    Deactivate
+                                //</a>
                             }
                             else
                             {
-                                <a class="text-success" asp-controller="User" asp-action="DeactiveUser">
-                                    Activate
-                                </a>
+                                <form asp-route-id="@item.UserId" asp-controller="User" asp-action="DeactiveUser">
+                                    <input type="hidden" name="isActive" value="true" />
+                                    <input class="text-success" type="submit" value="Activate" />
+                                </form>
+                                //<a class="text-success" name="isActive" value="true" asp-route-id="@item.UserId" asp-controller="User" asp-action="DeactiveUser">
+                                //    Activate
+                                //</a>
                             }
                         }
                     </td>

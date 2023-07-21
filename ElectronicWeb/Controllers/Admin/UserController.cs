@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core;
 using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.Entity;
@@ -49,7 +50,6 @@ namespace ElectronicWeb.Controllers.Admin
         public IActionResult UserManager(int currentPage = 1)
         {
             var token = _tokenService.GetToken();
-            Request.Cookies.TryGetValue("user", out string tokenCookieModel);
             if (string.IsNullOrEmpty(token))
             {
                 return View("Views/Account/Login.cshtml");
@@ -100,6 +100,38 @@ namespace ElectronicWeb.Controllers.Admin
                 }
             }
             return Forbid();
+        }
+
+        public IActionResult ChangeRole(Guid userId, string newRole)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            string url = $"{RoutesManager.UpdateRole}/{userId}?newRole={newRole}";
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.PUT, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                return RedirectToAction("UserManager");
+            }
+            return BadRequest();
+        } 
+        
+        public IActionResult DeactiveUser(Guid id, bool isActive)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            string url = $"{RoutesManager.Deactivate}/{id}?isActive={isActive}";
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.PUT, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                return RedirectToAction("UserManager");
+            }
+            return BadRequest();
         }
     }
 }

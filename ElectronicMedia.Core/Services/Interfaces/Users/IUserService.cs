@@ -47,5 +47,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<List<UserIdentity>> GetUsersByIds(List<Guid> userIds);
         Task<bool> UpdateRole(Guid userId, string roleType);
         Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody);
+        Task<bool> DeactivateOrActivateUser(bool isActive, Guid userId);
     }
 }

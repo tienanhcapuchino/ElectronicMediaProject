@@ -105,5 +105,45 @@ namespace ElectronicMediaAPI.Controllers
                 };
             }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("deactivate/{userId}")]
+        public async Task<APIResponeModel> DeactivateUser([FromRoute] Guid userId, bool isActive)
+        {
+            try
+            {
+                bool result = await _userService.DeactivateOrActivateUser(isActive, userId);
+                if (result)
+                {
+                    return new APIResponeModel()
+                    {
+                        IsSucceed = true,
+                        Code = 200,
+                        Message = "update successfully",
+                        Data = userId.ToString()
+                    };
+                }
+                else
+                {
+                    return new APIResponeModel()
+                    {
+                        IsSucceed = false,
+                        Code = 400,
+                        Message = "update failed!",
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error when deactivate user with userId: {userId}", ex);
+                return new APIResponeModel()
+                {
+                    Data = ex.ToString(),
+                    Message = ex.Message,
+                    IsSucceed = false,
+                    Code = 400
+                };
+            }
+        }
     }
 }
