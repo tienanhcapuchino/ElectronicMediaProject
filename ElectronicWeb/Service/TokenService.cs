@@ -29,7 +29,9 @@
 
 
 using ElectronicWeb.Models;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace ElectronicWeb.Service
 {
@@ -46,35 +48,15 @@ namespace ElectronicWeb.Service
             return token;
         }
 
-        public async Task<TokenOutputModel> GetTokenModel()
+        public TokenOutputModel GetTokenModel()
         {
-            var token = GetToken();
-            var tokenHandler = new JwtSecurityTokenHandler();
-            if (!string.IsNullOrEmpty(token))
+            var userToken = _contextAccessor.HttpContext.Request.Cookies["user"];
+            if (!string.IsNullOrEmpty(userToken))
             {
-                var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-                if (jwtToken != null)
+                var modelResult = JsonConvert.DeserializeObject<TokenOutputModel>(userToken);
+                if (modelResult != null)
                 {
-                    var claims = jwtToken.Claims.ToList();
-                    var expTime = claims.Where(c => c.Type.Equals("exp")).FirstOrDefault().Value;
-                    var roleClaim = claims.Where(c => c.Type.Equals("role")).FirstOrDefault().Value;
-                    var claimMail = claims.Where(c => c.Type.Equals("email")).FirstOrDefault().Value;
-                    var claimUsername = claims.Where(c => c.Type.Equals("unique_name")).FirstOrDefault().Value;
-                    long expDate = long.Parse(expTime);
-                    TokenOutputModel result = new TokenOutputModel()
-                    {
-                        Email = claimMail,
-                        ExpiredTime = expDate,
-                        RoleName = roleClaim,
-                        Username = claimUsername,
-                    };
-
-                    var userIdClaims = claims.Where(c => c.Type.Equals("UserId")).FirstOrDefault();
-                    if (userIdClaims != null)
-                    {
-                        result.UserId = userIdClaims.Value;
-                    }
-                    return await Task.FromResult(result);
+                    return modelResult;
                 }
             }
             return null;

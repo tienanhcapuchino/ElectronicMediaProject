@@ -31,6 +31,8 @@
 @{
     Layout = "_AdminLayout";
 }
+@using ElectronicMedia.Core.Repository.Entity;
+@using ElectronicWeb.Models;
 <h1>User management</h1>
 <h2>@Model</h2>
 <table class="table">
@@ -52,16 +54,16 @@
     </thead>
     <tbody>
         @{
-            int i = 1;
-            //foreach (var item in Model)
-            //{
+            int index = 1;
+            foreach (UserIdentity item in Model.Values)
+            {
                 <tr>
-                    <td>@i</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>@index</td>
+                    <td>@item.FullName</td>
+                    <td>@item.Email</td>
+                    <td>@item.UserName</td>
+                    <td>@item.PhoneNumber</td>
+                    <td>@item.Dob.ToString("dd/MM/yyyy")</td>
                     <td>
                         <form asp-controller="User" asp-action="ChangeRole">
                             <select onchange="this.form.submit()">
@@ -74,15 +76,75 @@
                         </form>
                     </td>
                     <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>
+                        @{
+                            if (item.IsActived)
+                            {
+                                <p class="text text-success">Activate</p>
+                            }
+                            else
+                            {
+                                <p class="text text-danger">Deactive</p>
+                            }
+                        }
+                    </td>
+                    <td>@item.Gender</td>
+                    <td>@item.Department?.Name</td>
                     <td>
                         <a class="btn btn-primary" asp-controller="User" asp-action="DeactiveUser"></a>
                     </td>
                 </tr>
-            //    i++;
-            //}
+                index++;
+            }
         }
     </tbody>
 </table>
+
+<div>
+    @if (Model.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-center">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Post" asp-action="Index" asp-route-currentPage="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" aria-label="Previous" asp-controller="Post" asp-action="Index" asp-route-currentPage="@(Model.CurrentPage -1)"> <span aria-hidden="true">&laquo;</span></a>
+                </li>
+            }
+            @{
+                int start = Model.CurrentPage - 5;
+                int end = Model.CurrentPage + 4;
+                if (start <= 0)
+                {
+                    end = end - (start - 1);
+                    start = 1;
+                }
+                if (end > Model.TotalPages)
+                {
+                    end = Model.TotalPages;
+                    if (end > 10)
+                    {
+                        start = end - 9;
+                    }
+                }
+            }
+            @for (int i = start; i <= end; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage?"active":"")">
+                    <a class="page-link" asp-controller="Post" asp-action="Index" asp-route-currentPage="@i">@i</a>
+                </li>
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" aria-label="Next" asp-controller="Post" asp-action="Index" asp-route-currentPage="@(Model.CurrentPage + 1)"><span aria-hidden="true">&raquo;</span></a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Post" asp-action="Index" asp-route-currentPage="@(Model.TotalPages)">Last</a>
+                </li>
+            }
+        </ul>
+    }
+</div>
