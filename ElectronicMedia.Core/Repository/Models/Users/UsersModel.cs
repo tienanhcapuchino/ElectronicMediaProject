@@ -27,23 +27,15 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ElectronicWeb.Controllers
+namespace ElectronicMedia.Core.Repository.Models.Users
 {
-    public class AccountController : Controller
+    internal class UsersModel
     {
-        public IActionResult Login()
-        {
-            return View();
-        }
-        public IActionResult Register()
-        {
-            return View();
-        }
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
     }
 }
