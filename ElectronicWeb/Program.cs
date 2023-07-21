@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using ElectronicMedia.Core.Repository.DataContext;
 /*********************************************************************
  *
  * PROPRIETARY and CONFIDENTIAL
@@ -29,7 +26,9 @@ using ElectronicMedia.Core.Repository.DataContext;
  * Unpublished - All rights reserved under the copyright laws
  * of the Government of Viet Nam
 *********************************************************************/
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicWeb.Service;
 
 var builder = WebApplication.CreateBuilder(args);
