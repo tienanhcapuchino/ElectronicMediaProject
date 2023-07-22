@@ -52,10 +52,10 @@ namespace ElectronicMedia.Core
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             Values.AddRange(items);
         }
-        public static PagedList<T> ToPagedList(List<T> source, int pageNumber, int pageSize)
+        public static PagedList<T> ToPagedList(List<T> source, int pageNumber, int pageSize,int countItem)
         {
-            var count = source.Count();
-            var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var count = countItem;
+            var items = source;
             return new PagedList<T>(items, count, pageNumber, pageSize);
         }
     }

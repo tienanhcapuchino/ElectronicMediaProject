@@ -1,4 +1,4 @@
-/*********************************************************************
+ï»¿/*********************************************************************
  * 
  * PROPRIETARY and CONFIDENTIAL
  * 
@@ -21,21 +21,22 @@
  * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
  * 
  * 
- * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
+ * Copy right 2023 Â© PRN231 - SU23 - Group 10 Â®. All Rights Reserved
  * 
  * Unpublished - All rights reserved under the copyright laws 
  * of the Government of Viet Nam
 *********************************************************************/
 
 using ElectronicMediaAPI;
-using ElectronicMedia.Core;
 using ElectronicMedia.Core.Automaper;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
+{
+    WebRootPath = "D:\\PRN231\\ElectronicMediaProject\\ElectronicWeb\\wwwroot"
+});
 
 var startup = new Startup(builder.Configuration);
-startup.ConfigureServices(builder.Services);
-
+startup.ConfigureServices(builder.Services, builder.Environment);
 var app = builder.Build();
 AutomapperCore.Init(app.Services);
 startup.Configure(app, builder.Environment);

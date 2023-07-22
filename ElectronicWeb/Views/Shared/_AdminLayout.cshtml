@@ -60,6 +60,7 @@
     <link rel="stylesheet" href="~/css/fonts/flaticon/font/flaticon.css">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <script src="~/js/tinymce/js/tinymce/tinymce.min.js"></script>
 
     <link rel="stylesheet" href="~/css/tiny-slider.css">
     <link rel="stylesheet" href="~/css/aos.css">
@@ -184,6 +185,48 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" asp-append-version="true"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" asp-append-version="true"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image code link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss image code',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat | code',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            image_title: true,
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            file_picker_callback: function (cb, value, meta) {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+
+                input.onchange = function () {
+                    var file = this.files[0];
+                    var formData = new FormData();
+                    formData.append('image', file);
+                    $.ajax({
+                        url: 'http://localhost:5243/api/Image', // Đường dẫn API xử lý tải ảnh lên máy chủ (project 1)
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data != null) {
+                                // Trả về URL ảnh đã tải lên thành công
+                                cb(data, { title: file.name });
+                            } else {
+                                alert('Tải ảnh lên thất bại');
+                            }
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra trong quá trình tải ảnh');
+                        }
+                    });
+                };
+                input.click();
+            }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

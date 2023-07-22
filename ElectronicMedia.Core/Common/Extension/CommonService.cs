@@ -28,10 +28,13 @@
 *********************************************************************/
 
 using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -168,6 +171,39 @@ namespace ElectronicMedia.Core.Common.Extension
             }
 
             return new string(password);
+        }
+        public static void GrantDirectoryAccess(string directoryPath)
+        {
+            try
+            {
+                // Lấy thông tin hiện tại của thư mục
+                DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
+                DirectorySecurity directorySecurity = directoryInfo.GetAccessControl();
+
+                // Thiết lập quyền truy cập cho mọi người (Everyone) với quyền FullControl
+                string everyone = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.WorldSid, null).Translate(typeof(System.Security.Principal.NTAccount)).ToString();
+                FileSystemAccessRule accessRule = new FileSystemAccessRule(everyone, FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.None, AccessControlType.Allow);
+
+                // Thêm quyền truy cập vào thư mục
+                directorySecurity.AddAccessRule(accessRule);
+
+                // Cập nhật thông tin quyền truy cập cho thư mục
+                directoryInfo.SetAccessControl(directorySecurity);
+
+                Console.WriteLine($"Granted access to {directoryPath} for Everyone.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        public static async Task<int> GetTotalCount<T>(DbContext dbContext) where T : class
+        {
+            // Your logic to fetch the total count of all items from the data source
+            // You can use LINQ or any other data access methods here
+
+            return await dbContext.Set<T>().CountAsync();
         }
     }
 }
