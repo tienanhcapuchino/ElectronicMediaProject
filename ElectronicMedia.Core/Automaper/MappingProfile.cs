@@ -55,6 +55,9 @@ namespace ElectronicMedia.Core.Automaper
             CreateMap<UserAddModel, UserIdentity>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true));
+            CreateMap<UserIdentity, MemberModel>()
+                .ForMember(dest => dest.MemberId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => ConvertGender(src.Gender))).ReverseMap();
             #endregion
 
             #region comments
@@ -97,15 +100,32 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.ImageUser, opt => opt.MapFrom(src => src.User.Image))
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.User.UserName));
             CreateMap<PostCategory, PostCategoryDto>();
-            
+            CreateMap<PostViewModel, Post>().ReverseMap()
+            .ForMember(dest => dest.AuthorName, otp => otp.MapFrom(src => src.User.UserName));
+            //.ForMember(dest => dest.Image, otp => otp.MapFrom(src => "data:image/jpeg;base64," + CommonFunct.Decode(src.Image)));
             #endregion
 
             #region departments
             CreateMap<Department, DepartmentModel>().ReverseMap();
-            CreateMap<PostViewModel, Post>().ReverseMap()
-            .ForMember(dest => dest.AuthorName, otp => otp.MapFrom(src => src.User.UserName));
-                //.ForMember(dest => dest.Image, otp => otp.MapFrom(src => "data:image/jpeg;base64," + CommonFunct.Decode(src.Image)));
+            CreateMap<Department, DepartmentViewDetail>()
+                .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.Members));
             #endregion
         }
+
+        private string ConvertGender(Gender? gender)
+        {
+            switch(gender)
+            {
+                case Gender.Male:
+                    return "Male";
+                case Gender.Female:
+                    return "Female";
+                case Gender.Unknown:
+                    return "UnKnow";
+                default:
+                    return "None";
+            }
+        }
+
     }
 }

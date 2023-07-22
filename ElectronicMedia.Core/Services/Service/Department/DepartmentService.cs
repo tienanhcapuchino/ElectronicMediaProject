@@ -28,6 +28,7 @@
 *********************************************************************/
 
 using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
@@ -101,38 +102,11 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public async Task<bool> AssignLeader(Guid depId, Guid leaderId)
+        public async Task<bool> AssignMemberToDepartment(Guid depId, Guid memberId)
         {
-            var user = await _userService.GetByIdAsync(leaderId);
-            //if (user.Role != RoleType.Leader) throw new Exception("user is not a leader to assign!");
-            if (user.DepartmentId == null || user.DepartmentId != depId)
-            {
-                user.DepartmentId = depId;
-                await _userService.Update(user, false);
-            }
-            bool result = await _dbContext.SaveChangesAsync() > 0;
-            return await Task.FromResult(result);
-        }
-
-        public async Task<bool> AssignMemberToDepartment(Guid depId, List<Guid> membersId)
-        {
-            var members = await _userService.GetUsersByIds(membersId);
-            if (members != null && members.Count > 0)
-            {
-                foreach (var item in members)
-                {
-                    //if (item.Role != RoleType.Writer)
-                    //{
-                    //    throw new Exception("You only can assign writer to become member of department!");
-                    //}
-                    if (item.DepartmentId == null || item.DepartmentId != depId)
-                    {
-                        item.DepartmentId = depId;
-                        await _userService.Update(item, false);
-                    }
-                }
-            }
-            bool result = await _dbContext.SaveChangesAsync() > 0;
+            var member = await _userService.GetByIdAsync(memberId);
+            member.DepartmentId = depId;
+            bool result = await _userService.Update(member);
             return await Task.FromResult(result);
         }
 
@@ -179,9 +153,49 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
-        public Task<APIResponeModel> KickMember(Guid departmentId, string userId)
+        public async Task<List<MemberModel>> GetLeadersToAssign()
         {
-            throw new NotImplementedException();
+            var leaders = (await _userManager.GetUsersInRoleAsync(UserRole.Leader)).ToList();
+            var leaderResult = leaders.Where(x => x.DepartmentId == null).ToList();
+            var result = leaderResult.MapToList<MemberModel>();
+            return result;
+        }
+
+        public async Task<List<MemberModel>> GetMembersToAssign()
+        {
+            var leaders = (await _userManager.GetUsersInRoleAsync(UserRole.Writer)).ToList();
+            var leaderResult = leaders.Where(x => x.DepartmentId == null).ToList();
+            var result = leaderResult.MapToList<MemberModel>();
+            return result;
+        }
+
+        public async Task<APIResponeModel> KickMember(Guid departmentId, string userId)
+        {
+            var department = await GetByIdAsync(departmentId);
+            var members = department.Members.ToList();
+            if (members != null && members.Any())
+            {
+                var user = members.Where(x => x.Id.Equals(userId)).FirstOrDefault();
+                if (user != null)
+                {
+                    user.DepartmentId = null;
+                    await _userManager.UpdateAsync(user);
+                    return new APIResponeModel()
+                    {
+                        Code = 200,
+                        IsSucceed = true,
+                        Message = "Kick successfully",
+                        Data = userId
+                    };
+                }
+            }
+            return new APIResponeModel()
+            {
+                Code = 400,
+                IsSucceed = false,
+                Message = "Kick failed",
+                Data = userId + ";" + departmentId
+            };
         }
 
         public async Task<bool> Update(Department entity, bool saveChange = true)
@@ -228,6 +242,14 @@ namespace ElectronicMedia.Core.Services.Service
             var entity = department.MapTo<Department>();
             await Update(entity, false);
             await _dbContext.SaveChangesAsync();
+            return result;
+        }
+
+        public async Task<DepartmentViewDetail> ViewDetailDepartment(Guid departmentId)
+        {
+            var dep = await GetByIdAsync(departmentId);
+            var result = dep.MapTo<DepartmentViewDetail>();
+            await _userService.SetRoleForMembersInDepartment(result.Members, dep.Members.ToList());
             return result;
         }
 

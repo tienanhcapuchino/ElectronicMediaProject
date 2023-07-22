@@ -56,7 +56,7 @@
                     <td>@dep.Name</td>
                     <td>@dep.Description</td>
                     <td>
-                        <a class="btn btn-primary">Update</a>
+                        <a class="btn btn-primary" asp-route-depId="@dep.Id" asp-action="Update" asp-controller="Department">Update</a>
                         <a asp-action="Delete" asp-route-depId="@dep.Id" asp-controller="Department" class="btn btn-primary">Delete</a>
                     </td>
                 </tr>

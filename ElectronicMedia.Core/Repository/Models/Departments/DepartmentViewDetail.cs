@@ -27,25 +27,19 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
-using ElectronicMedia.Core.Repository.Entity;
-using ElectronicMedia.Core.Repository.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Services.Interfaces
+namespace ElectronicMedia.Core.Repository.Models
 {
-    public interface IDepartmentService : ICoreRepository<Department>
+    public class DepartmentViewDetail
     {
-        Task<bool> AssignMemberToDepartment(Guid depId, Guid memberId);
-        Task<APIResponeModel> AddDepartment(DepartmentModel department);
-        Task<APIResponeModel> UpdateDepartment(DepartmentModel department);
-        Task<APIResponeModel> KickMember(Guid departmentId, string userId);
-        Task<PagedList<DepartmentModel>> GetAllWithPagingModel(PageRequestBody requestBody);
-        Task<DepartmentViewDetail> ViewDetailDepartment(Guid departmentId);
-        Task<List<MemberModel>> GetMembersToAssign();
-        Task<List<MemberModel>> GetLeadersToAssign();
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public List<MemberModel> Members { get; set; }
     }
 }

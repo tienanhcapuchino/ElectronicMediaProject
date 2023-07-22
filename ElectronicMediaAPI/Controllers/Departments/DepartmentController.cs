@@ -35,6 +35,7 @@ using ElectronicMedia.Core.Services.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace ElectronicMediaAPI.Controllers
 {
@@ -148,11 +149,98 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error("error when get all departments with paging", ex);
                 return new JsonResult(new ResultDto<PagedList<DepartmentModel>>
                 {
                     Status = ApiResultStatus.Failed,
                     ErrorMessage = ex.Message
                 });
+            }
+        }
+
+        [Authorize(Roles = "Admin, EditorDirector")]
+        [HttpGet("detail/{id}")]
+        public async Task<DepartmentViewDetail> GetDepartmentById([FromRoute] Guid id)
+        {
+            try
+            {
+                var result = await _departmentService.ViewDetailDepartment(id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"error when get department detail with departmentId: {id}", ex);
+                return new DepartmentViewDetail();
+            }
+        }
+
+        [Authorize(Roles = "Admin, EditorDirector, Leader")]
+        [HttpGet("members")]
+        public async Task<List<MemberModel>> GetAllMembers()
+        {
+            try
+            {
+                var result = await _departmentService.GetMembersToAssign();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"error when get all members", ex);
+                return new List<MemberModel>();
+            }
+        }
+
+        [Authorize(Roles = "Admin, EditorDirector")]
+        [HttpGet("leaders")]
+        public async Task<List<MemberModel>> GetAllLeaders()
+        {
+            try
+            {
+                var result = await _departmentService.GetLeadersToAssign();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"error when get all members", ex);
+                return new List<MemberModel>();
+            }
+        }
+
+        [Authorize(Roles = "Admin, EditorDirector, Leader")]
+        [HttpDelete("kick/{memberId}/{departmentId}")]
+        public async Task<APIResponeModel> KickMembers([FromRoute] string memberId, [FromRoute] Guid departmentId)
+        {
+            try
+            {
+                var result = await _departmentService.KickMember(departmentId, memberId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"error when get all members", ex);
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = ex.Message,
+                    Data = ex.ToString(),
+                    IsSucceed = false
+                };
+            }
+        }
+
+        [Authorize(Roles = "Admin, EditorDirector, Leader")]
+        [HttpPut("assignmember/{memberId}/{departmentId}")]
+        public async Task<bool> AssignMember([FromRoute] Guid memberId, [FromRoute] Guid departmentId)
+        {
+            try
+            {
+                bool result = await _departmentService.AssignMemberToDepartment(departmentId, memberId);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                _logger.Error($"error when get all members", ex);
+                return false;
             }
         }
     }

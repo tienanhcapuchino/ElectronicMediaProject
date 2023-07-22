@@ -112,6 +112,168 @@ namespace ElectronicWeb.Controllers.Admin
             }
             return Content("Error when delete department!");
         }
+        public IActionResult Update(Guid depId)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            HttpResponseMessage respone = CommonUIService.GetDataAPI($"{RoutesManager.ViewDetailDepartment}/{depId}", MethodAPI.GET, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                DepartmentViewDetail result = JsonConvert.DeserializeObject<DepartmentViewDetail>(data);
+                if (result.Members != null && result.Members.Count > 0)
+                {
+                    var leader = result.Members.Where(x => x.RoleName.ToLower().Equals("leader")).FirstOrDefault();
+                    if (leader != null)
+                    {
+                        ViewBag.ToolTipLeader = "true";
+                    }
+                }
+                if (TempData["KickSuccess"] != null)
+                {
+                    ViewBag.KickSuccess = TempData["KickSuccess"] as string;
+                }
+                if (TempData["AssignSuccess"] != null)
+                {
+                    ViewBag.AssignSuccess = TempData["AssignSuccess"] as string;
+                }
+                if (TempData["UpdateFail"] != null)
+                {
+                    ViewBag.UpdateFail = TempData["UpdateFail"] as string;
+                }
+                if (TempData["UpdateSuccess"] != null)
+                {
+                    ViewBag.UpdateSuccess = TempData["UpdateSuccess"] as string;
+                }
+                return View(result);
+            }
+            return Content($"Error when get detail department at departmentId: {depId}");
+        }
+
+        public IActionResult KickMember(string memId, Guid depId)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            string url = RoutesManager.KickMember + "/" + memId + "/" + depId;
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.DELETE, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                TempData["KickSuccess"] = "Kick successfully";
+                return RedirectToAction("Update", new { depId = depId});
+            }
+            return Content($"Error when kick member: {memId}");
+        }
+
+        public IActionResult AssignLeader(Guid depId)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            HttpResponseMessage responeCheck = CommonUIService.GetDataAPI($"{RoutesManager.ViewDetailDepartment}/{depId}", MethodAPI.GET, token);
+            if (responeCheck.IsSuccessStatusCode)
+            {
+                var data = responeCheck.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                DepartmentViewDetail result = JsonConvert.DeserializeObject<DepartmentViewDetail>(data);
+                if (result.Members != null && result.Members.Count > 0)
+                {
+                    var leader = result.Members.Where(x => x.RoleName.ToLower().Equals("leader")).FirstOrDefault();
+                    if (leader != null)
+                    {
+                        return RedirectToAction("Update", new { depId = depId });
+                    }
+                }
+            }
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetLeaders, MethodAPI.GET, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                List<MemberModel> result = JsonConvert.DeserializeObject<List<MemberModel>>(data);
+                ViewBag.DepId = depId;
+                return View(result);
+            }
+            return Content("Error when get all leaders");
+        }
+        public IActionResult AssignMember(Guid depId)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetMembers, MethodAPI.GET, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                List<MemberModel> result = JsonConvert.DeserializeObject<List<MemberModel>>(data);
+                if (TempData["AssignSuccess"] != null)
+                {
+                    ViewBag.AssignSuccess = TempData["AssignSuccess"] as string;
+                }
+                ViewBag.DepId = depId;
+                return View(result);
+            }
+            return Content("Error when get all members");
+        }
+
+        public IActionResult DoAssign(string memId, Guid depId, string check)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            string url = RoutesManager.AssignMember + "/" + memId + "/" + depId;
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.PUT, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                if (check.Equals("true"))
+                {
+                    TempData["AssignSuccess"] = "Assign leader successfully!";
+                    return RedirectToAction("Update", new {depId = depId});
+                }
+                else
+                {
+                    TempData["AssignSuccess"] = "Assign member successfully!";
+                    return RedirectToAction("AssignMember", new { depId = depId });
+                }
+            }
+            return Content($"Error when assign member: {memId} to department: {depId}");
+        }
+
+        public IActionResult DoUpdate(DepartmentModel department)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            string jsonData = JsonConvert.SerializeObject(department);
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.UpdateDepartment, MethodAPI.PUT, token, jsonData);
+            if (respone.IsSuccessStatusCode)
+            {
+                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                APIResponeModel result = JsonConvert.DeserializeObject<APIResponeModel>(data);
+                if (result.Code == 200)
+                {
+                    TempData["UpdateSuccess"] = "Update successfully";
+                    return RedirectToAction("Update", new {depId = department.Id});
+                }
+                else
+                {
+                    TempData["UpdateFail"] = result.Message;
+                    return RedirectToAction("Update", new { depId = department.Id });
+                }
+            }
+            return Content($"error when update department: {department.Name}");
+        }
 
     }
 }

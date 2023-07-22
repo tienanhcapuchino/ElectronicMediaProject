@@ -188,5 +188,21 @@ namespace ElectronicMedia.Core.Services.Service
             var result = _excelService.ExportToExcel(users);
             return result;
         }
+
+        public async Task SetRoleForMembersInDepartment(List<MemberModel> members, List<UserIdentity> userEntitys)
+        {
+            foreach (var item in userEntitys)
+            {
+                foreach (var model in members)
+                {
+                    if (item.Id.Equals(model.MemberId))
+                    {
+                        var roles = await _userManager.GetRolesAsync(item);
+                        if (roles != null && roles.Any())
+                            model.RoleName = roles.First();
+                    }
+                }
+            }
+        }
     }
 }

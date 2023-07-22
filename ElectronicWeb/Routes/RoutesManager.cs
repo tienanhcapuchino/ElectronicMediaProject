@@ -55,6 +55,11 @@ namespace ElectronicWeb.Routes
         public static string AddDepartment = $"{GetUrlPattern(EndPoint.Department)}/add";
         public static string UpdateDepartment = $"{GetUrlPattern(EndPoint.Department)}/update";
         public static string DeleteDepartment = $"{GetUrlPattern(EndPoint.Department)}/delete";
+        public static string ViewDetailDepartment = $"{GetUrlPattern(EndPoint.Department)}/detail";
+        public static string KickMember = $"{GetUrlPattern(EndPoint.Department)}/kick";
+        public static string AssignMember = $"{GetUrlPattern(EndPoint.Department)}/assignmember";
+        public static string GetMembers = $"{GetUrlPattern(EndPoint.Department)}/members";
+        public static string GetLeaders = $"{GetUrlPattern(EndPoint.Department)}/leaders";
         #endregion
 
         #region category

@@ -1,0 +1,126 @@
+﻿@*
+/*********************************************************************
+ *
+ * PROPRIETARY and CONFIDENTIAL
+ *
+ * This is licensed from, and is trade secret of:
+ *
+ *          Group 10 - PRN231 - SU23
+ *          FPT University, Education and Training zone
+ *          Hoa Lac Hi-tech Park, Km29, Thang Long Highway
+ *          Ha Noi, Viet Nam
+ *
+ * Refer to your License Agreement for restrictions on use,
+ * duplication, or disclosure
+ *
+ * RESTRICTED RIGHTS LEGEND
+ *
+ * Use, duplication or disclosure is the
+ * subject to restriction in Articles 736 and 738 of the
+ * 2005 Civil Code, the Intellectual Property Law and Decree
+ * No. 85/2011/ND-CP amending and supplementing a number of
+ * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
+ *
+ *
+ * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
+ *
+ * Unpublished - All rights reserved under the copyright laws
+ * of the Government of Viet Nam
+*********************************************************************/
+*@
+@{
+    Layout = "_AdminLayout";
+}
+@using ElectronicMedia.Core.Repository.Models;
+@model DepartmentViewDetail
+<h1>Update your department</h1>
+
+<form asp-controller="Department" asp-action="DoUpdate" class="form form-controll">
+    <input type="hidden" name="department.Id" value="@Model.Id" />
+    <label>Name</label>
+    <input class="form-controll" type="text" name="department.Name" value="@Model.Name" /><br /> <br />
+    <label>Description</label>
+    <textarea name="department.Description" class="form-controll">@Model.Description</textarea><br />
+    <input class="btn btn-primary" type="submit" value="Save" />
+</form>
+
+<h2>List of members</h2>
+<a class="btn btn-primary" asp-controller="Department" asp-route-depId="@Model.Id" asp-action="AssignMember">Assign members</a>
+@{
+    if (ViewBag.ToolTipLeader != null)
+    {
+        <a class="btn btn-primary disabled">
+            Assign Leader
+        </a>
+        <p>Your department already have a leader! Please kick your leader first if you want to assign leader!</p>
+    }
+    else
+    {
+        <a class="btn btn-primary" asp-route-depId="@Model.Id" asp-action="AssignLeader" asp-controller="Department">
+            Assign Leader
+        </a>
+    }
+}
+@{
+    if (!Model.Members.Any())
+    {
+        <p>This department doesn't have any members, please assign member first.</p>
+    }
+    if (ViewBag.KickSuccess != null)
+    {
+        <p class="text-success">@ViewBag.KickSuccess</p>
+    }
+    if (ViewBag.AssignSuccess != null)
+    {
+        <p class="text-success">@ViewBag.AssignSuccess</p>
+    }
+    if (ViewBag.UpdateSuccess != null)
+    {
+        <p class="text-success">@ViewBag.UpdateSuccess</p>
+    }
+    if (ViewBag.UpdateFail != null)
+    {
+        <p class="text-danger">@ViewBag.UpdateFail</p>
+    }
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fullname</th>
+            <th>Email</th>
+            <th>Dob</th>
+            <th>Phone number</th>
+            <th>Gender</th>
+            <th>IsLeader</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model.Members != null)
+            {
+                foreach (MemberModel member in Model.Members)
+                {
+                    <tr>
+                        <td>@member.FullName</td>
+                        <td>@member.Email</td>
+                        <td>@member.Dob.ToString("dd/MM/yyyy")</td>
+                        <td>@member.PhoneNumber</td>
+                        <td>@member.Gender</td>
+                        <td>
+                            @{
+                                if (member.RoleName.Equals("Leader"))
+                                {
+                                    <p class="text-primary">Leader</p>
+                                }
+                            }
+                        </td>
+                        <td>
+                            <a asp-route-memId="@member.MemberId" asp-controller="Department" asp-action="KickMember" asp-route-depId="@Model.Id" class="btn btn-danger">Kick</a>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>

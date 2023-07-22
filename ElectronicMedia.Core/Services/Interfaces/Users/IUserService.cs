@@ -51,5 +51,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<bool> DeactivateOrActivateUser(bool isActive, Guid userId);
         Task<APIResponeModel> AddNewUser(UserAddModel model);
         Task<DataTable> ExportUsers();
+        Task SetRoleForMembersInDepartment(List<MemberModel> members, List<UserIdentity> userEntitys);
     }
 }
