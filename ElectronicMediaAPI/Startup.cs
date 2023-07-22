@@ -60,7 +60,7 @@ namespace ElectronicMediaAPI
         {
             ConfigRoot = configuration;
         }
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
         {
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
@@ -95,6 +95,8 @@ namespace ElectronicMediaAPI
 
             services.AddControllers();
 
+            services.AddSingleton<IHostEnvironment>(env);
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             InjectDependencyServices(services);
         }
@@ -127,7 +129,6 @@ namespace ElectronicMediaAPI
                 builder.AddProvider(new Log4NetManager());
                 builder.AddConsole();
             });
-
             //configure JWT token
 
             services.Configure<AppSetting>(ConfigRoot.GetSection("AppSettings"));

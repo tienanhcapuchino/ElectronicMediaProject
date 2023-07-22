@@ -33,7 +33,7 @@ namespace ElectronicWeb.Controllers
 {
     public class ReadingController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(string id)
         {
             return View();
         }

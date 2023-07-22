@@ -29,6 +29,7 @@
 
 using AutoMapper;
 using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
@@ -128,11 +129,11 @@ namespace ElectronicMedia.Core.Services.Service
             var result = await _context.Posts.ToListAsync();
             return result;
         }
-        public async Task<IEnumerable<PostView>> GetNewPost()
+        public async Task<IEnumerable<PostView>> GetNewPost(int take)
         {
             try
             {
-                var post = await _context.Posts.Where(y => y.Status == PostStatusModel.Published).OrderBy(x => x.CreatedDate).Take(5).ToListAsync();
+                var post = await _context.Posts.Where(y => y.Status == PostStatusModel.Published).OrderBy(x => x.CreatedDate).Take(take).ToListAsync();
                 return post.MapToList<PostView>();
 
             }
@@ -146,10 +147,12 @@ namespace ElectronicMedia.Core.Services.Service
         {
             try
             {
-                var posts = await _context.Posts.Include(x => x.User).ToListAsync();
+                var posts = await _context.Posts.Include(x => x.User).Skip((requestBody.Page - 1) * requestBody.Top)
+                    .Take(requestBody.Top).ToListAsync();
+                var countItem = await CommonService.GetTotalCount<Post>(_context);
                 var postModels = posts.MapTo<List<PostViewModel>>();
                 var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
-                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
+                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
             }
             catch (Exception ex)
             {

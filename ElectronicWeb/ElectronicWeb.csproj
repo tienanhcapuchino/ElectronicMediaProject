@@ -8,14 +8,17 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\js\post.js" />
+    <Content Remove="wwwroot\js\reading.js" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\post.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\reading.js" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\js\post.js" />
+    <None Include="wwwroot\js\reading.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +30,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.15" />
+    <PackageReference Include="TinyMCE" Version="6.5.1" />
   </ItemGroup>
 
   <ItemGroup>

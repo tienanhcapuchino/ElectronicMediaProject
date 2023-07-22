@@ -27,8 +27,4 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\ElectronicMedia.Core\ElectronicMedia.Core.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Images\" />
-	</ItemGroup>
 </Project>

@@ -28,17 +28,13 @@
 *********************************************************************/
 
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Services.Interfaces
 {
     public interface IFileStorageService
     {
-        void SaveImageFile(IFormFile file);
-        void DeleteImageFile(string fileName);
+        Task<string> SaveImageFile(IFormFile file);
+        bool DeleteImageFile(string fileName);
+        bool DeleteImageFileApi(IFormFile fileName);
     }
 }
