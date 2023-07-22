@@ -28,6 +28,7 @@
 *********************************************************************/
 
 using DocumentFormat.OpenXml.Spreadsheet;
+using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -37,6 +38,7 @@ namespace ElectronicMediaAPI.Controllers
 {
     public partial class UserController
     {
+        [Authorize]
         [HttpGet("profile/{userId}")]
         public async Task<UserProfileModel> GetUserProfile([FromRoute] Guid userId)
         {
@@ -52,6 +54,8 @@ namespace ElectronicMediaAPI.Controllers
                 return null;
             }
         }
+
+        [Authorize]
         [HttpPost("update/profile/{userId}")]
         public async Task<bool> UpdateProfile([FromRoute] Guid userId, [FromBody] UserProfileModel profile)
         {
@@ -67,7 +71,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{UserRole.Admin}")]
         [HttpPut("roleupdate/{userId}")]
         public async Task<APIResponeModel> UpdateRole([FromRoute] Guid userId, string newRole)
         {
@@ -107,7 +111,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{UserRole.Admin}")]
         [HttpPut("deactivate/{userId}")]
         public async Task<APIResponeModel> DeactivateUser([FromRoute] Guid userId, bool isActive)
         {
@@ -147,7 +151,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{UserRole.Admin}")]
         [HttpPost("adduser")]
         public async Task<APIResponeModel> AddNewUser([FromBody] UserAddModel userModel)
         {

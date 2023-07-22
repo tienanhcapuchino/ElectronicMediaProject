@@ -36,6 +36,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using ElectronicMedia.Core.Common;
 
 namespace ElectronicMediaAPI.Controllers
 {
@@ -51,7 +52,7 @@ namespace ElectronicMediaAPI.Controllers
             _departmentService = departmentService;
         }
 
-        [Authorize(Roles = "Admin, EditorDirector")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
         [HttpPost("add")]
         public async Task<APIResponeModel> AddDepartment([FromBody] DepartmentModel model)
         {
@@ -73,7 +74,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, EditorDirector")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
         [HttpPut("update")]
         public async Task<APIResponeModel> Update([FromBody] DepartmentModel model)
         {
@@ -96,7 +97,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, EditorDirector")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
         [HttpDelete("delete/{depId}")]
         public async Task<APIResponeModel> Delete([FromRoute] Guid depId)
         {
@@ -137,7 +138,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, EditorDirector")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
         [HttpPost("page")]
         public async Task<IActionResult> GetAllDepartments(PageRequestBody requestBody)
         {
@@ -157,7 +158,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, EditorDirector")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
         [HttpGet("detail/{id}")]
         public async Task<DepartmentViewDetail> GetDepartmentById([FromRoute] Guid id)
         {
@@ -173,7 +174,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, EditorDirector, Leader")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}, {UserRole.Leader}")]
         [HttpGet("members")]
         public async Task<List<MemberModel>> GetAllMembers()
         {
@@ -189,7 +190,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, EditorDirector")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
         [HttpGet("leaders")]
         public async Task<List<MemberModel>> GetAllLeaders()
         {
@@ -205,7 +206,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, EditorDirector, Leader")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}, {UserRole.Leader}")]
         [HttpDelete("kick/{memberId}/{departmentId}")]
         public async Task<APIResponeModel> KickMembers([FromRoute] string memberId, [FromRoute] Guid departmentId)
         {
