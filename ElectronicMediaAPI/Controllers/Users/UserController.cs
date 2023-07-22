@@ -165,5 +165,25 @@ namespace ElectronicMediaAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [HttpGet("departmentId/{userId}")]
+        public async Task<string> GetDepartmentIdByUserId([FromRoute] Guid userId)
+        {
+            try
+            {
+                var user = await _userService.GetByIdAsync(userId);
+                if (user == null || user.DepartmentId == null)
+                {
+                    return Guid.Empty.ToString();
+                }
+                return user.DepartmentId.ToString();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error($"error when get departmentId by userId: {userId}", ex);
+                return Guid.Empty.ToString();
+            }
+        }
     }
 }

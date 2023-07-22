@@ -320,5 +320,23 @@ namespace ElectronicWeb.Controllers.Admin
             }
             return Content($"error when add department: {department.Name}");
         }
+
+        public IActionResult LeaderIndex(string userId)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            HttpResponseMessage respone = CommonUIService.GetDataAPI($"{RoutesManager.GetDepartmentIdByUserId}/{Guid.Parse(userId)}", MethodAPI.GET, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                Guid departmentId = Guid.Parse(data);
+                return RedirectToAction("Update", new { depId = departmentId});
+            }
+            return Content($"Error when get department for leader: {userId}");
+        }
+
     }
 }
