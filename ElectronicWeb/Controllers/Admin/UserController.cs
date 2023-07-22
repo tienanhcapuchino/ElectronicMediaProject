@@ -47,7 +47,7 @@ namespace ElectronicWeb.Controllers.Admin
         {
             _tokenService = tokenService;
         }
-        public IActionResult UserManager(int currentPage = 1)
+        public IActionResult UserManager(int currentPage = 1, string search = "")
         {
             var token = _tokenService.GetToken();
             if (string.IsNullOrEmpty(token))
@@ -67,8 +67,8 @@ namespace ElectronicWeb.Controllers.Admin
                     Page = currentPage,
                     Top = 5,
                     Skip = 0,
-                    SearchText = string.Empty,
-                    SearchByColumn = new List<string>() { },
+                    SearchText = string.IsNullOrEmpty(search) ? string.Empty : search,
+                    SearchByColumn = new List<string>() { "Email", "UserName", "FullName" },
                     OrderBy = new PageRequestOrderBy()
                     {
                         OrderByDesc = true,
@@ -90,6 +90,10 @@ namespace ElectronicWeb.Controllers.Admin
                     new AdditionalFilter{}
                 },
                 };
+                if(!string.IsNullOrEmpty(search))
+                {
+                    ViewBag.SearchText = search;
+                }
                 string data = JsonConvert.SerializeObject(pageRequestBody);
                 HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetUerssWithPaging, MethodAPI.POST, token, data);
                 if (respone.IsSuccessStatusCode)

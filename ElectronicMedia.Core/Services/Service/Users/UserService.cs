@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core.Automaper;
 using ElectronicMedia.Core.Common.Extension;
@@ -97,10 +98,10 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody)
         {
             var user = await _userManager.Users.Include(x => x.Department).ToListAsync();
-            var result = user.MapToList<UsersModel>();
+            var resultTemp = user.MapToList<UsersModel>();
             foreach (var item in user)
             {
-                foreach (var model in result)
+                foreach (var model in resultTemp)
                 {
                     if (item.Id.Equals(model.UserId))
                     {
@@ -110,12 +111,14 @@ namespace ElectronicMedia.Core.Services.Service
                     }
                 }
             }
+            var result = QueryData<UsersModel>.QueryForModel(requestBody, resultTemp).ToList();
             return PagedList<UsersModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
         }
         public async Task<PagedList<UserIdentity>> GetAllWithPaging(PageRequestBody requestBody)
         {
             var user = await _userManager.Users.ToListAsync();
-            return PagedList<UserIdentity>.ToPagedList(user, requestBody.Page, requestBody.Top);
+            var result = QueryData<UserIdentity>.QueryForModel(requestBody, user).ToList();
+            return PagedList<UserIdentity>.ToPagedList(result, requestBody.Page, requestBody.Top);
         }
         public Task<bool> Delete(Guid id, bool saveChange = true)
         {
