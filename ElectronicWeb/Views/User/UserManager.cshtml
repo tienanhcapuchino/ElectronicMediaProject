@@ -40,25 +40,28 @@
         <p class="text-success">@ViewBag.AddSuccess</p>
     }
 }
-<form class="form form-controll" asp-controller="User" asp-action="UserManager">
-    <input class="form-controll" name="search" placeholder="enter username, email or fullname to search" value="@ViewBag.SearchText" />
-    <input type="submit" class="btn btn-outline-primary" value="Search" /> <br />
-    <label>Status</label>
-    <select class="form-controll">
-        <option>Active</option>
-        <option>Deactive</option>
-    </select><br />
-    <label>Role</label><br />
-    <select class="form-controll">
-        <option class="form-controll text-success" value="UserNormal">UserNormal</option>
-        <option class="form-controll text-black" value="Writer">Writer</option>
-        <option class="form-controll text-primary" value="Leader">Leader</option>
-        <option class="form-controll text-warning" value="EditorDirector">EditorDirector</option>
-        <option class="form-controll text-info" value="Admin">Admin</option>
-    </select>
-</form>
-<a class="btn btn-primary" asp-controller="User" asp-action="AddUser">Add new user</a>
-@Html.ActionLink("Export to excel", "DownloadExcel", "User", null, new { @class = "btn btn-primary" })
+<div style="margin-bottom: -50px">
+    <form class="form form-controll" asp-controller="User" asp-action="UserManager">
+        <input class="form-controll" name="search" placeholder="enter username, email or fullname to search" value="@ViewBag.SearchText" />
+        <input type="submit" class="btn btn-outline-primary" value="Search" /> <br />
+    </form>
+    <form class="form form-controll" onchange="this.form.submit()" asp-controller="User" asp-action="UserManager">
+        <label>Role</label>
+        <select name="role" onchange="this.form.submit()" class="form-controll">
+            <option value="@string.Empty" selected="@(ViewBag.RoleSearch == "")" class="form-controll">All</option>
+            <option class="form-controll text-success" selected="@(ViewBag.RoleSearch == "UserNormal")" value="UserNormal">UserNormal</option>
+            <option class="form-controll text-black" selected="@(ViewBag.RoleSearch == "Writer")" value="Writer">Writer</option>
+            <option class="form-controll text-primary" selected="@(ViewBag.RoleSearch == "Leader")" value="Leader">Leader</option>
+            <option class="form-controll text-warning" selected="@(ViewBag.RoleSearch == "EditorDirector")" value="EditorDirector">EditorDirector</option>
+            <option class="form-controll text-info" selected="@(ViewBag.RoleSearch == "Admin")" value="Admin">Admin</option>
+        </select>
+    </form>
+</div>
+<br />
+<div style="float: right">
+    <a class="btn btn-primary" asp-controller="User" asp-action="AddUser">Add new user</a>
+    @Html.ActionLink("Export to excel", "DownloadExcel", "User", null, new { @class = "btn btn-primary" })
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -112,7 +115,7 @@
                     <td>@item.Gender</td>
                     <td>@item.Department?.Name</td>
                     <td>
-                        
+
                         @{
                             if (item.IsActived)
                             {
