@@ -41,6 +41,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
     public interface IPostService : ICoreRepository<Post>
     {
         Task<bool> CreatePost(PostModel post);
+        Task<bool> UpdatePost(PostViewModel post);
         Task<bool> UpdateLikeAndDislike(Guid postId, bool liked);
         Task<bool> VotePost(PostDetailModel postDetail);
         Task<PostViewModel> GetById(Guid id);
@@ -48,5 +49,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<DataTable> ExportPosts();
         Task<IEnumerable<PostView>> GetNewPost();
         Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId, int top);
+        Task<List<Post>> GetPostByCateId(Guid cateId);
+        Task<PagedList<PostViewModel>> GetAllWithPaging(PageRequestBody requestBody);
     }
 }

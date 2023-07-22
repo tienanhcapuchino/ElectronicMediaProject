@@ -135,7 +135,8 @@ namespace ElectronicMediaAPI
 
             var secretKey = ConfigRoot["AppSettings:SecretKey"];
             var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-            services.AddIdentity<UserIdentity, IdentityRole>(options =>{
+            services.AddIdentity<UserIdentity, IdentityRole>(options =>
+            {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequireDigit = true;

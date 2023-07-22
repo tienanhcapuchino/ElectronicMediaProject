@@ -29,6 +29,7 @@
 *********************************************************************/
 *@
 @using ElectronicMedia.Core.Repository.Entity;
+@using ElectronicMedia.Core.Repository.Models;
 @using ElectronicWeb.Models;
 @{
     Layout = "_AdminLayout";
@@ -39,33 +40,57 @@
         <tr>
             <th>Title</th>
             <th>Content</th>
-            <th>Image</th>
+            <th>AuthorName</th>
             <th>CreatedDate</th>
             <th>PublishedDate</th>
-@*            <th>UpdatedDate</th>*@
+            @*<th>UpdatedDate</th>*@
             <th>Rate</th>
             <th>Like</th>
             <th>Dislike</th>
             <th>Status</th>
-            <th></th>
+            <th style="width:95%">Action</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (Post p in Model.Values)
+        @foreach (PostViewModel p in Model.Values)
         {
             <tr>
-                <td>@p.Title</td>
-                <td>@p.Content</td>
-                <td></td>
+                <td style="width:40%">@p.Title</td>
+                <td class="ellipsis first">
+                    <span>@p.Content</span>
+                </td>
+                <td>@p.AuthorName</td>
                 <td>@p.CreatedDate.ToString("dd/MM/yyyy")</td>
                 <td>@p.PublishedDate.Value.ToString("dd/MM/yyyy")</td>
-               @* <td>@p.UpdatedDate.Value.ToString("dd/MM/yyyy")</td>*@
+                @* <td>@p.UpdatedDate.Value.ToString("dd/MM/yyyy")</td>*@
                 <td>@p.Rate</td>
                 <td>@p.Like</td>
                 <td>@p.Dislike</td>
-                <td>@p.Status</td>
-                <td><a asp-controller="Post" asp-action="Update" asp-route-pid="@p.Id" type="button" class="btn btn-primary">Update</a></td>
-                <td><a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
+                @if (p.Status.ToString() == "Pending")
+                {
+                    <td style="color:blue">@p.Status</td>
+                }
+                else if (p.Status.ToString() == "Approved")
+                {
+                    <td style="color:dodgerblue">@p.Status</td>
+                }
+                else if (p.Status.ToString() == "Published")
+                {
+                    <td style="color:green">@p.Status</td>
+                }
+                else
+                {
+                    <td style="color:red">@p.Status</td>
+                }
+
+                <td class="button-cell">
+                    <a asp-controller="Post" asp-action="Detail" asp-route-pid="@p.Id" type="button" class="btn btn-success"><i class="bi bi-eye"></i></a>
+                    <a asp-controller="Post" asp-action="Update" asp-route-pid="@p.Id" type="button" class="btn btn-primary"><i class="bi bi-pen"></i></a>
+                    <a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+
+                </td>
+
+
             </tr>
         }
 
@@ -120,3 +145,38 @@
         </ul>
     }
 </div>
+<style>
+    table {
+        width: 100%;
+    }
+
+    .button-cell {
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        justify-content: end;
+        align-items: center;
+        gap: 10px; /* Adjust this value to set the space between buttons */
+    }
+
+    .first {
+        width: 70%;
+    }
+
+    .ellipsis {
+        position: relative;
+    }
+
+        .ellipsis:before {
+            content: ' ';
+            visibility: hidden;
+        }
+
+        .ellipsis span {
+            position: absolute;
+            left: 0;
+            right: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+</style>
