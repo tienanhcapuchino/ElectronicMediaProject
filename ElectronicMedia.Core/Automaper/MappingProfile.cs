@@ -94,7 +94,8 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.AuthorId))
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
                 .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.Liked));
-            CreateMap<Post, PostViewModel>();
+            CreateMap<Post, PostViewModel>()
+                .ForMember(dest => dest.UserImage, opt => opt.MapFrom(src => src.User.Image));
             CreateMap<Post, PostView>()
                 .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.ImageUser, opt => opt.MapFrom(src => src.User.Image))

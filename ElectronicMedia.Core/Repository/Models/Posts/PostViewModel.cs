@@ -43,6 +43,7 @@ namespace ElectronicMedia.Core.Repository.Models
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public string? AuthorName { get; set; }
+        public string? UserImage { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Content { get; set; }
