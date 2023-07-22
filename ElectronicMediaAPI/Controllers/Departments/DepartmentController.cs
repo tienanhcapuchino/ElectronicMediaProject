@@ -158,7 +158,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}, {UserRole.Leader}")]
         [HttpGet("detail/{id}")]
         public async Task<DepartmentViewDetail> GetDepartmentById([FromRoute] Guid id)
         {

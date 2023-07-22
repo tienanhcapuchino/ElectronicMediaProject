@@ -32,7 +32,17 @@
     Layout = "_AdminLayout";
 }
 @using ElectronicMedia.Core.Repository.Models;
+@using ElectronicWeb.Service;
+@using ElectronicMedia.Core.Common;
 @model DepartmentViewDetail
+@inject ITokenService _tokenService
+
+@{
+    string token = _tokenService.GetToken();
+    string roleName = "";
+    var tokenModel = _tokenService.GetTokenModelUI(token);
+    roleName = tokenModel.RoleName;
+}
 <h1>Update your department</h1>
 
 <form asp-controller="Department" asp-action="DoUpdate" class="form form-controll">
@@ -47,14 +57,14 @@
 <h2>List of members</h2>
 <a class="btn btn-primary" asp-controller="Department" asp-route-depId="@Model.Id" asp-action="AssignMember">Assign members</a>
 @{
-    if (ViewBag.ToolTipLeader != null)
+    if (ViewBag.ToolTipLeader != null && !roleName.Equals(UserRole.Leader))
     {
         <a class="btn btn-primary disabled">
             Assign Leader
         </a>
         <p>Your department already have a leader! Please kick your leader first if you want to assign leader!</p>
     }
-    else
+    if (!roleName.Equals(UserRole.Leader) && ViewBag.ToolTipLeader == null)
     {
         <a class="btn btn-primary" asp-route-depId="@Model.Id" asp-action="AssignLeader" asp-controller="Department">
             Assign Leader
@@ -101,6 +111,7 @@
             {
                 foreach (MemberModel member in Model.Members)
                 {
+                    if (member.RoleName.Equals(roleName)) continue;
                     <tr>
                         <td>@member.FullName</td>
                         <td>@member.Email</td>
@@ -109,7 +120,7 @@
                         <td>@member.Gender</td>
                         <td>
                             @{
-                                if (member.RoleName.Equals("Leader"))
+                                if (member.RoleName.Equals(UserRole.Leader))
                                 {
                                     <p class="text-primary">Leader</p>
                                 }
