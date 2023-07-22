@@ -30,6 +30,7 @@
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core;
+using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Repository.Models.Email;
@@ -54,7 +55,7 @@ namespace ElectronicMediaAPI.Controllers
             _emailService = mailService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{UserRole.Admin}")]
         [HttpPost("getall")]
         public async Task<IActionResult> GetAllUser(PageRequestBody requestBody)
         {
@@ -65,6 +66,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error($"Error when get all users with paging", ex);
                 return new JsonResult(new ResultDto<PagedList<UsersModel>>
                 {
                     Status = ApiResultStatus.Failed,
@@ -139,7 +141,7 @@ namespace ElectronicMediaAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{UserRole.Admin}")]
         [HttpGet("export")]
         public async Task<IActionResult> ExportUsers()
         {
