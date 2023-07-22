@@ -143,7 +143,8 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<PagedList<DepartmentModel>> GetAllWithPagingModel(PageRequestBody requestBody)
         {
             var departments = await _dbContext.Departments.ToListAsync();
-            var result = departments.MapToList<DepartmentModel>();
+            var tempResult = departments.MapToList<DepartmentModel>();
+            var result = QueryData<DepartmentModel>.QueryForModel(requestBody, tempResult).ToList();
             return PagedList<DepartmentModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
         }
 

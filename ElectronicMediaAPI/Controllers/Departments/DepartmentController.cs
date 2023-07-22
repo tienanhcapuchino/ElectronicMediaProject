@@ -57,7 +57,6 @@ namespace ElectronicMediaAPI.Controllers
         {
             try
             {
-                model.Id = Guid.NewGuid();
                 var result = await _departmentService.AddDepartment(model);
                 return result;
             }

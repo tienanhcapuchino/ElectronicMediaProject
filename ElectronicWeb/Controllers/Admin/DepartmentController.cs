@@ -46,7 +46,7 @@ namespace ElectronicWeb.Controllers.Admin
             _tokenService = tokenService;
         }
 
-        public IActionResult Index(int currentPage = 1)
+        public IActionResult Index(int currentPage = 1, string search = "")
         {
             var token = _tokenService.GetToken();
             if (string.IsNullOrEmpty(token))
@@ -59,8 +59,8 @@ namespace ElectronicWeb.Controllers.Admin
                 Page = currentPage,
                 Top = 5,
                 Skip = 0,
-                SearchText = string.Empty,
-                SearchByColumn = new List<string>() { },
+                SearchText = string.IsNullOrEmpty(search) ? string.Empty : search,
+                SearchByColumn = new List<string>() { "Name" },
                 OrderBy = new PageRequestOrderBy()
                 {
                     OrderByDesc = true,
@@ -82,6 +82,7 @@ namespace ElectronicWeb.Controllers.Admin
                     new AdditionalFilter{}
                 },
             };
+            if (!string.IsNullOrEmpty(search)) ViewBag.SearchText = search;
             string data = JsonConvert.SerializeObject(pageRequestBody);
             HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetAllDepartments, MethodAPI.POST, token, data);
             if (respone.IsSuccessStatusCode)
@@ -89,6 +90,10 @@ namespace ElectronicWeb.Controllers.Admin
                 if (TempData["DeleteSuccess"] != null)
                 {
                     ViewBag.DeleteSuccess = TempData["DeleteSuccess"] as string;
+                }
+                if (TempData["AddSuccess"] != null)
+                {
+                    ViewBag.AddSuccess = TempData["AddSuccess"] as string;
                 }
                 var content = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 pageRequest = JsonConvert.DeserializeObject<PageList<DepartmentModel>>(content);
@@ -165,7 +170,7 @@ namespace ElectronicWeb.Controllers.Admin
             if (respone.IsSuccessStatusCode)
             {
                 TempData["KickSuccess"] = "Kick successfully";
-                return RedirectToAction("Update", new { depId = depId});
+                return RedirectToAction("Update", new { depId = depId });
             }
             return Content($"Error when kick member: {memId}");
         }
@@ -237,7 +242,7 @@ namespace ElectronicWeb.Controllers.Admin
                 if (check.Equals("true"))
                 {
                     TempData["AssignSuccess"] = "Assign leader successfully!";
-                    return RedirectToAction("Update", new {depId = depId});
+                    return RedirectToAction("Update", new { depId = depId });
                 }
                 else
                 {
@@ -264,7 +269,7 @@ namespace ElectronicWeb.Controllers.Admin
                 if (result.Code == 200)
                 {
                     TempData["UpdateSuccess"] = "Update successfully";
-                    return RedirectToAction("Update", new {depId = department.Id});
+                    return RedirectToAction("Update", new { depId = department.Id });
                 }
                 else
                 {
@@ -275,5 +280,45 @@ namespace ElectronicWeb.Controllers.Admin
             return Content($"error when update department: {department.Name}");
         }
 
+        public IActionResult Add()
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            if (TempData["ErrorAdd"] != null)
+            {
+                ViewBag.ErrorAdd = TempData["ErrorAdd"] as string;
+            }
+            return View();
+        }
+        public IActionResult OnAdd(DepartmentModel department)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            department.Id = Guid.NewGuid();
+            string jsonData = JsonConvert.SerializeObject(department);
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.AddDepartment, MethodAPI.POST, token, jsonData);
+            if (respone.IsSuccessStatusCode)
+            {
+                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var result = JsonConvert.DeserializeObject<APIResponeModel>(data);
+                if (result.Code == 200)
+                {
+                    TempData["AddSuccess"] = "add successfully!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["ErrorAdd"] = result.Message;
+                    return RedirectToAction("Add");
+                }
+            }
+            return Content($"error when add department: {department.Name}");
+        }
     }
 }
