@@ -43,5 +43,6 @@ namespace ElectronicMedia.Core.Repository.Models
         public string Name { get; set; }
         public List<PostCategoryDto> Childrens { get; set; } = new List<PostCategoryDto>();
         public string? Description { get; set; }
+        public int? CountPost { get; set; }
     }
 }

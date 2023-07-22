@@ -47,7 +47,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<PostViewModel> GetById(Guid id);
         Task<bool> DeletePost(Guid postId);
         Task<DataTable> ExportPosts();
-        Task<IEnumerable<PostView>> GetNewPost();
+        Task<IEnumerable<PostView>> GetNewPost(int take);
         Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId, int top);
         Task<List<Post>> GetPostByCateId(Guid cateId);
         Task<PagedList<PostViewModel>> GetAllWithPaging(PageRequestBody requestBody);
