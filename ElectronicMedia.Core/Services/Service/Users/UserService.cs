@@ -36,6 +36,7 @@ using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Interfaces.Email;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -62,11 +63,13 @@ namespace ElectronicMedia.Core.Services.Service
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
         private readonly IExcelService<UserIdentity> _excelService;
+        private readonly IHttpContextAccessor _contextAccessor;
         public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor,
            UserManager<UserIdentity> userManager, RoleManager<IdentityRole> roleManager,
             SignInManager<UserIdentity> signInManager,
             IEmailService emailService, 
-            IExcelService<UserIdentity> excelService)
+            IExcelService<UserIdentity> excelService, 
+            IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _appSettings = optionsMonitor.CurrentValue;
@@ -75,6 +78,7 @@ namespace ElectronicMedia.Core.Services.Service
             _signInManager = signInManager;
             _emailService = emailService;
             _excelService = excelService;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<UserIdentity> GetByIdAsync(Guid id)
@@ -97,7 +101,9 @@ namespace ElectronicMedia.Core.Services.Service
         }
         public async Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody)
         {
-            var user = await _userManager.Users.Include(x => x.Department).ToListAsync();
+            var currentUser = _contextAccessor.HttpContext.User;
+            var userId = currentUser.FindFirst("UserId")?.Value;
+            var user = await _userManager.Users.Where(x => !x.Id.Equals(userId)).Include(x => x.Department).ToListAsync();
             var resultTemp = user.MapToList<UsersModel>();
             foreach (var item in user)
             {
