@@ -1,0 +1,81 @@
+﻿@*
+/*********************************************************************
+ *
+ * PROPRIETARY and CONFIDENTIAL
+ *
+ * This is licensed from, and is trade secret of:
+ *
+ *          Group 10 - PRN231 - SU23
+ *          FPT University, Education and Training zone
+ *          Hoa Lac Hi-tech Park, Km29, Thang Long Highway
+ *          Ha Noi, Viet Nam
+ *
+ * Refer to your License Agreement for restrictions on use,
+ * duplication, or disclosure
+ *
+ * RESTRICTED RIGHTS LEGEND
+ *
+ * Use, duplication or disclosure is the
+ * subject to restriction in Articles 736 and 738 of the
+ * 2005 Civil Code, the Intellectual Property Law and Decree
+ * No. 85/2011/ND-CP amending and supplementing a number of
+ * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
+ *
+ *
+ * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
+ *
+ * Unpublished - All rights reserved under the copyright laws
+ * of the Government of Viet Nam
+*********************************************************************/
+*@
+@{
+    Layout = "_AdminLayout";
+}
+@using ElectronicMedia.Core.Repository.Models;
+@model List<MemberModel>;
+
+<h1>Assign members</h1>
+
+@{
+    if (!Model.Any())
+    {
+        <p>we don't have any members to assign. Let create user as writer first!</p>
+    }
+    if (ViewBag.AssignSuccess != null)
+    {
+        <p class="text-success">@ViewBag.AssignSuccess</p>
+    }
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fullname</th>
+            <th>Email</th>
+            <th>Dob</th>
+            <th>Phone number</th>
+            <th>Gender</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (Model != null && Model.Any())
+            {
+                foreach (MemberModel item in Model)
+                {
+                    <tr>
+                        <td>@item.FullName</td>
+                        <td>@item.Email</td>
+                        <td>@item.Dob.ToString("dd/MM/yyyy")</td>
+                        <td>@item.PhoneNumber</td>
+                        <td>@item.Gender</td>
+                        <td>
+                            <a asp-route-memId="@item.MemberId" asp-route-check="false" asp-controller="Department" asp-action="DoAssign" asp-route-depId="@ViewBag.DepId" class="btn btn-success">Assign</a>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>

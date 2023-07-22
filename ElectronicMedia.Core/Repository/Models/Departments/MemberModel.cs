@@ -28,24 +28,22 @@
 *********************************************************************/
 
 using ElectronicMedia.Core.Repository.Entity;
-using ElectronicMedia.Core.Repository.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectronicMedia.Core.Services.Interfaces
+namespace ElectronicMedia.Core.Repository.Models
 {
-    public interface IDepartmentService : ICoreRepository<Department>
+    public class MemberModel
     {
-        Task<bool> AssignMemberToDepartment(Guid depId, Guid memberId);
-        Task<APIResponeModel> AddDepartment(DepartmentModel department);
-        Task<APIResponeModel> UpdateDepartment(DepartmentModel department);
-        Task<APIResponeModel> KickMember(Guid departmentId, string userId);
-        Task<PagedList<DepartmentModel>> GetAllWithPagingModel(PageRequestBody requestBody);
-        Task<DepartmentViewDetail> ViewDetailDepartment(Guid departmentId);
-        Task<List<MemberModel>> GetMembersToAssign();
-        Task<List<MemberModel>> GetLeadersToAssign();
+        public string MemberId { get; set; }
+        public string RoleName { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public DateTime Dob { get; set; }
+        public string Gender { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }
