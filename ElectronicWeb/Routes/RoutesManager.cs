@@ -40,6 +40,9 @@ namespace ElectronicWeb.Routes
         public static string GetPostsWithPaging = $"{GetUrlPattern(EndPoint.Post)}/page";
         public static string GetPostById = $"{GetUrlPattern(EndPoint.Post)}/";
         public static string UpdatePost = $"{GetUrlPattern(EndPoint.Post)}/update";
+        public static string GetPostByLeader = $"{GetUrlPattern(EndPoint.Post)}/leader/page/";
+        public static string GetPostByWriter = $"{GetUrlPattern(EndPoint.Post)}/writer/page/";
+        public static string ExportPosts = $"{GetUrlPattern(EndPoint.Post)}/export";
         #endregion
 
         #region user

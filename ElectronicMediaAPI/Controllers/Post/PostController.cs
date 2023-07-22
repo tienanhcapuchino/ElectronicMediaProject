@@ -42,6 +42,7 @@ namespace ElectronicMediaAPI.Controllers.Post
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostController));
@@ -156,6 +157,43 @@ namespace ElectronicMediaAPI.Controllers.Post
                 });
             }
         }
+
+        [HttpPost("leader/page/{leaderId}")]
+        public async Task<IActionResult> GetPostByPagingByLeader([FromRoute] Guid leaderId, [FromBody] PageRequestBody requestBody)
+        {
+            try
+            {
+                var result = await _postService.GetAllWithPagingByLeader(leaderId,requestBody);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
+            }
+        }
+
+        [HttpPost("writer/page/{writerId}")]
+        public async Task<IActionResult> GetPostByPagingByWriter([FromRoute] Guid writerId, [FromBody] PageRequestBody requestBody)
+        {
+            try
+            {
+                var result = await _postService.GetAllWithPagingByWriter(writerId,requestBody);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
+            }
+        }
+
         [HttpDelete("delete/{postId}")]
         public async Task<APIResponeModel> DeletePost([FromRoute] Guid postId)
         {

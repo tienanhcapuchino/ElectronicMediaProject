@@ -34,8 +34,41 @@
 @{
     Layout = "_AdminLayout";
 }
+@{
+    TokenUIModel user = ViewBag.User;
+    string status = ViewBag.SelectedStatus;
+}
+<h4>@user.Username  - @user.RoleName</h4>
 
-<table class="table">
+<form asp-controller="Post" asp-action="index" method="get">
+    <div class="input-group">
+        <div class="form-outline">
+            <input name="text" value="@ViewBag.Text" id="search-focus" type="search" placeholder="Search Title or Content..." class="" />
+        </div>
+        <div id="labeldiv"></div>
+        <button type="submit" aria-labelledby="labeldiv">
+            <i class="bi bi-search"></i>
+        </button>
+    </div>
+</form>
+
+<form asp-controller="Post" asp-action="index" method="get">
+    <div style="margin-top:10px">
+        <label>Filter Status</label>
+        <select style="margin-left:60px" name="status" onchange="this.form.submit()">
+            <option value="All" selected="@(status == "All"? true:false)">--All---</option>
+            <option value="Pending" selected="@(status == "Pending"? true:false)">Pending</option>
+            <option value="Approved" selected="@(status == "Approved"? true:false)">Approved</option>
+            <option value="Published" selected="@(status == "Published"? true:false)">Published</option>
+            <option value="Denied" selected="@(status == "Denied"? true:false)">Denied</option>
+
+        </select>
+    </div>
+</form>
+
+@Html.ActionLink("Export to excel", "DownloadExcel", "Post", null, new { @class = "btn btn-primary" })
+
+<table class="table" style="margin-bottom: 20px">
     <thead>
         <tr>
             <th>Title</th>
@@ -84,9 +117,20 @@
                 }
 
                 <td class="button-cell">
+
                     <a asp-controller="Post" asp-action="Detail" asp-route-pid="@p.Id" type="button" class="btn btn-success"><i class="bi bi-eye"></i></a>
-                    <a asp-controller="Post" asp-action="Update" asp-route-pid="@p.Id" type="button" class="btn btn-primary"><i class="bi bi-pen"></i></a>
-                    <a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                    @if (user.RoleName != "Writer" || (user.RoleName == "Writer" && p.Status.ToString() == "Pending"))
+                    {
+                        <a asp-controller="Post" asp-action="Update" asp-route-pid="@p.Id" asp-route-currentPage="@Model.CurrentPage" type="button" class="btn btn-primary"><i class="bi bi-pen"></i></a>
+
+                    }
+
+                    @if ((user.RoleName != "Leader" && user.RoleName != "Writer") || (user.RoleName == "Writer" && p.Status.ToString() == "Pending"))
+                    {
+                        <a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+
+                    }
+                   
 
                 </td>
 
@@ -145,10 +189,32 @@
         </ul>
     }
 </div>
+
+<div class="modal fade" id="modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <span id="modal-content"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="delete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     table {
         width: 100%;
     }
+
+
+
 
     .button-cell {
         display: grid;
@@ -156,6 +222,10 @@
         justify-content: end;
         align-items: center;
         gap: 10px; /* Adjust this value to set the space between buttons */
+    }
+
+    .search {
+        height: 10%;
     }
 
     .first {
@@ -180,3 +250,4 @@
             text-overflow: ellipsis;
         }
 </style>
+
