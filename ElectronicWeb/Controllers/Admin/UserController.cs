@@ -47,7 +47,7 @@ namespace ElectronicWeb.Controllers.Admin
         {
             _tokenService = tokenService;
         }
-        public IActionResult UserManager(int currentPage = 1, string search = "")
+        public IActionResult UserManager(string role, int currentPage = 1, string search = "")
         {
             var token = _tokenService.GetToken();
             if (string.IsNullOrEmpty(token))
@@ -62,12 +62,13 @@ namespace ElectronicWeb.Controllers.Admin
             if (tokenModel != null && tokenModel.RoleName.Equals("Admin"))
             {
                 PageList<UsersModel> pageRequest = null;
+                string realRole = string.IsNullOrEmpty(role) ? string.Empty : role;
                 PageRequestBody pageRequestBody = new PageRequestBody()
                 {
                     Page = currentPage,
                     Top = 5,
                     Skip = 0,
-                    SearchText = string.IsNullOrEmpty(search) ? string.Empty : search,
+                    SearchText = string.IsNullOrEmpty(search) ? "" : search,
                     SearchByColumn = new List<string>() { "Email", "UserName", "FullName" },
                     OrderBy = new PageRequestOrderBy()
                     {
@@ -78,21 +79,24 @@ namespace ElectronicWeb.Controllers.Admin
                 {
                     new PageRequestFilter
                     {
-                        ColumnName = "",
-                        IsNullValue = true,
+                        ColumnName = "RoleName",
+                        IsNullValue = string.IsNullOrEmpty(role) ? true : false,
                         IncludeNullValue= true,
-                        Value = new List<string>()
-                    }
-
+                        Value = new List<string>(){ realRole }
+                    },
                 },
                     AdditionalFilters = new List<AdditionalFilter>
                 {
                     new AdditionalFilter{}
                 },
                 };
-                if(!string.IsNullOrEmpty(search))
+                if (!string.IsNullOrEmpty(search))
                 {
                     ViewBag.SearchText = search;
+                }
+                if(!string.IsNullOrEmpty(role))
+                {
+                    ViewBag.RoleSearch = role;
                 }
                 string data = JsonConvert.SerializeObject(pageRequestBody);
                 HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetUerssWithPaging, MethodAPI.POST, token, data);

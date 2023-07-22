@@ -227,7 +227,7 @@ namespace ElectronicMedia.Core.Services.Service
                             <p>&nbsp;Please login to the website with your <strong><em>Username</em></strong> and <em><strong>Password</strong></em></p>
                             <p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below: <a href=""mailto:tienanhcapuchino@gmail.com"">tienanhcapuchino@gmail.com</a></p>
                             <p>This email is sent automatically, please don&rsquo;t reply.</p>
-                            <p><em>HAVE A GOOD EXPERIENCE.</em></p>";
+                            <p><strong><em>HAVE A GOOD EXPERIENCE!</em></strong></p>";
             result.To = emailTos;
             return await Task.FromResult(result);
         }
