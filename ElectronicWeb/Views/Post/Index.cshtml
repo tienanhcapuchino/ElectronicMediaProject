@@ -29,6 +29,7 @@
 *********************************************************************/
 *@
 @using ElectronicMedia.Core.Repository.Entity;
+@using ElectronicMedia.Core.Common;
 @using ElectronicMedia.Core.Repository.Models;
 @using ElectronicWeb.Models;
 @{
@@ -90,12 +91,11 @@
             <tr>
                 <td style="width:40%">@p.Title</td>
                 <td class="ellipsis first">
-                    <span>@p.Content</span>
+                    <span>@Html.Raw(@p.Content)</span>
                 </td>
                 <td>@p.AuthorName</td>
                 <td>@p.CreatedDate.ToString("dd/MM/yyyy")</td>
                 <td>@p.PublishedDate.Value.ToString("dd/MM/yyyy")</td>
-                @* <td>@p.UpdatedDate.Value.ToString("dd/MM/yyyy")</td>*@
                 <td>@p.Rate</td>
                 <td>@p.Like</td>
                 <td>@p.Dislike</td>
@@ -119,13 +119,13 @@
                 <td class="button-cell">
 
                     <a asp-controller="Post" asp-action="Detail" asp-route-pid="@p.Id" type="button" class="btn btn-success"><i class="bi bi-eye"></i></a>
-                    @if (user.RoleName != "Writer" || (user.RoleName == "Writer" && p.Status.ToString() == "Pending"))
+                    @if (user.RoleName != UserRole.Writer || (user.RoleName == UserRole.Writer && p.Status.ToString() == "Pending"))
                     {
                         <a asp-controller="Post" asp-action="Update" asp-route-pid="@p.Id" asp-route-currentPage="@Model.CurrentPage" type="button" class="btn btn-primary"><i class="bi bi-pen"></i></a>
 
                     }
 
-                    @if ((user.RoleName != "Leader" && user.RoleName != "Writer") || (user.RoleName == "Writer" && p.Status.ToString() == "Pending"))
+                    @if ((user.RoleName != UserRole.Leader && user.RoleName != UserRole.Writer) || (user.RoleName == UserRole.Writer && p.Status.ToString() == "Pending"))
                     {
                         <a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a>
 

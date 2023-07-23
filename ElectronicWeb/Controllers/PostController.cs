@@ -53,6 +53,11 @@ namespace ElectronicWeb.Controllers
         }
         public IActionResult Index(int currentPage = 1, string text = "", string status = "All")
         {
+            string token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
             PageList<PostViewModel> pageRequest = null;
 
             PageRequestBody pageRequestBody = new PageRequestBody()
@@ -88,18 +93,16 @@ namespace ElectronicWeb.Controllers
             };
 
 
-            string data = JsonConvert.SerializeObject(pageRequestBody);
-            string token = _tokenService.GetToken();
+            string data = JsonConvert.SerializeObject(pageRequestBody);       
             var user = _tokenService.GetTokenModelUI(token);
-            if (user == null) return Redirect("/home/Index");
             var result = CommonUIService.GetDataAPI(RoutesManager.GetPostsWithPaging, MethodAPI.POST, token, data);
-            if (user.RoleName == "Leader")
+            if (user.RoleName == UserRole.Leader)
             {
                 string url = RoutesManager.GetPostByLeader + user.UserId;
                 result = CommonUIService.GetDataAPI(url, MethodAPI.POST, token, data);
             }
 
-            if (user.RoleName == "Writer")
+            if (user.RoleName == UserRole.Writer)
             {
                 string url = RoutesManager.GetPostByWriter + user.UserId;
                 result = CommonUIService.GetDataAPI(url, MethodAPI.POST, token, data);
@@ -109,6 +112,10 @@ namespace ElectronicWeb.Controllers
             {
                 var content = result.Content.ReadAsStringAsync().Result;
                 pageRequest = JsonConvert.DeserializeObject<PageList<PostViewModel>>(content);
+            }
+            else
+            {
+                return View("Views/Account/Login.cshtml");
             }
             ViewBag.User = user;
             ViewBag.Text = text;
@@ -121,6 +128,10 @@ namespace ElectronicWeb.Controllers
         {
             string url = RoutesManager.GetPostById + "" + pid;
             string token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
             var user = _tokenService.GetTokenModelUI(token);
             PostViewModel post = null;
             List<PostCategory> categories = null;

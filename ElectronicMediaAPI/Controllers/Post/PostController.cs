@@ -141,6 +141,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
         [HttpPost("page")]
+        [Authorize(Roles =$"{UserRole.Admin}, {UserRole.EditorDirector}")]
         public async Task<IActionResult> GetPostByPaging(PageRequestBody requestBody)
         {
             try
@@ -159,6 +160,7 @@ namespace ElectronicMediaAPI.Controllers.Post
         }
 
         [HttpPost("leader/page/{leaderId}")]
+        [Authorize(Roles = $"{UserRole.Leader}")]
         public async Task<IActionResult> GetPostByPagingByLeader([FromRoute] Guid leaderId, [FromBody] PageRequestBody requestBody)
         {
             try
@@ -177,6 +179,7 @@ namespace ElectronicMediaAPI.Controllers.Post
         }
 
         [HttpPost("writer/page/{writerId}")]
+        [Authorize(Roles = $"{UserRole.Writer}")]
         public async Task<IActionResult> GetPostByPagingByWriter([FromRoute] Guid writerId, [FromBody] PageRequestBody requestBody)
         {
             try
@@ -195,6 +198,7 @@ namespace ElectronicMediaAPI.Controllers.Post
         }
 
         [HttpDelete("delete/{postId}")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector},{UserRole.Writer}")]
         public async Task<APIResponeModel> DeletePost([FromRoute] Guid postId)
         {
             try

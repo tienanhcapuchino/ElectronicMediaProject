@@ -164,19 +164,21 @@ namespace ElectronicMedia.Core.Services.Service
         {
             try
             {
-                var  depId = (Guid)_context.Users.FirstOrDefault(x => x.Id == leaderId.ToString()).DepartmentId;
+                var depId = (Guid)_context.Users.FirstOrDefault(x => x.Id == leaderId.ToString()).DepartmentId;
+
                 var posts = await _context.Posts.Include(x => x.User).ToListAsync();
                 List<Post> postsLeader = new List<Post>();
-                foreach(var post in posts)
+                foreach (var post in posts)
                 {
-                    if(post.User.DepartmentId == depId)
+                    if (post.User.DepartmentId == depId)
                     {
                         postsLeader.Add(post);
                     }
                 }
                 var postModels = postsLeader.MapTo<List<PostViewModel>>();
+                var countItem = postsLeader.Count();
                 var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
-                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
+                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
             }
             catch (Exception ex)
             {
@@ -184,14 +186,15 @@ namespace ElectronicMedia.Core.Services.Service
             }
         }
 
-        public async  Task<PagedList<PostViewModel>> GetAllWithPagingByWriter(Guid writerId, PageRequestBody requestBody)
+        public async Task<PagedList<PostViewModel>> GetAllWithPagingByWriter(Guid writerId, PageRequestBody requestBody)
         {
             try
             {
-                var posts = await _context.Posts.Where(x=>x.UserId == writerId.ToString()).Include(x => x.User).ToListAsync();
+                var posts = await _context.Posts.Where(x => x.UserId == writerId.ToString()).Include(x => x.User).ToListAsync();
                 var postModels = posts.MapTo<List<PostViewModel>>();
+                var countItem = postModels.Count();  
                 var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
-                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
+                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top,countItem);
             }
             catch (Exception ex)
             {
@@ -334,7 +337,7 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-     
+
         #endregion
     }
 }
