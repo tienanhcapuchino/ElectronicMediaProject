@@ -59,7 +59,7 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return Unauthorized();
             }
-            if (tokenModel != null && tokenModel.RoleName.Equals("Admin"))
+            if (tokenModel != null && tokenModel.RoleName.Equals(UserRole.Admin))
             {
                 PageList<UsersModel> pageRequest = null;
                 string realRole = string.IsNullOrEmpty(role) ? string.Empty : role;
@@ -94,7 +94,7 @@ namespace ElectronicWeb.Controllers.Admin
                 {
                     ViewBag.SearchText = search;
                 }
-                if(!string.IsNullOrEmpty(role))
+                if (!string.IsNullOrEmpty(role))
                 {
                     ViewBag.RoleSearch = role;
                 }
@@ -121,13 +121,21 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            string url = $"{RoutesManager.UpdateRole}/{userId}?newRole={newRole}";
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.PUT, token);
-            if (respone.IsSuccessStatusCode)
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel != null && tokenModel.ExpiredTime >= DateTime.Now.Ticks)
             {
-                return RedirectToAction("UserManager");
+                return Unauthorized();
             }
-            return BadRequest();
+            if (tokenModel != null && tokenModel.RoleName.Equals(UserRole.Admin))
+            {
+                string url = $"{RoutesManager.UpdateRole}/{userId}?newRole={newRole}";
+                HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.PUT, token);
+                if (respone.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("UserManager");
+                }
+            }
+            return Content("Error when change role!");
         }
 
         public IActionResult DeactiveUser(Guid id, bool isActive)
@@ -137,18 +145,40 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            string url = $"{RoutesManager.Deactivate}/{id}?isActive={isActive}";
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.PUT, token);
-            if (respone.IsSuccessStatusCode)
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel != null && tokenModel.ExpiredTime >= DateTime.Now.Ticks)
             {
-                return RedirectToAction("UserManager");
+                return Unauthorized();
             }
-            return BadRequest();
+            if (tokenModel != null && tokenModel.RoleName.Equals(UserRole.Admin))
+            {
+                string url = $"{RoutesManager.Deactivate}/{id}?isActive={isActive}";
+                HttpResponseMessage respone = CommonUIService.GetDataAPI(url, MethodAPI.PUT, token);
+                if (respone.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("UserManager");
+                }
+            }
+            return Content("Error when deactive user");
         }
 
         public IActionResult AddUser()
         {
-            return View("Views/User/Add.cshtml");
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel != null && tokenModel.ExpiredTime >= DateTime.Now.Ticks)
+            {
+                return Unauthorized();
+            }
+            if (tokenModel != null && tokenModel.RoleName.Equals(UserRole.Admin))
+            {
+                return View("Views/User/Add.cshtml");
+            }
+            return View("Views/Account/Login.cshtml");
         }
 
         public IActionResult DoAdd(UserAddModel user)
@@ -158,14 +188,22 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            var jsonData = JsonConvert.SerializeObject(user);
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.AddNewUser, MethodAPI.POST, token, jsonData);
-            if (respone.IsSuccessStatusCode)
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel != null && tokenModel.ExpiredTime >= DateTime.Now.Ticks)
             {
-                TempData["AddUserSuccess"] = "Add successfully";
-                return RedirectToAction("UserManager");
+                return Unauthorized();
             }
-            return BadRequest();
+            if (tokenModel != null && tokenModel.RoleName.Equals(UserRole.Admin))
+            {
+                var jsonData = JsonConvert.SerializeObject(user);
+                HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.AddNewUser, MethodAPI.POST, token, jsonData);
+                if (respone.IsSuccessStatusCode)
+                {
+                    TempData["AddUserSuccess"] = "Add successfully";
+                    return RedirectToAction("UserManager");
+                }
+            }
+            return Content("Error when add user");
         }
         public IActionResult DownloadExcel()
         {
@@ -174,12 +212,20 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.ExportUsers, MethodAPI.GET, token);
-            if (respone.IsSuccessStatusCode)
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel != null && tokenModel.ExpiredTime >= DateTime.Now.Ticks)
             {
-                byte[] fileContent = respone.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
-                string fileName = "Export_Users.xlsx";
-                return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                return Unauthorized();
+            }
+            if (tokenModel != null && tokenModel.RoleName.Equals(UserRole.Admin))
+            {
+                HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.ExportUsers, MethodAPI.GET, token);
+                if (respone.IsSuccessStatusCode)
+                {
+                    byte[] fileContent = respone.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                    string fileName = "Export_Users.xlsx";
+                    return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
             }
             return Content("Error when dowload excel!");
         }
