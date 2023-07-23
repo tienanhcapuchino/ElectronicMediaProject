@@ -30,33 +30,58 @@
 *@
 @using ElectronicWeb.Models;
 @using ElectronicMedia.Core.Repository.Entity;
+@using ElectronicMedia.Core.Common;
 @using ElectronicMedia.Core.Repository.Models;
 
 @{
     Layout = "_AdminLayout";
 }
 @{
+    TokenUIModel user = ViewBag.User;
+    List<PostCategory> categories = ViewBag.Category;
+    List<PostCategory> subCategories = ViewBag.SubCategory;
+    var cate = categories.FirstOrDefault(x => x.Id == Model.CategoryId);
+    var sub = subCategories.FirstOrDefault(x => x.Id == Model.SubCategoryId);
 }
 @model PostViewModel;
 <h1>Post management</h1>
 <form asp-controller="Post" asp-action="Update" method="post">
     <input type="hidden" asp-for="Id" value="@Model.Id" />
     <div class="form-group row">
-        <label for="inputEmail3" class="col-sm-2 col-form-label">Title</label>
+        <label for="inputEmail3" class="bold-label col-sm-2 col-form-label">Title</label>
         <div class="col-sm-9">
-            <input asp-for=Title type="text" class="form-control" value="@Model.Title" placeholder="Title">
+          
             <input asp-for=UserId type="hidden" class="form-control" value="@Model.UserId">
+            @if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.Leader || user.RoleName == UserRole.EditorDirector || (user.RoleName == UserRole.Writer && Model.Status.ToString() != "Pending"))
+            {
+                <h6>@Model.Title</h6>
+                <input asp-for=Title type="hidden" class="form-control" value="@Model.Title" placeholder="Title">
+            }
+            else
+            {
+                <input asp-for=Title  type="text" class="form-control" value="@Model.Title" placeholder="Title">
+            }
+           
             <input asp-for=CreatedDate type="hidden" class="form-control" value="@Model.CreatedDate">
             <input asp-for=PublishedDate type="hidden" class="form-control" value="@Model.PublishedDate">
             <input asp-for=Rate type="hidden" class="form-control" value="@Model.Rate">
             <input asp-for=Like type="hidden" class="form-control" value="@Model.Like">
-            <input asp-for=Dislike type="hidden" class="form-control" value="@Model.Dislike">        
+            <input asp-for=Dislike type="hidden" class="form-control" value="@Model.Dislike">
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Content</label>
+        <label class="bold-label col-sm-2 col-form-label">Content</label>
         <div class="col-sm-9">
-            <textarea asp-for=Content class="form-control" placeholder="Content here..." id="textarea" rows="15">@Html.Raw(@Model.Content)</textarea>
+
+            @if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.Leader || user.RoleName == UserRole.EditorDirector || (user.RoleName == UserRole.Writer && Model.Status.ToString() != "Pending"))
+            {
+                <p>@Html.Raw(@Model.Content)</p>
+                <input asp-for=Content type="hidden" class="form-control" value="@Model.Content"/>
+            }else{
+                <textarea asp-for=Content class="form-control" placeholder="Content here..." id="textarea" rows="15">@Html.Raw(@Model.Content)</textarea>
+            }
+
+           
         </div>
     </div>
 
@@ -75,30 +100,47 @@
         </div>
     </div>
     <div class="form-group row">
-        <label for="category" class="col-sm-2 col-form-label">Post Category</label>
+        <label for="category" class="bold-label col-sm-2 col-form-label">Post Category</label>
         <div class="col-sm-9" style="margin-top:10px; margin-bottom:10px">
-            <select asp-for="CategoryId"  id="category">
-                @foreach (PostCategory pc in ViewBag.Category)
-                {
-                    if (pc.Id == Model.CategoryId)
+            @if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.Leader || user.RoleName == UserRole.EditorDirector || (user.RoleName == UserRole.Writer && Model.Status.ToString() != "Pending"))
+            {
+                <p>@cate.Name</p>
+                <input type="hidden" asp-for="CategoryId" value="@Model.CategoryId" />
+            }
+            else
+            {
+                <select asp-for="CategoryId" id="category">
+                    @foreach (PostCategory pc in categories)
                     {
-                        <option value="@pc.Id" selected> @pc.Name</option>
+                        if (pc.Id == Model.CategoryId)
+                        {
+                            <option value="@pc.Id" selected> @pc.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@pc.Id"> @pc.Name</option>
+                        }
                     }
-                    else
-                    {
-                        <option value="@pc.Id"> @pc.Name</option>
-                    }
-              }
 
-            </select>
+                </select>
+            }
+            
         </div>
     </div>
 
     <div class="form-group row">
-        <label for="subCategory" class="col-sm-2 col-form-label">Sub Category</label>
+        <label for="subCategory" class="bold-label col-sm-2 col-form-label">Sub Category</label>
         <div class="col-sm-9" style="margin-top:10px; margin-bottom:10px">
 
-            <select asp-for="SubCategoryId" id="subCategory">
+            @if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.Leader || user.RoleName == UserRole.EditorDirector || (user.RoleName == UserRole.Writer && Model.Status.ToString() != "Pending"))
+            {
+                <label>@(sub ==null?"None": sub.Name)</label>
+                <input asp-for="SubCategoryId"  type="hidden" value="@Model.SubCategoryId" />
+            }
+            else
+            {
+                <select asp-for="SubCategoryId" id="subCategory">
+
                     @foreach (PostCategory pc in ViewBag.SubCategory)
                     {
                         if (pc.ParentId == Model.CategoryId)
@@ -109,21 +151,57 @@
                             }
                             else
                             {
-                             
+
                                 <option value="@pc.Id"> @pc.Name</option>
                             }
 
                         }
 
                     }
+                    <option selected="@(Model.SubCategoryId ==null?true:false)">None</option>
 
                 </select>
+            }
+           
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="status" class="bold-label col-sm-2 col-form-label">Status</label>
+        <div class="col-sm-9" style="margin-top:10px; margin-bottom:10px">
+            @if (user.RoleName == UserRole.Writer)
+            {
+                <label style="color:deepskyblue">@Model.Status</label>
+                <input asp-for=Status type="hidden" readonly value="@Model.Status" />
+            }
+            else if (user.RoleName == UserRole.Leader)
+            {
+                <select asp-for="Status" id="status">
+                    <option value="0" selected="@(Model.Status.ToString() == "Pending" ? true : false)">Pending</option>
+                    <option value="1" selected="@(Model.Status.ToString() == "Approved" ? true : false)">Approved</option>
+                    <option value="3" selected="@(Model.Status.ToString() == "Denied" ? true : false)">Denied</option>
+                </select>
+            }
+            else if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.EditorDirector)
+            {
+                <select asp-for="Status" id="status">
+                    <option value="0" selected="@(Model.Status.ToString() == "Pending" ? true : false)">Pending</option>
+                    <option value="1" selected="@(Model.Status.ToString() == "Approved" ? true : false)">Approved</option>
+                    <option value="2" selected="@(Model.Status.ToString() == "Published" ? true : false)">Published</option>
+                    <option value="3" selected="@(Model.Status.ToString() == "Denied" ? true : false)">Denied</option>
+                </select>
+            }
+
+            
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label"></label>
         <div class="col-sm-9">
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Update</button>
+            @if ((user.RoleName == UserRole.Writer && Model.Status.ToString() == "Pending") || user.RoleName != UserRole.Writer)
+            {
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Update</button>
+            }
+           
         </div>
     </div>
     <div class="form-group row">
@@ -131,11 +209,14 @@
         <div class="col-sm-9">
             <span style="color:red"> @TempData["message"]</span>
         </div>
-      
+
     </div>
 </form>
 
 <style>
+    .bold-label {
+        font-weight: bold;
+    }
     #select {
         cursor: pointer;
     }
@@ -149,4 +230,4 @@
     }
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- <script src="~/js/subCategory.js">  </script>
+<script src="~/js/subCategory.js">  </script>

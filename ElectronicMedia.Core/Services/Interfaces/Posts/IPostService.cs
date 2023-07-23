@@ -51,5 +51,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId, int top);
         Task<List<Post>> GetPostByCateId(Guid cateId);
         Task<PagedList<PostViewModel>> GetAllWithPaging(PageRequestBody requestBody);
+        Task<PagedList<PostViewModel>> GetAllWithPagingByLeader( Guid leaderId,PageRequestBody requestBody);
+        Task<PagedList<PostViewModel>> GetAllWithPagingByWriter(Guid writerId, PageRequestBody requestBody);
     }
 }

@@ -1,4 +1,4 @@
-/*********************************************************************
+ï»¿/*********************************************************************
  * 
  * PROPRIETARY and CONFIDENTIAL
  * 
@@ -21,7 +21,7 @@
  * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
  * 
  * 
- * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
+ * Copy right 2023 Â© PRN231 - SU23 - Group 10 Â®. All Rights Reserved
  * 
  * Unpublished - All rights reserved under the copyright laws 
  * of the Government of Viet Nam
@@ -51,16 +51,22 @@ namespace ElectronicWeb.Controllers
             _tokenService = tokenService;
 
         }
-        public IActionResult Index(int currentPage = 1)
+        public IActionResult Index(int currentPage = 1, string text = "", string status = "All")
         {
+            string token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
             PageList<PostViewModel> pageRequest = null;
+
             PageRequestBody pageRequestBody = new PageRequestBody()
             {
                 Page = currentPage,
                 Top = 10,
                 Skip = 0,
-                SearchText = string.Empty,
-                SearchByColumn = new List<string>() { },
+                SearchText = (string.IsNullOrEmpty(text) ? string.Empty : text),
+                SearchByColumn = new List<string>() { "Title", "Content" },
                 OrderBy = new PageRequestOrderBy()
                 {
                     OrderByDesc = true,
@@ -70,10 +76,11 @@ namespace ElectronicWeb.Controllers
                 {
                     new PageRequestFilter
                     {
-                        ColumnName = "",
-                        IsNullValue = true,
+                        ColumnName = "Status",
+                         IsNullValue = (status=="All"?true:false),
                         IncludeNullValue= true,
-                        Value = new List<string>()
+                        Value = new List<string>(){status}
+
                     }
 
                 },
@@ -85,23 +92,47 @@ namespace ElectronicWeb.Controllers
 
             };
 
-            string data = JsonConvert.SerializeObject(pageRequestBody);
-            string token = _tokenService.GetToken();
 
+            string data = JsonConvert.SerializeObject(pageRequestBody);       
+            var user = _tokenService.GetTokenModelUI(token);
             var result = CommonUIService.GetDataAPI(RoutesManager.GetPostsWithPaging, MethodAPI.POST, token, data);
+            if (user.RoleName == UserRole.Leader)
+            {
+                string url = RoutesManager.GetPostByLeader + user.UserId;
+                result = CommonUIService.GetDataAPI(url, MethodAPI.POST, token, data);
+            }
+
+            if (user.RoleName == UserRole.Writer)
+            {
+                string url = RoutesManager.GetPostByWriter + user.UserId;
+                result = CommonUIService.GetDataAPI(url, MethodAPI.POST, token, data);
+            }
+
             if (result.IsSuccessStatusCode)
             {
                 var content = result.Content.ReadAsStringAsync().Result;
                 pageRequest = JsonConvert.DeserializeObject<PageList<PostViewModel>>(content);
             }
+            else
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            ViewBag.User = user;
+            ViewBag.Text = text;
+            ViewBag.SelectedStatus = status;
             return View(pageRequest);
         }
 
         [HttpGet]
-        public IActionResult Update(string pid)
+        public IActionResult Update(string pid, int currentPage)
         {
             string url = RoutesManager.GetPostById + "" + pid;
             string token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            var user = _tokenService.GetTokenModelUI(token);
             PostViewModel post = null;
             List<PostCategory> categories = null;
             List<PostCategory> subCategories = null;
@@ -126,8 +157,9 @@ namespace ElectronicWeb.Controllers
                 subCategories = JsonConvert.DeserializeObject<List<PostCategory>>(content);
             }
 
-
+            TempData["CurrentPage"] = currentPage;
             ViewBag.Category = categories;
+            ViewBag.User = user;
             ViewBag.SubCategory = subCategories;
             return View(post);
         }
@@ -147,8 +179,9 @@ namespace ElectronicWeb.Controllers
                     var result = CommonUIService.GetDataAPI(RoutesManager.UpdatePost, MethodAPI.POST, token, data);
                     if (result.IsSuccessStatusCode)
                     {
+                        int page = int.Parse(TempData["CurrentPage"].ToString());
                         var content = result.Content.ReadAsStringAsync().Result;
-                        return Redirect("/Post/Index");
+                        return Redirect("/Post?currentPage=" + page);
                     }
                     else
                     {
@@ -170,11 +203,11 @@ namespace ElectronicWeb.Controllers
             }
         }
 
-
         public IActionResult Detail(string pid)
         {
             string url = RoutesManager.GetPostById + "" + pid;
             string token = _tokenService.GetToken();
+
             var getPost = CommonUIService.GetDataAPI(url, MethodAPI.GET, token);
             PostViewModel post = null;
             if (getPost.IsSuccessStatusCode)
@@ -188,5 +221,22 @@ namespace ElectronicWeb.Controllers
         {
             return View();
         }
+        public IActionResult DownloadExcel()
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.ExportPosts, MethodAPI.GET, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                byte[] fileContent = respone.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                string fileName = "Export_Posts.xlsx";
+                return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            return Content("Error when dowload excel!");
+        }
     }
 }
+

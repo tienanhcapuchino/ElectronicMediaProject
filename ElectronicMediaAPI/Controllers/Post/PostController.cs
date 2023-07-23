@@ -42,6 +42,7 @@ namespace ElectronicMediaAPI.Controllers.Post
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostController));
@@ -140,6 +141,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
         [HttpPost("page")]
+        [Authorize(Roles =$"{UserRole.Admin}, {UserRole.EditorDirector}")]
         public async Task<IActionResult> GetPostByPaging(PageRequestBody requestBody)
         {
             try
@@ -156,7 +158,47 @@ namespace ElectronicMediaAPI.Controllers.Post
                 });
             }
         }
+
+        [HttpPost("leader/page/{leaderId}")]
+        [Authorize(Roles = $"{UserRole.Leader}")]
+        public async Task<IActionResult> GetPostByPagingByLeader([FromRoute] Guid leaderId, [FromBody] PageRequestBody requestBody)
+        {
+            try
+            {
+                var result = await _postService.GetAllWithPagingByLeader(leaderId,requestBody);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
+            }
+        }
+
+        [HttpPost("writer/page/{writerId}")]
+        [Authorize(Roles = $"{UserRole.Writer}")]
+        public async Task<IActionResult> GetPostByPagingByWriter([FromRoute] Guid writerId, [FromBody] PageRequestBody requestBody)
+        {
+            try
+            {
+                var result = await _postService.GetAllWithPagingByWriter(writerId,requestBody);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
+                {
+                    Status = ApiResultStatus.Failed,
+                    ErrorMessage = ex.Message
+                });
+            }
+        }
+
         [HttpDelete("delete/{postId}")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector},{UserRole.Writer}")]
         public async Task<APIResponeModel> DeletePost([FromRoute] Guid postId)
         {
             try
