@@ -54,9 +54,14 @@ namespace ElectronicWeb.Controllers
         public IActionResult Index(int currentPage = 1, string text = "", string status = "All")
         {
             string token = _tokenService.GetToken();
+            var user = _tokenService.GetTokenModelUI(token);
             if (string.IsNullOrEmpty(token))
             {
                 return View("Views/Account/Login.cshtml");
+            }
+            if(user.RoleName == UserRole.NormalUser)
+            {
+                return View("Views/Home/Index.cshtml");
             }
             PageList<PostViewModel> pageRequest = null;
 
@@ -94,7 +99,7 @@ namespace ElectronicWeb.Controllers
 
 
             string data = JsonConvert.SerializeObject(pageRequestBody);       
-            var user = _tokenService.GetTokenModelUI(token);
+           
             var result = CommonUIService.GetDataAPI(RoutesManager.GetPostsWithPaging, MethodAPI.POST, token, data);
             if (user.RoleName == UserRole.Leader)
             {
@@ -126,13 +131,22 @@ namespace ElectronicWeb.Controllers
         [HttpGet]
         public IActionResult Update(string pid, int currentPage)
         {
-            string url = RoutesManager.GetPostById + "" + pid;
             string token = _tokenService.GetToken();
+            var user = _tokenService.GetTokenModelUI(token);
             if (string.IsNullOrEmpty(token))
             {
                 return View("Views/Account/Login.cshtml");
             }
-            var user = _tokenService.GetTokenModelUI(token);
+            if (user.RoleName == UserRole.NormalUser)
+            {
+                return View("Views/Home/Index.cshtml");
+            }
+            string url = RoutesManager.GetPostById + "" + pid;
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
             PostViewModel post = null;
             List<PostCategory> categories = null;
             List<PostCategory> subCategories = null;
@@ -170,12 +184,21 @@ namespace ElectronicWeb.Controllers
         {
             try
             {
+                string token = _tokenService.GetToken();
+                var user = _tokenService.GetTokenModelUI(token);
+                if (string.IsNullOrEmpty(token))
+                {
+                    return View("Views/Account/Login.cshtml");
+                }
+                if (user.RoleName == UserRole.NormalUser)
+                {
+                    return View("Views/Home/Index.cshtml");
+                }
                 post.UpdatedDate = DateTime.Now;
                 post.Description = "";
                 if (!string.IsNullOrEmpty(post.Title) && !string.IsNullOrEmpty(post.Content))
                 {
                     string data = JsonConvert.SerializeObject(post);
-                    string token = _tokenService.GetToken();
                     var result = CommonUIService.GetDataAPI(RoutesManager.UpdatePost, MethodAPI.POST, token, data);
                     if (result.IsSuccessStatusCode)
                     {
@@ -205,8 +228,17 @@ namespace ElectronicWeb.Controllers
 
         public IActionResult Detail(string pid)
         {
-            string url = RoutesManager.GetPostById + "" + pid;
             string token = _tokenService.GetToken();
+            var user = _tokenService.GetTokenModelUI(token);
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            if (user.RoleName == UserRole.NormalUser)
+            {
+                return View("Views/Home/Index.cshtml");
+            }
+            string url = RoutesManager.GetPostById + "" + pid;
 
             var getPost = CommonUIService.GetDataAPI(url, MethodAPI.GET, token);
             PostViewModel post = null;
@@ -219,14 +251,29 @@ namespace ElectronicWeb.Controllers
         }
         public IActionResult Delete(PostVM post)
         {
+            string token = _tokenService.GetToken();
+            var user = _tokenService.GetTokenModelUI(token);
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            if (user.RoleName == UserRole.NormalUser || user.RoleName == UserRole.Leader)
+            {
+                return View("Views/Home/Index.cshtml");
+            }
             return View();
         }
         public IActionResult DownloadExcel()
         {
-            var token = _tokenService.GetToken();
+            string token = _tokenService.GetToken();
+            var user = _tokenService.GetTokenModelUI(token);
             if (string.IsNullOrEmpty(token))
             {
                 return View("Views/Account/Login.cshtml");
+            }
+            if (user.RoleName == UserRole.NormalUser)
+            {
+                return View("Views/Home/Index.cshtml");
             }
             HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.ExportPosts, MethodAPI.GET, token);
             if (respone.IsSuccessStatusCode)
