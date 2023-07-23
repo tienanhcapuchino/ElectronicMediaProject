@@ -66,9 +66,11 @@
         </select>
     </div>
 </form>
+@if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.EditorDirector)
+{
+    @Html.ActionLink("Export to excel", "DownloadExcel", "Post", null, new { @class = "btn btn-primary" })
 
-@Html.ActionLink("Export to excel", "DownloadExcel", "Post", null, new { @class = "btn btn-primary" })
-
+}
 <table class="table" style="margin-bottom: 20px">
     <thead>
         <tr>

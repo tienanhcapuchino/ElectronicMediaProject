@@ -42,7 +42,6 @@ namespace ElectronicMediaAPI.Controllers.Post
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostController));
@@ -109,6 +108,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
         [HttpPost("create")]
+        [Authorize]
         public async Task<APIResponeModel> CreatePost([FromForm] PostModel model)
         {
             try
@@ -242,6 +242,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
         [HttpGet("export")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
         public async Task<IActionResult> ExportPost()
         {
             try
@@ -297,6 +298,7 @@ namespace ElectronicMediaAPI.Controllers.Post
         }
 
         [HttpPost("update")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}, {UserRole.Leader}, {UserRole.Writer}")]
         public async Task<APIResponeModel> UpdatePost([FromBody] PostViewModel model)
             {
                 try
