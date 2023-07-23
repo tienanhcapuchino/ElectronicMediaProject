@@ -49,10 +49,10 @@
         <label>Role</label>
         <select name="role" onchange="this.form.submit()" class="form-controll">
             <option value="@string.Empty" selected="@(ViewBag.RoleSearch == "")" class="form-controll">All</option>
-            <option class="form-controll text-success" selected="@(ViewBag.RoleSearch == "UserNormal")" value="UserNormal">UserNormal</option>
+            <option class="form-controll text-success" selected="@(ViewBag.RoleSearch == "UserNormal")" value="UserNormal">User Normal</option>
             <option class="form-controll text-black" selected="@(ViewBag.RoleSearch == "Writer")" value="Writer">Writer</option>
             <option class="form-controll text-primary" selected="@(ViewBag.RoleSearch == "Leader")" value="Leader">Leader</option>
-            <option class="form-controll text-warning" selected="@(ViewBag.RoleSearch == "EditorDirector")" value="EditorDirector">EditorDirector</option>
+            <option class="form-controll text-warning" selected="@(ViewBag.RoleSearch == "EditorDirector")" value="EditorDirector">Editor Director</option>
             <option class="form-controll text-info" selected="@(ViewBag.RoleSearch == "Admin")" value="Admin">Admin</option>
         </select>
     </form>
@@ -91,10 +91,10 @@
                     <td>
                         <form asp-controller="User" asp-route-userId="@item.UserId" asp-action="ChangeRole">
                             <select class="form-controll" name="newRole" onchange="this.form.submit()">
-                                <option class="form-controll text-success" value="UserNormal" selected="@(item.RoleName == "UserNormal")">UserNormal</option>
+                                <option class="form-controll text-success" value="UserNormal" selected="@(item.RoleName == "UserNormal")">User Normal</option>
                                 <option class="form-controll text-black" value="Writer" selected="@(item.RoleName == "Writer")">Writer</option>
                                 <option class="form-controll text-primary" value="Leader" selected="@(item.RoleName == "Leader")">Leader</option>
-                                <option class="form-controll text-warning" value="EditorDirector" selected="@(item.RoleName == "EditorDirector")">EditorDirector</option>
+                                <option class="form-controll text-warning" value="EditorDirector" selected="@(item.RoleName == "EditorDirector")">Editor Director</option>
                                 <option class="form-controll text-info" value="Admin" selected="@(item.RoleName == "Admin")">Admin</option>
                             </select>
                         </form>

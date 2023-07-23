@@ -53,20 +53,23 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            PageList<DepartmentModel> pageRequest = null;
-            PageRequestBody pageRequestBody = new PageRequestBody()
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel.RoleName.Equals(UserRole.Admin) || tokenModel.RoleName.Equals(UserRole.EditorDirector))
             {
-                Page = currentPage,
-                Top = 5,
-                Skip = 0,
-                SearchText = string.IsNullOrEmpty(search) ? string.Empty : search,
-                SearchByColumn = new List<string>() { "Name" },
-                OrderBy = new PageRequestOrderBy()
+                PageList<DepartmentModel> pageRequest = null;
+                PageRequestBody pageRequestBody = new PageRequestBody()
                 {
-                    OrderByDesc = true,
-                    OrderByKeyWord = string.Empty,
-                },
-                Filter = new List<PageRequestFilter>
+                    Page = currentPage,
+                    Top = 5,
+                    Skip = 0,
+                    SearchText = string.IsNullOrEmpty(search) ? string.Empty : search,
+                    SearchByColumn = new List<string>() { "Name" },
+                    OrderBy = new PageRequestOrderBy()
+                    {
+                        OrderByDesc = true,
+                        OrderByKeyWord = string.Empty,
+                    },
+                    Filter = new List<PageRequestFilter>
                 {
                     new PageRequestFilter
                     {
@@ -77,27 +80,28 @@ namespace ElectronicWeb.Controllers.Admin
                     }
 
                 },
-                AdditionalFilters = new List<AdditionalFilter>
+                    AdditionalFilters = new List<AdditionalFilter>
                 {
                     new AdditionalFilter{}
                 },
-            };
-            if (!string.IsNullOrEmpty(search)) ViewBag.SearchText = search;
-            string data = JsonConvert.SerializeObject(pageRequestBody);
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetAllDepartments, MethodAPI.POST, token, data);
-            if (respone.IsSuccessStatusCode)
-            {
-                if (TempData["DeleteSuccess"] != null)
+                };
+                if (!string.IsNullOrEmpty(search)) ViewBag.SearchText = search;
+                string data = JsonConvert.SerializeObject(pageRequestBody);
+                HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetAllDepartments, MethodAPI.POST, token, data);
+                if (respone.IsSuccessStatusCode)
                 {
-                    ViewBag.DeleteSuccess = TempData["DeleteSuccess"] as string;
+                    if (TempData["DeleteSuccess"] != null)
+                    {
+                        ViewBag.DeleteSuccess = TempData["DeleteSuccess"] as string;
+                    }
+                    if (TempData["AddSuccess"] != null)
+                    {
+                        ViewBag.AddSuccess = TempData["AddSuccess"] as string;
+                    }
+                    var content = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    pageRequest = JsonConvert.DeserializeObject<PageList<DepartmentModel>>(content);
+                    return View(pageRequest);
                 }
-                if (TempData["AddSuccess"] != null)
-                {
-                    ViewBag.AddSuccess = TempData["AddSuccess"] as string;
-                }
-                var content = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                pageRequest = JsonConvert.DeserializeObject<PageList<DepartmentModel>>(content);
-                return View(pageRequest);
             }
             return Content("Error when get all departments!");
         }
@@ -182,27 +186,31 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            HttpResponseMessage responeCheck = CommonUIService.GetDataAPI($"{RoutesManager.ViewDetailDepartment}/{depId}", MethodAPI.GET, token);
-            if (responeCheck.IsSuccessStatusCode)
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel.RoleName.Equals(UserRole.Admin) || tokenModel.RoleName.Equals(UserRole.EditorDirector))
             {
-                var data = responeCheck.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                DepartmentViewDetail result = JsonConvert.DeserializeObject<DepartmentViewDetail>(data);
-                if (result.Members != null && result.Members.Count > 0)
+                HttpResponseMessage responeCheck = CommonUIService.GetDataAPI($"{RoutesManager.ViewDetailDepartment}/{depId}", MethodAPI.GET, token);
+                if (responeCheck.IsSuccessStatusCode)
                 {
-                    var leader = result.Members.Where(x => x.RoleName.ToLower().Equals("leader")).FirstOrDefault();
-                    if (leader != null)
+                    var data = responeCheck.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    DepartmentViewDetail result = JsonConvert.DeserializeObject<DepartmentViewDetail>(data);
+                    if (result.Members != null && result.Members.Count > 0)
                     {
-                        return RedirectToAction("Update", new { depId = depId });
+                        var leader = result.Members.Where(x => x.RoleName.ToLower().Equals("leader")).FirstOrDefault();
+                        if (leader != null)
+                        {
+                            return RedirectToAction("Update", new { depId = depId });
+                        }
                     }
                 }
-            }
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetLeaders, MethodAPI.GET, token);
-            if (respone.IsSuccessStatusCode)
-            {
-                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                List<MemberModel> result = JsonConvert.DeserializeObject<List<MemberModel>>(data);
-                ViewBag.DepId = depId;
-                return View(result);
+                HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetLeaders, MethodAPI.GET, token);
+                if (respone.IsSuccessStatusCode)
+                {
+                    var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    List<MemberModel> result = JsonConvert.DeserializeObject<List<MemberModel>>(data);
+                    ViewBag.DepId = depId;
+                    return View(result);
+                }
             }
             return Content("Error when get all leaders");
         }
@@ -213,17 +221,21 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetMembers, MethodAPI.GET, token);
-            if (respone.IsSuccessStatusCode)
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (!tokenModel.RoleName.Equals(UserRole.Writer) && !tokenModel.RoleName.Equals(UserRole.NormalUser))
             {
-                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                List<MemberModel> result = JsonConvert.DeserializeObject<List<MemberModel>>(data);
-                if (TempData["AssignSuccess"] != null)
+                HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.GetMembers, MethodAPI.GET, token);
+                if (respone.IsSuccessStatusCode)
                 {
-                    ViewBag.AssignSuccess = TempData["AssignSuccess"] as string;
+                    var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    List<MemberModel> result = JsonConvert.DeserializeObject<List<MemberModel>>(data);
+                    if (TempData["AssignSuccess"] != null)
+                    {
+                        ViewBag.AssignSuccess = TempData["AssignSuccess"] as string;
+                    }
+                    ViewBag.DepId = depId;
+                    return View(result);
                 }
-                ViewBag.DepId = depId;
-                return View(result);
             }
             return Content("Error when get all members");
         }
@@ -287,11 +299,16 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            if (TempData["ErrorAdd"] != null)
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (tokenModel.RoleName.Equals(UserRole.Admin) || tokenModel.RoleName.Equals(UserRole.EditorDirector))
             {
-                ViewBag.ErrorAdd = TempData["ErrorAdd"] as string;
+                if (TempData["ErrorAdd"] != null)
+                {
+                    ViewBag.ErrorAdd = TempData["ErrorAdd"] as string;
+                }
+                return View();
             }
-            return View();
+            return Content("Error when add department");
         }
         public IActionResult OnAdd(DepartmentModel department)
         {
@@ -328,12 +345,16 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 return View("Views/Account/Login.cshtml");
             }
-            HttpResponseMessage respone = CommonUIService.GetDataAPI($"{RoutesManager.GetDepartmentIdByUserId}/{Guid.Parse(userId)}", MethodAPI.GET, token);
-            if (respone.IsSuccessStatusCode)
+            var tokenModel = _tokenService.GetTokenModelUI(token);
+            if (!tokenModel.RoleName.Equals(UserRole.Writer) && !tokenModel.RoleName.Equals(UserRole.NormalUser))
             {
-                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                Guid departmentId = Guid.Parse(data);
-                return RedirectToAction("Update", new { depId = departmentId});
+                HttpResponseMessage respone = CommonUIService.GetDataAPI($"{RoutesManager.GetDepartmentIdByUserId}/{Guid.Parse(userId)}", MethodAPI.GET, token);
+                if (respone.IsSuccessStatusCode)
+                {
+                    var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    Guid departmentId = Guid.Parse(data);
+                    return RedirectToAction("Update", new { depId = departmentId });
+                }
             }
             return Content($"Error when get department for leader: {userId}");
         }
