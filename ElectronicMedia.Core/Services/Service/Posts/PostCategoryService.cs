@@ -27,7 +27,9 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.Wordprocessing;
 using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
@@ -83,9 +85,11 @@ namespace ElectronicMedia.Core.Services.Service
         {
             try
             {
-                var category = await _context.PostCategories.ToListAsync();
+                var category = await _context.PostCategories.Skip((requestBody.Page - 1) * requestBody.Top)
+                    .Take(requestBody.Top).ToListAsync();
+                var counitem = await CommonService.GetTotalCount<PostCategory>(_context);
                 var result = QueryData<PostCategory>.QueryForModel(requestBody,category).ToList();
-                return PagedList<PostCategory>.ToPagedList(result, requestBody.Page, requestBody.Top);
+                return PagedList<PostCategory>.ToPagedList(result, requestBody.Page, requestBody.Top, counitem);
             }
             catch(Exception ex) 
             {
@@ -106,6 +110,8 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 var category = parent.MapTo<PostCategoryDto>();
                 var chidrent = _context.PostCategories.Where(x => x.ParentId == parent.Id).ToList();
+                var countPostInCategory = _context.Posts.Where(x => x.CategoryId == parent.Id).Count();
+                category.CountPost = countPostInCategory;
                 category.Childrens.AddRange(chidrent.MapToList<PostCategoryDto>());
                 result.Add(category);
             });

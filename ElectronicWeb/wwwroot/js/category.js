@@ -1,5 +1,6 @@
 ﻿function getTopCategory() {
     var token = getCookie("token");
+    var categoryPost = $("#categoryList");
     $.ajax({
         url: 'http://localhost:5243/api/Category/categoryParent',
         method: 'GET',
@@ -30,6 +31,28 @@
                 $log.append($logIn)
             }
             $navigationMenu.append($log);
+            if (categoryPost != null) {
+                response.forEach(function (category) {
+                    var listItem = $("<li>").appendTo("#categoryList");
+                    var link = $("<a>").attr("href", "#").appendTo(listItem).text(category.name);
+                    $("<span>").text("(" + category.countPost + ")").appendTo(link);
+                    categoryPost.append(listItem);
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            // Xử lý lỗi
+            console.error(error);
+        }
+    });
+}
+function getCategory() {
+    $.ajax({
+        url: 'http://localhost:5243/api/Category/categoryParent',
+        method: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (response) {
             generatePostsEntrySection(response[0]);
             generatePostsEntrySectionSmall(response[1]);
             generatePostsEntrySectionSecond(response[2]);
@@ -42,6 +65,24 @@
         }
     });
 }
+function getCategoryById(id) {
+    var tagA = $("<a>")
+    $.ajax({
+        url: 'http://localhost:5243/api/Category/' + id,
+        method: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (response) {
+            tagA.text(response.name)
+        },
+        error: function (xhr, status, error) {
+            // Xử lý lỗi
+            console.error(error);
+        }
+    });
+    return tagA;
+}
+
 function buildMenu(data, $parent) {
     const $ul = $("<ul>").addClass("dropdown");
     data.forEach(item => {

@@ -29,7 +29,7 @@
 
 function getNewPost() {
     $.ajax({
-        url: 'http://localhost:5243/api/Post/newPost',
+        url: 'http://localhost:5243/api/Post/newPost/5',
         method: 'GET',
         dataType: 'json',
         contentType: 'application/json',
@@ -55,16 +55,39 @@ function getNewPost() {
         }
     });
 }
+function getPopularPost(number) {
+    $.ajax({
+        url: 'http://localhost:5243/api/Post/newPost/' + number,
+        method: 'GET',
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (response) {
+            response.forEach(function (post) {
+                var listItem = $("<li>").appendTo("#postList");
+                var link = $("<a>").attr("href", "#").appendTo(listItem);
+                $("<img>").attr("src", post.image).attr("alt", "Image placeholder").addClass("me-4 rounded").appendTo(link);
+                var textDiv = $("<div>").addClass("text").appendTo(link);
+                $("<h4>").text(post.title).appendTo(textDiv);
+                var postMetaDiv = $("<div>").addClass("post-meta").appendTo(textDiv);
+                $("<span>").text(new Date(post.createdDate).toDateString()).addClass("mr-2").appendTo(postMetaDiv);
+            });
+        },
+        error: function (xhr, status, error) {
+            // Xử lý lỗi
+            console.error(error);
+        }
+    });
+}
 function getPostByCategory() {
 
 }
 function createArticleElemt(item, index) {
     var link = $("<a>").addClass("h-entry v-height gradient").click(function () {
-        viewDetail(item.id)
+        rediectToReading(item.id)
     });
     if (index == 0 | index == 3) {
         link = $("<a>").addClass("h-entry v-height gradient mb-30").click(function () {
-            viewDetail(item.id)
+            rediectToReading(item.id)
         });
     }
     var featuredImg = $("<div>").addClass("featured-img").css("background-image", "url('" + item.image + "')");
@@ -80,7 +103,7 @@ function createArticleElemt(item, index) {
 function createArticleElementRow2(item) {
     // Create elements
     var link = $("<a>").addClass("h-entry img-5 h-100 gradient").click(function () {
-        viewDetail(item.id)
+        rediectToReading(item.id)
     });
     var featuredImg = $("<div>").addClass("featured-img").css("background-image", "url('" + item.image + "')");
     var textDiv = $("<div>").addClass("text");
@@ -93,8 +116,8 @@ function createArticleElementRow2(item) {
 
     return link;
 }
-function viewDetail(id) {
-    alert("chua co trang detail")
+function rediectToReading(id) {
+    window.location.href = "/reading?id=" + id;
 }
 
 function generatePostsEntrySection(category) {
@@ -176,16 +199,16 @@ function generatePostInEntryRow9(post, order) {
             // Create the first blog entry content
             var blogEntry1Content = $("<div>").addClass("blog-entry");
             var blogEntry1ImgLink = $("<a>").addClass("img-link").click(function () {
-                viewDetail(x.id)
+                rediectToReading(x.id)
             });
             var blogEntry1Img = $("<img>").attr("src", x.image).addClass("img-fluid");
             var blogEntry1Date = $("<span>").addClass("date").text(new Date(x.createdDate).toDateString());
             var blogEntry1Title = $("<h2>").append($("<a>").text(x.title).click(function () {
-                viewDetail(x.id)
+                rediectToReading(x.id)
             }));
             var blogEntry1Description = $("<p>").text(x.description);
             var blogEntry1ReadMore = $("<p>").append($("<a>").addClass("btn btn-sm btn-outline-primary").text("Read More")).click(function () {
-                viewDetail(x.id)
+                rediectToReading(x.id)
             });
             // Append the elements to form the first blog entry
             blogEntry1ImgLink.append(blogEntry1Img);
@@ -211,11 +234,11 @@ function generatePostInEntrySider(listSecondEntry) {
             var sidebarLi = $("<li>");
             var sidebarDate3 = $("<span>").addClass("date").text(new Date(x.createdDate).toDateString());
             var sidebarTitle3 = $("<h3>").append($("<a>").text(x.title).click(function () {
-                viewDetail(x.id)
+                rediectToReading(x.id)
             }));
             var sidebarDescription3 = $("<p>").text(x.description);
             var sidebarReadMore3 = $("<p>").append($("<a>").addClass("read-more").text("Reading").click(function () {
-                viewDetail(blogEntryData.id)
+                rediectToReading(blogEntryData.id)
             }));
 
             // Append the content to the sidebar li items
@@ -252,16 +275,16 @@ function generatePostsEntrySectionSmall(category) {
                 var blogEntryColumn = $("<div>").addClass("col-md-6 col-lg-3");
                 var blogEntryContent = $("<div>").addClass("blog-entry");
                 var blogEntryImgLink = $("<a>").addClass("img-link").click(function () {
-                    viewDetail(item.id)
+                    rediectToReading(item.id)
                 });
                 var blogEntryImg = $("<img>").attr("src", item.image).attr("alt","Image").addClass("img-fluid");
                 var blogEntryDate = $("<span>").addClass("date").text(new Date(item.createdDate).toDateString());
                 var blogEntryTitle = $("<h2>").append($("<a>").text(item.title).click(function () {
-                    viewDetail(item.id)
+                    rediectToReading(item.id)
                 }));
                 var blogEntryDescription = $("<p>").text(item.description);
                 var blogEntryReadMore = $("<p>").append($("<a>").addClass("read-more").text("Reading")).click(function () {
-                    viewDetail(item.id)
+                    rediectToReading(item.id)
                 });
 
                 // Append the elements to form the blog entry
@@ -355,23 +378,23 @@ function generateSectionPostsEntryList(category) {
                 // Create the blog entry content
                 var blogEntryContent = $("<div>").addClass("post-entry-alt");
                 var blogEntryImgLink = $("<a>").addClass("img-link").click(function () {
-                    viewDetail(item.id)
+                    rediectToReading(item.id)
                 });
                 var blogEntryImg = $("<img>").attr("src", item.image).addClass("img-fluid");
                 var blogEntryExcerpt = $("<div>").addClass("excerpt");
                 var blogEntryTitle = $("<h2>").append($("<a>").text(item.title)).click(function () {
-                    viewDetail(item.id)
+                    rediectToReading(item.id)
                 });
                 var blogEntryMeta = $("<div>").addClass("post-meta align-items-center text-left clearfix");
                 var authorFigure = $("<figure>").addClass("author-figure mb-0 me-3 float-start");
                 var authorImg = $("<img>").attr("src", item.imageUser).addClass("img-fluid");
                 var authorNameLink = $("<a>").text(item.authorName).click(function () {
-                    viewDetail(item.id)
+                    rediectToReading(item.id)
                 });
                 var blogEntryDate = $("<span>").text("&nbsp;-&nbsp; " + item.createdDate);
                 var blogEntryDescription = $("<p>").text(item.description);
                 var blogEntryReadMore = $("<p>").append($("<a>").addClass("read-more").text("Reading")).click(function () {
-                    viewDetail(item.id)
+                    rediectToReading(item.id)
                 });
 
                 // Append the elements to form the blog entry
@@ -445,7 +468,7 @@ function generateSectionTravel(category) {
             // Create the blog entry link with class "hentry", "img-1" or "img-2" depending on the layout,
             // "h-100" for height (only for the first entry), and "gradient" for styling
             var blogEntryLink = $("<a>").addClass("hentry img-1 h-100 gradient").click(function () {
-                viewDetail(blogEntryData.id)
+                rediectToReading(blogEntryData.id)
             });
 
             // Create the blog entry image with class "featured-img" and style for the background image
@@ -492,7 +515,7 @@ function generateBlogEntries(listFirstEntry) {
 
     // Create the first blog entry link with class "hentry img-2 v-height mb30 gradient" and href "single.html"
     var firstBlogEntryLink = $("<a>").addClass("hentry img-2 v-height mb30 gradient").click(function () {
-        viewDetail(entryFirst.id)
+        rediectToReading(entryFirst.id)
     });
 
     // Create the first blog entry image with class "featured-img" and style for the background image
@@ -522,7 +545,7 @@ function generateBlogEntries(listFirstEntry) {
 
         // Create the blog entry link with class "hentry v-height img-2 gradient" and href "single.html"
         var blogEntryLink = $("<a>").addClass("hentry v-height img-2 gradient").click(function () {
-            viewDetail(blogEntryData.id)
+            rediectToReading(blogEntryData.id)
         });
 
         // Create the blog entry image with class "featured-img" and style for the background image

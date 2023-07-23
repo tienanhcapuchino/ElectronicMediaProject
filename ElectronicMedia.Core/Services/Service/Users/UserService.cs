@@ -103,7 +103,8 @@ namespace ElectronicMedia.Core.Services.Service
         {
             var currentUser = _contextAccessor.HttpContext.User;
             var userId = currentUser.FindFirst("UserId")?.Value;
-            var user = await _userManager.Users.Where(x => !x.Id.Equals(userId)).Include(x => x.Department).ToListAsync();
+            var user = await _userManager.Users.Where(x => !x.Id.Equals(userId)).Include(x => x.Department).Skip((requestBody.Page - 1) * requestBody.Top)
+                    .Take(requestBody.Top).ToListAsync();
             var resultTemp = user.MapToList<UsersModel>();
             foreach (var item in user)
             {
@@ -118,13 +119,16 @@ namespace ElectronicMedia.Core.Services.Service
                 }
             }
             var result = QueryData<UsersModel>.QueryForModel(requestBody, resultTemp).ToList();
-            return PagedList<UsersModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
+            var countItem = await CommonService.GetTotalCount<UserIdentity>(_context);
+            return PagedList<UsersModel>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
         }
         public async Task<PagedList<UserIdentity>> GetAllWithPaging(PageRequestBody requestBody)
         {
-            var user = await _userManager.Users.ToListAsync();
+            var user = await _userManager.Users.Skip((requestBody.Page - 1) * requestBody.Top)
+                    .Take(requestBody.Top).ToListAsync();
             var result = QueryData<UserIdentity>.QueryForModel(requestBody, user).ToList();
-            return PagedList<UserIdentity>.ToPagedList(result, requestBody.Page, requestBody.Top);
+            var countItem = await CommonService.GetTotalCount<UserIdentity>(_context);
+            return PagedList<UserIdentity>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
         }
         public Task<bool> Delete(Guid id, bool saveChange = true)
         {

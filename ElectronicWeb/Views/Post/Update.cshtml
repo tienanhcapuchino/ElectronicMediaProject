@@ -71,14 +71,16 @@
     <div class="form-group row">
         <label class="bold-label col-sm-2 col-form-label">Content</label>
         <div class="col-sm-9">
+
             @if (user.RoleName == "Admin" || user.RoleName == "Leader" || user.RoleName == "EditorDirector" || (user.RoleName == "Writer" && Model.Status.ToString()!="Pending"))
             {
-                <p>@Model.Content</p>
+                <p>@Html.Raw(@Model.Content)</p>
                 <input asp-for=Content type="hidden" class="form-control" value="@Model.Content"/>
             }else{
-                <textarea asp-for=Content  class="form-control" placeholder="Content here..." id="exampleFormControlTextarea1" rows="15">@Model.Content</textarea>
+                <textarea asp-for=Content class="form-control" placeholder="Content here..." id="textarea" rows="15">@Html.Raw(@Model.Content)</textarea>
             }
-          
+
+           
         </div>
     </div>
 

@@ -27,8 +27,10 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using DocumentFormat.OpenXml.InkML;
 using ElectronicMedia.Core.Automaper;
 using ElectronicMedia.Core.Common;
+using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
@@ -135,17 +137,21 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<PagedList<Department>> GetAllWithPaging(PageRequestBody requestBody)
         {
-            var departments = await _dbContext.Departments.ToListAsync();
+            var departments = await _dbContext.Departments.Skip((requestBody.Page - 1) * requestBody.Top)
+                    .Take(requestBody.Top).ToListAsync();
+            var countItem = await CommonService.GetTotalCount<Department>(_dbContext);
             var result = QueryData<Department>.QueryForModel(requestBody, departments).ToList();
-            return PagedList<Department>.ToPagedList(result, requestBody.Page, requestBody.Top);
+            return PagedList<Department>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
         }
 
         public async Task<PagedList<DepartmentModel>> GetAllWithPagingModel(PageRequestBody requestBody)
         {
-            var departments = await _dbContext.Departments.ToListAsync();
+            var departments = await _dbContext.Departments.Skip((requestBody.Page - 1) * requestBody.Top)
+                    .Take(requestBody.Top).ToListAsync();
+            var countItem = await CommonService.GetTotalCount<Department>(_dbContext);
             var tempResult = departments.MapToList<DepartmentModel>();
             var result = QueryData<DepartmentModel>.QueryForModel(requestBody, tempResult).ToList();
-            return PagedList<DepartmentModel>.ToPagedList(result, requestBody.Page, requestBody.Top);
+            return PagedList<DepartmentModel>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
         }
 
         public async Task<Department> GetByIdAsync(Guid id)

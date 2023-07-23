@@ -27,6 +27,7 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.DataContext;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Services.Interfaces;
@@ -77,9 +78,11 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<PagedList<EmailTemplate>> GetAllWithPaging(PageRequestBody requestBody)
         {
-            var posts = await _context.EmailTemplates.ToListAsync();
+            var posts = await _context.EmailTemplates.Skip((requestBody.Page - 1) * requestBody.Top)
+                    .Take(requestBody.Top).ToListAsync();
+            var countItem = await CommonService.GetTotalCount<EmailTemplate>(_context);
             var result = QueryData<EmailTemplate>.QueryForModel(requestBody, posts).ToList();
-            return PagedList<EmailTemplate>.ToPagedList(result, requestBody.Page, requestBody.Top);
+            return PagedList<EmailTemplate>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
         }
 
         public async Task<EmailTemplate> GetByIdAsync(Guid id)

@@ -274,11 +274,11 @@ namespace ElectronicMediaAPI.Controllers.Post
                 return BadRequest(e.ToString());
             }
         }
-        [HttpGet("newPost")]
-        public async Task<IActionResult> GetNewPost() {
+        [HttpGet("newPost/{take}")]
+        public async Task<IActionResult> GetNewPost(int take) {
             try
             {
-                var result = await _postService.GetNewPost();
+                var result = await _postService.GetNewPost(take);
                 return new JsonResult(result);
             }
             catch (Exception ex)
