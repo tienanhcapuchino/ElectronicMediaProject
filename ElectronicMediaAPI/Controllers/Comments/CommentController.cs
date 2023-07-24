@@ -45,12 +45,12 @@ namespace ElectronicMediaAPI.Controllers
             _commentService = commentService;
         }
         [HttpGet("{postId}")]
-        public async Task<List<CommentModel>> GetCommentsByPost([FromRoute] Guid postId)
+        public async Task<IActionResult> GetCommentsByPost([FromRoute] Guid postId)
         {
             try
             {
                 var result = await _commentService.GetAllCommentsByPost(postId);
-                return result;
+                return new JsonResult(result);
             }
             catch (Exception ex)
             {
@@ -58,19 +58,18 @@ namespace ElectronicMediaAPI.Controllers
                 throw;
             }
         }
-        [HttpPost("{userId}/create/{postId}")]
-        public async Task<APIResponeModel> CreateComment([FromRoute] Guid userId, [FromRoute] Guid postId, string content)
+        [HttpPost("create")]
+        public async Task<APIResponeModel> CreateComment(CommentAddModel model)
         {
             try
             {
-                if (await _commentService.CreateComment(userId, postId, content))
+                if (await _commentService.CreateComment(model))
                 {
                     return new APIResponeModel()
                     {
                         Code = 200,
                         Message = "OK",
                         IsSucceed = true,
-                        Data = content
                     };
                 }
                 else
@@ -84,7 +83,7 @@ namespace ElectronicMediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"error when create comment at post: {postId} and user: {userId}", ex);
+                _logger.Error($"error when create comment at post: {model}", ex);
                 throw;
             }
         }

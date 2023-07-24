@@ -39,7 +39,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
 {
     public interface ICommentService : ICoreRepository<Comment>
     {
-        Task<List<CommentModel>> GetAllCommentsByPost(Guid postId);
-        Task<bool> CreateComment(Guid userId, Guid postId, string content);
+        Task<CommentDto> GetAllCommentsByPost(Guid postId);
+        Task<bool> CreateComment(CommentAddModel comment);
     }
 }

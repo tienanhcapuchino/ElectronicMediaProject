@@ -60,7 +60,7 @@ namespace ElectronicMediaAPI.Controllers.Comments
             }
         }
         [HttpPost("create")]
-        public async Task<APIResponeModel> CreateReplyComment([FromBody] ReplyCommentModel replyComment)
+        public async Task<APIResponeModel> CreateReplyComment(ReplyCommentModel replyComment)
         {
             try
             {
@@ -72,7 +72,6 @@ namespace ElectronicMediaAPI.Controllers.Comments
                         Code = 200,
                         Message = "ok",
                         IsSucceed = true,
-                        Data = replyComment
                     };
                 }
                 else

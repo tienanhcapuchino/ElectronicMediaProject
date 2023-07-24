@@ -36,11 +36,26 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Repository.Models
 {
+    public class CommentDto
+    {
+        public int CountComment { get; set; }
+        public IEnumerable<CommentModel> CommentModels { get; set; }
+    }
     public class CommentModel
+    {
+        public Guid Id { get; set; }
+        public Guid PostId { get; set; }
+        public Guid UserId { get; set; }
+        public string ImageUser { get; set; }
+        public string UserName { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public List<ReplyCommentModel> ReplyComment { get; set; } = new List<ReplyCommentModel>();
+        public string Content { get; set; }
+    }
+    public class CommentAddModel
     {
         public Guid PostId { get; set; }
         public Guid UserId { get; set; }
-        public DateTime CreatedDate { get; set; }
         public string Content { get; set; }
     }
 }

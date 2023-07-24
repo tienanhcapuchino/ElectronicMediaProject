@@ -40,7 +40,7 @@ namespace ElectronicMedia.Core
         public static IEnumerable<T> QueryForModel(PageRequestBody pageRequest, List<T> values)
         {
             var result = values;
-            if (!string.IsNullOrEmpty(pageRequest.OrderBy.OrderByKeyWord))
+            if (!string.IsNullOrEmpty(pageRequest.OrderBy?.OrderByKeyWord))
             {
                 if (pageRequest.OrderBy.OrderByDesc)
                 {
@@ -51,7 +51,7 @@ namespace ElectronicMedia.Core
                     result = values.OrderBy(x => pageRequest.OrderBy.OrderByKeyWord).ToList();
                 }
             }
-            if (pageRequest.SearchByColumn.Count > 0)
+            if (pageRequest.SearchByColumn?.Count > 0)
             {
                 result = values.Where(item =>
                 pageRequest.SearchByColumn.Any(column => item.GetType()
@@ -61,7 +61,7 @@ namespace ElectronicMedia.Core
                 .Contains(pageRequest.SearchText) == true))
                 .ToList();
             }
-            if(pageRequest.Filter.Count() > 0)
+            if(pageRequest.Filter?.Count() > 0)
             {
                 foreach (var filter in pageRequest.Filter)
                 {

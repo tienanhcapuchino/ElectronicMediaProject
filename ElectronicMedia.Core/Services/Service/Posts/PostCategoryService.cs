@@ -110,7 +110,7 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 var category = parent.MapTo<PostCategoryDto>();
                 var chidrent = _context.PostCategories.Where(x => x.ParentId == parent.Id).ToList();
-                var countPostInCategory = _context.Posts.Where(x => x.CategoryId == parent.Id).Count();
+                var countPostInCategory = _context.Posts.Where(x => x.CategoryId == parent.Id && x.Status == PostStatusModel.Published).Count();
                 category.CountPost = countPostInCategory;
                 category.Childrens.AddRange(chidrent.MapToList<PostCategoryDto>());
                 result.Add(category);

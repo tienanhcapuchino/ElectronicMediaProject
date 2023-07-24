@@ -29,6 +29,7 @@
 
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
+using ElectronicMedia.Core.RequestBody;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -48,8 +49,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<bool> DeletePost(Guid postId,string message = "No reasons.");
         Task<DataTable> ExportPosts();
         Task<IEnumerable<PostView>> GetNewPost(int take);
-        Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId, int top);
-        Task<List<Post>> GetPostByCateId(Guid cateId);
+        Task<PagedList<PostView>> GetPostByCateId(PostRequestBody requestBody);
         Task<PagedList<PostViewModel>> GetAllWithPaging(PageRequestBody requestBody);
         Task<PagedList<PostViewModel>> GetAllWithPagingByLeader( Guid leaderId,PageRequestBody requestBody);
         Task<PagedList<PostViewModel>> GetAllWithPagingByWriter(Guid writerId, PageRequestBody requestBody);

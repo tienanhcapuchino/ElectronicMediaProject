@@ -200,9 +200,6 @@ namespace ElectronicMedia.Core.Common.Extension
 
         public static async Task<int> GetTotalCount<T>(DbContext dbContext) where T : class
         {
-            // Your logic to fetch the total count of all items from the data source
-            // You can use LINQ or any other data access methods here
-
             return await dbContext.Set<T>().CountAsync();
         }
     }

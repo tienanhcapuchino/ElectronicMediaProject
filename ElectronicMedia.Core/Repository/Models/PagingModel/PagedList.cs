@@ -55,7 +55,15 @@ namespace ElectronicMedia.Core
         public static PagedList<T> ToPagedList(List<T> source, int pageNumber, int pageSize,int countItem)
         {
             var count = countItem;
-            var items = source;
+            var items = new List<T>();
+            if(source.Count() <= pageSize)
+            {
+                items.AddRange(source);
+            }
+            else
+            {
+                items.AddRange(source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+            }
             return new PagedList<T>(items, count, pageNumber, pageSize);
         }
     }

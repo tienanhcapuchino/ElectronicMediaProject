@@ -62,13 +62,18 @@ namespace ElectronicMedia.Core.Automaper
             #endregion
 
             #region comments
-            CreateMap<CommentModel, Comment>().ReverseMap();
+            CreateMap<Comment, CommentModel>()
+                .ForMember(dest => dest.ImageUser, opt => opt.MapFrom(src => src.User.Image))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName))
+                .ReverseMap();
             CreateMap<ReplyCommentModel, ReplyComment>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId))
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId)).ReverseMap();
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+            CreateMap<ReplyComment, ReplyCommentModel>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => Guid.Parse(src.UserId)));
             #endregion
 
             #region posts

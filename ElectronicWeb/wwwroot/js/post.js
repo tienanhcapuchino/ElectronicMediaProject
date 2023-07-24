@@ -64,7 +64,9 @@ function getPopularPost(number) {
         success: function (response) {
             response.forEach(function (post) {
                 var listItem = $("<li>").appendTo("#postList");
-                var link = $("<a>").attr("href", "#").appendTo(listItem);
+                var link = $("<a>").appendTo(listItem).click(function () {
+                    rediectToReading(post.id);
+                });
                 $("<img>").attr("src", post.image).attr("alt", "Image placeholder").addClass("me-4 rounded").appendTo(link);
                 var textDiv = $("<div>").addClass("text").appendTo(link);
                 $("<h4>").text(post.title).appendTo(textDiv);
@@ -78,8 +80,105 @@ function getPopularPost(number) {
         }
     });
 }
-function getPostByCategory() {
+function getPostByCategory(page) {
+    var queryParams = new URLSearchParams(window.location.search);
+    var category = queryParams.get("id");
+    var categotyName = localStorage.getItem("categoryName");
+    var data = {
+        "categoryId": category,
+        "pageNumber": page,
+        "pageSize": 10
+    }
+    $("#blogEntriesContainer").empty();
+    $("#heading_c").append(`Category: ${categotyName}`);
+    $.ajax({
+        url: 'http://localhost:5243/api/Post/category',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (response) {
+            response.values.forEach(function (entry) {
+                var blogEntryDiv = $("<div>").addClass("blog-entry d-flex blog-entry-search-item").appendTo("#blogEntriesContainer");
+                var imgLink = $("<a>").addClass("img-link me-4").appendTo(blogEntryDiv);
+                $("<img>").attr("src", entry.image).attr("alt", "Image").addClass("img-fluid").appendTo(imgLink);
+                var entryDiv = $("<div>").appendTo(blogEntryDiv);
+                $("<span>").addClass("date").text(new Date(entry.createdDate).toDateString()).appendTo(entryDiv);
+                $("<h2>").appendTo(entryDiv).append($("<a>").text(entry.title)).click(function () {
+                    rediectToReading(entry.id);
+                });
+                $("<p>").text(entry.description).appendTo(entryDiv);
+                $("<p>").appendTo(entryDiv).append($("<a>").addClass("btn btn-sm btn-outline-primary").text("Read More")).click(function () {
+                    rediectToReading(entry.id);
+                });
+            });
+            var totalPages = response.totalPages;
+            var pagesToShow = 5;
+            var currentPage = response.currentPage;
+            
+            var parent = $("<div>").addClass("row text-start pt-5 border-top").appendTo("#blogEntriesContainer");
+            var divcontain = $("<div>").addClass("col-md-12").appendTo(parent);
+            var paginationDiv = $("<div>").addClass("custom-pagination").appendTo(divcontain);
 
+            function calculateStartEndPages() {
+                var halfPagesToShow = Math.floor(pagesToShow / 2);
+                var startPage = Math.max(currentPage - halfPagesToShow, 1);
+                var endPage = Math.min(startPage + pagesToShow - 1, totalPages);
+                if (endPage - startPage + 1 < pagesToShow) {
+                    startPage = Math.max(endPage - pagesToShow + 1, 1);
+                }
+                return { start: startPage, end: endPage };
+            }
+            if (currentPage > pagesToShow / 2) {
+                createPaginationLink("First", paginationDiv);
+                createPaginationLink("<<", paginationDiv);
+            }
+            var { start, end } = calculateStartEndPages();
+            for (var i = start; i <= end; i++) {
+                createPaginationLink(i, paginationDiv);
+            }
+
+            // Add ">>" for next page if not on the last set of pages
+            if (end < totalPages) {
+                createPaginationLink(">>", paginationDiv);
+                createPaginationLink("Last", paginationDiv);
+
+            }
+
+            paginationDiv.on('click', 'a', function (event) {
+                event.preventDefault();
+                var clickedPage = $(this).attr("data-page");
+
+                if (clickedPage === "First") {
+                    currentPage = 1;
+                } else if (clickedPage === "<<") {
+                    currentPage = Math.max(currentPage - 1, 1);
+                } else if (clickedPage === ">>") {
+                    currentPage = Math.min(currentPage + 1, totalPages);
+                } else if (clickedPage === "Last") {
+                    currentPage = totalPages;
+                } else {
+                    currentPage = parseInt(clickedPage, 10);
+                }
+                paginationDiv.empty();
+
+                getPostByCategory(currentPage);
+                updatePagination(currentPage);
+            });
+            updatePagination(currentPage);
+        },
+        error: function (xhr, status, error) {
+            // Xử lý lỗi
+            console.error(error);
+        }
+    });
+}
+
+function updatePagination(activePage) {
+    $('.custom-pagination a').removeClass('active'); // Remove 'active' class from all links
+    $('.custom-pagination a[data-page="' + activePage + '"]').addClass('active'); // Add 'active' class to the clicked link
+}
+function createPaginationLink(pageNumber, paginationDiv) {
+    return $("<a>").attr("data-page", pageNumber).text(pageNumber).appendTo(paginationDiv);
 }
 function createArticleElemt(item, index) {
     var link = $("<a>").addClass("h-entry v-height gradient").click(function () {
@@ -125,21 +224,23 @@ function generatePostsEntrySection(category) {
     // Create container div with class "container"
     var container = $("<div>").addClass("container");
 
-    var headerRow = generateHeaderRow(category.name);
+    var headerRow = generateHeaderRow(category.name, category.id);
     var blogEntriesRow = $("<div>").addClass("row g-3");
     $.ajax({
-        url: "http://localhost:5243/category/" + category.id,
-        method: "GET",
+        url: "http://localhost:5243/api/Post/category",
+        method: "POST",
         dataType: "json",
         contentType: 'application/json',
-        data: {
-            top: 5
-        },
+        data: JSON.stringify({
+            categoryId: category.id,
+            pageSize: 5,
+            pageNumber: 1
+        }),
         success: function (data) {
             // Handle the response data here
             var listFirstEntry = []
             var listSecondEntry = []
-            data.forEach(function (item, index) {
+            data.values.forEach(function (item, index) {
                 if (index < 2) {
                     listFirstEntry.push(item)
                 } else {
@@ -164,7 +265,7 @@ function generatePostsEntrySection(category) {
     section.append(container);
     $("#container_post").append(section);
 }
-function generateHeaderRow(header) {
+function generateHeaderRow(header,id) {
 
     // Create div row for the header with class "row mb-4"
     var headerRow = $("<div>").addClass("row mb-4");
@@ -179,7 +280,9 @@ function generateHeaderRow(header) {
     var viewAllColumn = $("<div>").addClass("col-sm-6 text-sm-end");
 
     // Create "View All" link with class "read-more" and href "category.html"
-    var viewAllLink = $("<a>").attr("href", "category.html").addClass("read-more").text("View All");
+    var viewAllLink = $("<a>").addClass("read-more").text("View All").click(function () {
+        rediectToCategory(id, header);
+    });
 
     // Append the title and "View All" link to their respective columns
     titleColumn.append(titleH2);
@@ -238,7 +341,7 @@ function generatePostInEntrySider(listSecondEntry) {
             }));
             var sidebarDescription3 = $("<p>").text(x.description);
             var sidebarReadMore3 = $("<p>").append($("<a>").addClass("read-more").text("Reading").click(function () {
-                rediectToReading(blogEntryData.id)
+                rediectToReading(x.id)
             }));
 
             // Append the content to the sidebar li items
@@ -262,16 +365,18 @@ function generatePostsEntrySectionSmall(category) {
     // Create div row for the blog entries
     var blogEntriesRow = $("<div>").addClass("row");
     $.ajax({
-        url: "http://localhost:5243/category/" + category.id,
-        method: "GET",
+        url: "http://localhost:5243/api/Post/category",
+        method: "POST",
         dataType: "json",
         contentType: 'application/json',
-        data: {
-            top: 4
-        },
+        data: JSON.stringify({
+            categoryId: category.id,
+            pageSize: 4,
+            pageNumber: 1
+        }),
         success: function (data) {
             // Handle the response data here
-            data.forEach(function (item) {
+            data.values.forEach(function (item) {
                 var blogEntryColumn = $("<div>").addClass("col-md-6 col-lg-3");
                 var blogEntryContent = $("<div>").addClass("blog-entry");
                 var blogEntryImgLink = $("<a>").addClass("img-link").click(function () {
@@ -311,21 +416,23 @@ function generatePostsEntrySectionSecond(category) {
     // Create container div with class "container"
     var container = $("<div>").addClass("container");
 
-    var headerRow = generateHeaderRow(category.name);
+    var headerRow = generateHeaderRow(category.name, category.id);
     var blogEntriesRow = $("<div>").addClass("row g-3");
     $.ajax({
-        url: "http://localhost:5243/category/" + category.id,
-        method: "GET",
+        url: "http://localhost:5243/api/Post/category",
+        method: "POST",
         dataType: "json",
         contentType: 'application/json',
-        data: {
-            top: 5
-        },
+        data: JSON.stringify({
+            categoryId: category.id,
+            pageSize: 5,
+            pageNumber: 1
+        }),
         success: function (data) {
             // Handle the response data here
             var listFirstEntry = []
             var listSecondEntry = []
-            data.forEach(function (item, index) {
+            data.values.forEach(function (item, index) {
                 if (index < 2) {
                     listFirstEntry.push(item)
                 } else {
@@ -355,7 +462,7 @@ function generateSectionPostsEntryList(category) {
     var container = $("<div>").addClass("container");
 
     // Append the title column and "View All" column to the header row
-    var headerRow = generateHeaderRow(category.name)
+    var headerRow = generateHeaderRow(category.name, category.id);
 
     // Append the header row to the container
     container.append(headerRow);
@@ -363,16 +470,18 @@ function generateSectionPostsEntryList(category) {
     // Create div row for the blog entries with class "row"
     var blogEntriesRow = $("<div>").addClass("row");
     $.ajax({
-        url: "http://localhost:5243/category/" + category.id,
-        method: "GET",
+        url: "http://localhost:5243/api/Post/category",
+        method: "POST",
         dataType: "json",
         contentType: 'application/json',
-        data: {
-            top: 6
-        },
+        data: JSON.stringify({
+            categoryId: category.id,
+            pageSize: 6,
+            pageNumber: 1
+        }),
         success: function (data) {
             // Handle the response data here
-            data.forEach(function (item) {
+            data.values.forEach(function (item) {
                 var blogEntryColumn = $("<div>").addClass("col-lg-4 mb-4");
 
                 // Create the blog entry content
@@ -387,11 +496,11 @@ function generateSectionPostsEntryList(category) {
                 });
                 var blogEntryMeta = $("<div>").addClass("post-meta align-items-center text-left clearfix");
                 var authorFigure = $("<figure>").addClass("author-figure mb-0 me-3 float-start");
-                var authorImg = $("<img>").attr("src", item.imageUser).addClass("img-fluid");
+                var authorImg = $("<img>").attr("src", item.imageUser).attr("alt", "Avatar").addClass("img-fluid");
                 var authorNameLink = $("<a>").text(item.authorName).click(function () {
                     rediectToReading(item.id)
                 });
-                var blogEntryDate = $("<span>").text("&nbsp;-&nbsp; " + item.createdDate);
+                var blogEntryDate = $("<span>").text(" - " + item.createdDate);
                 var blogEntryDescription = $("<p>").text(item.description);
                 var blogEntryReadMore = $("<p>").append($("<a>").addClass("read-more").text("Reading")).click(function () {
                     rediectToReading(item.id)
@@ -431,7 +540,7 @@ function generateSectionTravel(category) {
     // Create container div with class "container"
     var container = $("<div>").addClass("container");
 
-    var headerRow = generateHeaderRow(category.name)
+    var headerRow = generateHeaderRow(category.name, category.id);
 
     // Append the header row to the container
     container.append(headerRow);
@@ -443,16 +552,18 @@ function generateSectionTravel(category) {
     var blogEntries = [];
     var blogEntriesTwo = [];
     $.ajax({
-        url: "http://localhost:5243/category/" + category.id,
-        method: "GET",
+        url: "http://localhost:5243/api/Post/category",
+        method: "POST",
         dataType: "json",
         contentType: 'application/json',
-        data: {
-            top: 4
-        },
+        data: JSON.stringify({
+            categoryId: category.id,
+            pageSize: 4,
+            pageNumber: 1
+        }),
         success: function (data) {
             // Handle the response data here
-            data.forEach(function (item, index) {
+            data.values.forEach(function (item, index) {
                 if (index < 1) {
                     blogEntries.push(item);
                 } else {
