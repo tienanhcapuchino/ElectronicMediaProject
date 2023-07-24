@@ -75,6 +75,12 @@ namespace ElectronicMedia.Core.Repository.Domains
                                             <p>Reason for deleting post:</p>
                                             <p><em>{3}</em></p>
                                             <p>Any questions please send to email address: <strong>{4}</strong></p>";
+        public const string PublishPostBody = @"<h4><strong><em>Electronic Media Online Service</em></strong></h4>
+                                                <p><span style=""color: #009933;""><strong>Congratulations</strong>! Your post have been published by {0} : {1}. Below is the post information:</span></p>
+                                                <p><strong>Title:</strong> {2}</p>
+                                                <p><strong>Publish Date:&nbsp; {3}</strong></p>
+                                                <p>&nbsp;<em>Your post have been published! Let go to our website to view that!</em></p>
+                                                <p>Any questions please send to email address: <strong>{4}</strong></p>";
 
         public const string SignatureFooter = @"<p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below: <a>tienanhcapuchino@gmail.com</a></p>
                                                 <p>This email is sent automatically, <em><strong>please don&rsquo;t reply</strong></em>.</p>
@@ -94,6 +100,7 @@ namespace ElectronicMedia.Core.Repository.Domains
         public const string PendingForApprovalPostSubject = "You have a post need to be approved";
         public const string AddNewUserSubject = "ADDED TO ELECTRONIC MEDIA ONLINE SERVICE";
         public const string DeletePostSubject = "Your post has been deleted";
+
     }
     public class EmailTemplateMailToConstant
     {
