@@ -45,7 +45,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<bool> UpdateLikeAndDislike(Guid postId, bool liked);
         Task<bool> VotePost(PostDetailModel postDetail);
         Task<PostViewModel> GetById(Guid id);
-        Task<bool> DeletePost(Guid postId);
+        Task<bool> DeletePost(Guid postId,string message = "No reasons.");
         Task<DataTable> ExportPosts();
         Task<IEnumerable<PostView>> GetNewPost(int take);
         Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId, int top);

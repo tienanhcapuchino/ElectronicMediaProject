@@ -38,6 +38,7 @@ using ElectronicWeb.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
+using System.Security.Policy;
 
 namespace ElectronicWeb.Controllers
 {
@@ -141,12 +142,12 @@ namespace ElectronicWeb.Controllers
             {
                 return View("Views/Home/Index.cshtml");
             }
-            string url = RoutesManager.GetPostById + "" + pid;
-
+          
             if (string.IsNullOrEmpty(token))
             {
                 return View("Views/Account/Login.cshtml");
             }
+            string url = RoutesManager.GetPostById + "" + pid;
             PostViewModel post = null;
             List<PostCategory> categories = null;
             List<PostCategory> subCategories = null;
@@ -249,7 +250,8 @@ namespace ElectronicWeb.Controllers
             }
             return View(post);
         }
-        public IActionResult Delete(PostVM post)
+        [HttpGet]
+        public IActionResult Delete(string pid)
         {
             string token = _tokenService.GetToken();
             var user = _tokenService.GetTokenModelUI(token);
@@ -261,6 +263,32 @@ namespace ElectronicWeb.Controllers
             {
                 return View("Views/Home/Index.cshtml");
             }
+            string url = RoutesManager.GetPostById + "" + pid;
+
+            var getPost = CommonUIService.GetDataAPI(url, MethodAPI.GET, token);
+            PostViewModel post = null;
+            if (getPost.IsSuccessStatusCode)
+            {
+                var content = getPost.Content.ReadAsStringAsync().Result;
+                post = JsonConvert.DeserializeObject<PostViewModel>(content);
+            }
+            return View(post);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(string postId, string message = "No Reasons.")
+        {
+            string token = _tokenService.GetToken();
+            var user = _tokenService.GetTokenModelUI(token);
+            string url = RoutesManager.DeletePost + postId;
+            string data = JsonConvert.SerializeObject(message);
+            var deletePost = CommonUIService.GetDataAPI(url, MethodAPI.POST, token,data);
+            if(deletePost.IsSuccessStatusCode)
+            {
+                ViewBag.Message = "Delete Post Successful!";
+
+            }
+         
             return View();
         }
         public IActionResult DownloadExcel()
@@ -284,6 +312,8 @@ namespace ElectronicWeb.Controllers
             }
             return Content("Error when dowload excel!");
         }
+
+
     }
 }
 

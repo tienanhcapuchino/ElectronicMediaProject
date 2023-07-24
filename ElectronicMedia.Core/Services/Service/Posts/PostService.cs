@@ -29,11 +29,15 @@
 
 using AutoMapper;
 using ElectronicMedia.Core.Automaper;
+using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Common.Extension;
 using ElectronicMedia.Core.Repository.DataContext;
+using ElectronicMedia.Core.Repository.Domains;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
+using ElectronicMedia.Core.Repository.Models.Email;
 using ElectronicMedia.Core.Services.Interfaces;
+using ElectronicMedia.Core.Services.Interfaces.Email;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -52,11 +56,15 @@ namespace ElectronicMedia.Core.Services.Service
         private readonly ICommentService _commentService;
         private readonly IReplyCommentService _replyCommentService;
         private readonly IExcelService<Post> _excelService;
+        private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
         public PostService(ElectronicMediaDbContext context,
             IPostDetailService postDetailService,
             ICommentService commentService,
             IReplyCommentService replyCommentService,
-            IExcelService<Post> excelService
+            IExcelService<Post> excelService,
+            IUserService userService,
+            IEmailService emailService
             )
         {
             _context = context;
@@ -64,6 +72,8 @@ namespace ElectronicMedia.Core.Services.Service
             _commentService = commentService;
             _replyCommentService = replyCommentService;
             _excelService = excelService;
+            _userService = userService;
+            _emailService = emailService;
         }
 
         public async Task<bool> Add(Post entity, bool saveChange = true)
@@ -108,7 +118,7 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Update(entity);
             return result;
         }
-        public async Task<bool> Delete(Guid id, bool saveChange = true)
+        public async Task<bool> Delete(Guid id,bool saveChange = true)
         {
             bool result = true;
             var post = await GetByIdAsync(id);
@@ -192,9 +202,9 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 var posts = await _context.Posts.Where(x => x.UserId == writerId.ToString()).Include(x => x.User).ToListAsync();
                 var postModels = posts.MapTo<List<PostViewModel>>();
-                var countItem = postModels.Count();  
+                var countItem = postModels.Count();
                 var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
-                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top,countItem);
+                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
             }
             catch (Exception ex)
             {
@@ -270,10 +280,13 @@ namespace ElectronicMedia.Core.Services.Service
             }
             return result;
         }
-        public async Task<bool> DeletePost(Guid postId)
+        public async Task<bool> DeletePost(Guid postId, string message = "No reasons.")
         {
-            var post = await GetByIdAsync(postId);
+            var currentUser = _userService.GetCurrentUser();
+            var role = currentUser.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
+            var post = await GetByIdAsync(postId);        
             if (post == null) return false;
+            var receiveUser = await _userService.GetByIdAsync(Guid.Parse(post.UserId));
             var comments = await _commentService.GetAllCommentsByPost(postId);
             List<ReplyComment> replyComments = new List<ReplyComment>();
             List<Comment> commentEnities = new List<Comment>();
@@ -292,7 +305,15 @@ namespace ElectronicMedia.Core.Services.Service
                 _context.Comments.RemoveRange(commentEnities);
             }
             _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                if (role == UserRole.Admin || role == UserRole.EditorDirector)
+                {
+                    var emailModel = await SendEmailForDelete(receiveUser.Email, message, post);
+                    await _emailService.SendEmailAsync(emailModel);
+                }
+            }
             return true;
         }
         public async Task<DataTable> ExportPosts()
@@ -336,7 +357,21 @@ namespace ElectronicMedia.Core.Services.Service
         {
             throw new NotImplementedException();
         }
-
+        private async Task<EmailModel> SendEmailForDelete(string emailReceive, string message, Post post)
+        {
+            var currentUser = _userService.GetCurrentUser();
+            var roleCurrentUser = currentUser.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
+            var nameCurrentUser = currentUser.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").Value;
+            var emailCurrentUser = currentUser.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
+            EmailModel result = new EmailModel();
+            List<string> emailTos = new List<string>();
+            emailTos.Add(emailReceive);
+            result.Subject = EmailTemplateSubjectConstant.DeletePostSubject;
+            string bodyEmail = string.Format(EmailTemplateBodyConstant.DeletePostBody, roleCurrentUser, nameCurrentUser, post.Title, message, emailCurrentUser);
+            result.Body = bodyEmail + EmailTemplateBodyConstant.SignatureFooter;
+            result.To = emailTos;
+            return await Task.FromResult(result);
+        }
 
         #endregion
     }
