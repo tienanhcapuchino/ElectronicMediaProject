@@ -32,7 +32,7 @@ using ElectronicMedia.Core.Automaper;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
 {
-    WebRootPath = "D:\\PRN231\\ElectronicMediaProject\\ElectronicWeb\\wwwroot"
+    WebRootPath = "..\\ElectronicWeb\\wwwroot"
 });
 
 var startup = new Startup(builder.Configuration);

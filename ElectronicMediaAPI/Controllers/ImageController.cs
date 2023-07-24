@@ -17,7 +17,7 @@ namespace ElectronicMediaAPI.Controllers
             _fileStorageService = fileStorageService;
         }
         [HttpPost]
-        public async Task<IActionResult> UploadImage([FromBody] IFormFile image)
+        public async Task<IActionResult> UploadImage(IFormFile image)
         {
             try
             {

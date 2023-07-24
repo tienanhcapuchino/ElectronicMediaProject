@@ -1,0 +1,80 @@
+﻿@*
+/*********************************************************************
+ *
+ * PROPRIETARY and CONFIDENTIAL
+ *
+ * This is licensed from, and is trade secret of:
+ *
+ *          Group 10 - PRN231 - SU23
+ *          FPT University, Education and Training zone
+ *          Hoa Lac Hi-tech Park, Km29, Thang Long Highway
+ *          Ha Noi, Viet Nam
+ *
+ * Refer to your License Agreement for restrictions on use,
+ * duplication, or disclosure
+ *
+ * RESTRICTED RIGHTS LEGEND
+ *
+ * Use, duplication or disclosure is the
+ * subject to restriction in Articles 736 and 738 of the
+ * 2005 Civil Code, the Intellectual Property Law and Decree
+ * No. 85/2011/ND-CP amending and supplementing a number of
+ * articles of Decree 100/ND-CP/2006 of the Government of Viet Nam
+ *
+ *
+ * Copy right 2023 © PRN231 - SU23 - Group 10 ®. All Rights Reserved
+ *
+ * Unpublished - All rights reserved under the copyright laws
+ * of the Government of Viet Nam
+*********************************************************************/*@
+
+@{
+    Layout = "_Layout";
+}
+
+@using ElectronicMedia.Core.Repository.Entity;
+@using ElectronicMedia.Core.Repository.Models;
+@model UserProfileModel;
+
+<div id="container-post" style="margin-left: 50px">
+    <h1>Update your profile</h1>
+
+    <form asp-controller="User" asp-action="UpdateProfile" enctype="multipart/form-data">
+        <div style="display: flex; justify-content: space-around">
+            <div>
+                <input type="hidden" value="@Model.Id" name="userProfile.Id" />
+                <input type="hidden" value="@Model.Username" name="userProfile.Username" />
+                <label>Full name</label>
+                <input name="userProfile.FullName" class="form-control" type="text" value="@Model.FullName" required /> <br />
+                <label>Email</label>
+                <input name="userProfile.Email" class="form-control" type="email" value="@Model.Email" required /> <br />
+            </div>
+            <div>
+                <label>Phone number</label>
+                <input name="userProfile.PhoneNumber" class="form-control" type="number" maxlength="10" value="@Model.PhoneNumber" required /> <br />
+                <label>Gender</label>
+                <select name="userProfile.Gender" class="form-control">
+                    <option selected="@(Model.Gender == Gender.Unknown)" value="0">@Gender.Unknown</option>
+                    <option selected="@(Model.Gender == Gender.Male)" value="1">@Gender.Male</option>
+                    <option selected="@(Model.Gender == Gender.Female)" value="2">@Gender.Female</option>
+                </select>
+            </div>
+            <div>
+                <img class="form-controll" src="/@(Model.Image != null ? Model.Image : "images/avt_def.jpg")" />
+                <input name="userProfile.ImageFile" type="file" class="form-control" />
+            </div>
+        </div>
+        @{
+            if (ViewBag.UpdateSuccess != null)
+            {
+                <span class="text-success">@ViewBag.UpdateSuccess</span>
+            }
+            if (ViewBag.UpdateFailed != null)
+            {
+                <span class="text-danger">@ViewBag.UpdateFailed</span>
+            }
+        }
+        <input class="btn btn-primary" style="margin-bottom: 20px; text-align: center; margin-left: 500px" value="Update" type="submit" />
+
+    </form>
+</div>

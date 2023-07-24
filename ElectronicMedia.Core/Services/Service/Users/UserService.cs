@@ -49,6 +49,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -64,12 +65,14 @@ namespace ElectronicMedia.Core.Services.Service
         private readonly IEmailService _emailService;
         private readonly IExcelService<UserIdentity> _excelService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IFileStorageService _fileStorageService;
         public UserService(ElectronicMediaDbContext context, IOptionsMonitor<AppSetting> optionsMonitor,
            UserManager<UserIdentity> userManager, RoleManager<IdentityRole> roleManager,
             SignInManager<UserIdentity> signInManager,
-            IEmailService emailService, 
-            IExcelService<UserIdentity> excelService, 
-            IHttpContextAccessor contextAccessor)
+            IEmailService emailService,
+            IExcelService<UserIdentity> excelService,
+            IHttpContextAccessor contextAccessor,
+            IFileStorageService fileStorageService)
         {
             _context = context;
             _appSettings = optionsMonitor.CurrentValue;
@@ -79,6 +82,7 @@ namespace ElectronicMedia.Core.Services.Service
             _emailService = emailService;
             _excelService = excelService;
             _contextAccessor = contextAccessor;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<UserIdentity> GetByIdAsync(Guid id)
@@ -90,13 +94,8 @@ namespace ElectronicMedia.Core.Services.Service
         {
             var user = await GetByIdAsync(userId);
             if (user == null) throw new Exception($"Cannot find user with id: {userId}");
-            //if (user.Image == null)
-            //{
-            //    user.Image = CommonService.InitAvatarUser();
-            //    await Update(user);
-            //}
             var profile = user.MapTo<UserProfileModel>();
-            //if (profile == null) throw new Exception("cannot map profile from user");
+
             return await Task.FromResult(profile);
         }
         public async Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody)
@@ -156,25 +155,59 @@ namespace ElectronicMedia.Core.Services.Service
             }
             return result;
         }
-        public async Task<bool> UpdateUserProfile(Guid userId, UserProfileModel profile)
+        public APIResponeModel UpdateUserProfile(UserProfileUpdateModel profile)
         {
-            var user = await GetByIdAsync(userId);
-            if (user == null) throw new Exception($"Cannot find user with userId: {userId}");
-            if (!profile.Username.Equals(user.UserName))
+            APIResponeModel result = new APIResponeModel()
             {
-                throw new Exception("Cannot change username");
+                Data = profile,
+                Code = 200,
+                IsSucceed = true,
+                Message = "update successfully"
+            };
+            //var user = GetByIdAsync(Guid.Parse(profile.Id)).GetAwaiter().GetResult();
+            //if (user == null)
+            //{
+            //    return new APIResponeModel()
+            //    {
+            //        Data = profile,
+            //        Code = 400,
+            //        IsSucceed = false,
+            //        Message = "user doesn't exist"
+            //    };
+            //}
+            //if (!profile.Username.Equals(user.UserName))
+            //{
+            //    return new APIResponeModel()
+            //    {
+            //        Data = profile,
+            //        Code = 400,
+            //        IsSucceed = false,
+            //        Message = "cannot change username"
+            //    };
+            //}
+            var updateProfile = profile.MapTo<UserIdentity>();
+            IFormFile fileDemo = ConvertObjectToIFormFile(profile.ImageFile);
+            updateProfile.Image = _fileStorageService.SaveImageFile(fileDemo).GetAwaiter().GetResult();
+            _context.Entry(updateProfile).State = EntityState.Detached;
+            var resultUpdate = _userManager.UpdateAsync(updateProfile).GetAwaiter().GetResult();
+            if (resultUpdate.Succeeded)
+            {
+                return result;
             }
-            user.FullName = profile.FullName;
-            user.Email = profile.Email;
-            user.PhoneNumber = profile.PhoneNumber;
-            user.Dob = profile.Dob;
-            user.Gender = profile.Gender;
-            /*  if (string.IsNullOrEmpty(profile.Image))
-              {
-                  user.Image = Convert.FromBase64String(profile.Image);
-              }*/
-            bool result = await Update(user);
-            return await Task.FromResult(result);
+            else
+            {
+                string errorMesage = "";
+                foreach (var error in resultUpdate.Errors)
+                {
+                    errorMesage += error.Description;
+                }
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Message = errorMesage,
+                    IsSucceed = false
+                };
+            }
         }
 
         public async Task<IEnumerable<UserIdentity>> GetAllAsync()
@@ -216,6 +249,26 @@ namespace ElectronicMedia.Core.Services.Service
                     }
                 }
             }
+        }
+
+        private IFormFile ConvertObjectToIFormFile(object imageFileObject)
+        {
+            JsonDocument jsonDocument = JsonDocument.Parse(imageFileObject.ToString());
+            JsonElement root = jsonDocument.RootElement;
+
+            // Extract the necessary properties
+            string contentDisposition = root.GetProperty("ContentDisposition").GetString();
+            string contentType = root.GetProperty("ContentType").GetString();
+            string fileName = root.GetProperty("FileName").GetString();
+            long length = root.GetProperty("Length").GetInt64();
+
+            // Create a temporary MemoryStream to hold the file content
+            IFormFile formFile = new FormFile(Stream.Null, 0, length, "userProfile.ImageFile", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
+            };
+            return formFile;
         }
     }
 }
