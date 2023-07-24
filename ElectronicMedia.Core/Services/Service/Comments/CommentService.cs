@@ -59,18 +59,18 @@ namespace ElectronicMedia.Core.Services.Service
             return await Task.FromResult(result);
         }
 
-        public async Task<bool> CreateComment(Guid userId, Guid postId, string content)
+        public async Task<bool> CreateComment(CommentAddModel model)
         {
-            if (string.IsNullOrEmpty(content))
+            if (string.IsNullOrEmpty(model.Content))
             {
                 return false;
             }
             var entity = new Comment()
             {
-                UserId = userId.ToString(),
-                PostId = postId,
+                UserId = model.UserId.ToString(),
+                PostId = model.PostId,
                 CreatedDate = DateTime.UtcNow,
-                Content = content
+                Content = model.Content
             };
             bool result = await Add(entity);
             return result;
@@ -91,10 +91,26 @@ namespace ElectronicMedia.Core.Services.Service
             throw new NotImplementedException();
         }
 
-        public async Task<List<CommentModel>> GetAllCommentsByPost(Guid postId)
+        public async Task<CommentDto> GetAllCommentsByPost(Guid postId)
         {
-            var comments = await _context.Comments.Where(c => c.PostId == postId).OrderBy(c => c.CreatedDate).ToListAsync();
-            var result = comments.MapTo<List<CommentModel>>();
+            var result = new CommentDto();
+            var comments = await _context.Comments.Where(c => c.PostId == postId).Include(x => x.User).OrderBy(c => c.CreatedDate).ToListAsync();
+            var countNumber = await _context.Comments.Where(c => c.PostId == postId).OrderBy(c => c.CreatedDate).CountAsync();
+            var listComment = comments.MapToList<CommentModel>();
+            if (listComment.Count() > 0)
+            {
+                listComment.ForEach(x =>
+                {
+                    var reply = _context.ReplyComments.Where(r => r.ParentId == x.Id).Include(y => y.User).ToList();
+                    if (reply.Count() > 0)
+                    {
+                        x.ReplyComment.AddRange(reply.MapToList<ReplyCommentModel>());
+                    }
+                    countNumber += reply.Count();
+                });
+            }
+            result.CountComment = countNumber;
+            result.CommentModels = listComment;
             return result;
         }
 

@@ -86,3 +86,77 @@ function setCookie(name, value, days) {
     }
     document.cookie = name + "=" + value + expires + "; path=/";
 }
+
+function register(event) {
+    event.preventDefault();
+    var username = $("#username").val();
+    var fullname = $("#fullname").val();
+    var dobInput = $("#dobInput").val();
+    var maleRadio = $("#maleRadio").is(":checked");
+    var email = $("#email").val();
+    var password = $("#password").val();
+    var hasError = false;
+
+    if (!validateEmail(email)) {
+        $("#emailError").text("Invalid email format.");
+        event.preventDefault(); // Prevent form submission
+        hasError = true;
+    } else {
+        $("#emailError").text(""); // Clear error message
+        if (!validatePassword(password)) {
+            $("#passwordError").text("Password must have at least one digit (0-9) and one uppercase letter (A-Z).");
+            event.preventDefault(); // Prevent form submission
+            hasError = true;
+        } else {
+            $("#passwordError").text(""); // Clear error message
+        }
+    }
+    if (hasError) {
+        event.preventDefault(); // Prevent form submission
+        return; // Dừng việc gọi ajax
+    }
+    var requestBody = {
+        username: username,
+        fullname: fullname,
+        dob: dobInput,
+        gender: maleRadio? 1 : 2,
+        email: email,
+        password: password
+    };
+    $.ajax({
+        url: "http://localhost:5243/api/User/register",
+        type: "POST", // Change to the appropriate HTTP method (e.g., GET, POST, PUT, DELETE, etc.)
+        dataType: "json", // Set the expected data type of the response
+        contentType: 'application/json',
+        data: JSON.stringify(requestBody),
+        success: function (data) {
+            // Handle the successful response from the API
+            $("#genericModalLabel").text("Register");
+            if (data.isSucceed) {
+                $("#genericModalBody").text(data.message);
+                $("#genericModalLabel").addClass("text-success");
+                $("#genericModal").find(".modal-dialog").removeClass("modal-danger").addClass("modal-success");
+            } else {
+                $("#genericModalBody").text(data.message);
+                $("#genericModalLabel").addClass("text-danger");
+                $("#genericModal").find(".modal-dialog").removeClass("modal-success").addClass("modal-danger");
+            }
+            $("#genericModal").modal("show");
+        },
+        error: function (xhr, status, error) {
+            $("#genericModalBody").text(error);
+            $("#genericModalLabel").addClass("text-danger");
+            $("#genericModal").find(".modal-dialog").removeClass("modal-success").addClass("modal-danger");
+        }
+    });
+}
+function validateEmail(email) {
+    // This is a simple email validation regex
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+function validatePassword(password) {
+    // This is a password validation regex that checks for at least one digit and one uppercase letter
+    var passwordRegex = /^(?=.*\d)(?=.*[A-Z])/;
+    return passwordRegex.test(password);
+}

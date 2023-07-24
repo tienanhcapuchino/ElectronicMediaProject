@@ -34,8 +34,10 @@ $(document).ready(function () {
                 "Authorization": "Bearer " + token // Gán token vào tiêu đề yêu cầu
             }
         });
+        $("#profile").show();
     }
 });
+
 function getCookie(token) {
     var cookie = $.cookie(token);
     if (cookie != null) {
@@ -43,6 +45,7 @@ function getCookie(token) {
     }
     return null;
 }
+
 function decodeToken(token) {
     var parts = token.split('.');
     var encodedPayload = parts[1];
@@ -51,4 +54,13 @@ function decodeToken(token) {
     }).join(''));
 
     return JSON.parse(payload);
+}
+
+function rediectToCategory(id,name) {
+    localStorage.setItem("categoryName", name);
+    window.location.href = "/Post/CategoryPost?id=" + id;
+}
+
+function redirectTo() {
+    window.location.href = "/";
 }

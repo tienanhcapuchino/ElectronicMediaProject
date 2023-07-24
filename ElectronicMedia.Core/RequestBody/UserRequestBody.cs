@@ -42,11 +42,11 @@ namespace ElectronicMedia.Core
         public int Page { get; set; }
         public int Top { get; set; }
         public int Skip { get; set; }
-        public string SearchText { get; set; }
-        public List<string> SearchByColumn { get; set; }
-        public PageRequestOrderBy OrderBy { get; set; }
-        public IEnumerable<PageRequestFilter> Filter { get; set; }
-        public IEnumerable<AdditionalFilter> AdditionalFilters { get; set; }
+        public string? SearchText { get; set; }
+        public List<string>? SearchByColumn { get; set; }
+        public PageRequestOrderBy? OrderBy { get; set; }
+        public IEnumerable<PageRequestFilter>? Filter { get; set; }
+        public IEnumerable<AdditionalFilter>? AdditionalFilters { get; set; }
 
         public void AddAdditionalFilters(IEnumerable<PageRequestFilter> additionalFilter)
         {

@@ -33,6 +33,7 @@ using ElectronicMedia.Core;
 using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
+using ElectronicMedia.Core.RequestBody;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -266,13 +267,25 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
 
-        [HttpGet("/category/{cateId}")]
-        public async Task<IActionResult> GetPostByCateId(Guid cateId,int top)
+        [HttpPost("category")]
+        public async Task<IActionResult> GetPostByCateId(PostRequestBody requestBody)
         {
             try
             {
-                var result = await _postService.GetPostByCateId(cateId,top);
-                return Ok(result);
+                var result = await _postService.GetPostByCateId(requestBody);
+                if(result != null)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return new JsonResult(new APIResponeModel()
+                    {
+                        Code = 400,
+                        IsSucceed = false,
+                        Message = "Invalid request body"
+                    });
+                }
             }
             catch (Exception e)
             {

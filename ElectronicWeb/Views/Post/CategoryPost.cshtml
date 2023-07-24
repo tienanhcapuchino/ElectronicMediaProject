@@ -1,0 +1,37 @@
+﻿<div class="section search-result-wrap">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="heading" id="heading_c"></div>
+			</div>
+		</div>
+		<div class="row posts-entry">
+			<div class="col-lg-8" id="blogEntriesContainer">
+			</div>
+
+			<div class="col-lg-4 sidebar">
+				<!-- END sidebar-box -->
+				<div class="sidebar-box">
+					<h3 class="heading">Popular Posts</h3>
+					<div class="post-entry-sidebar" id="popularPost">
+						<ul id="postList">
+						</ul>
+					</div>
+				</div>
+				<!-- END sidebar-box -->
+
+				<div class="sidebar-box">
+					<h3 class="heading">Categories</h3>
+					<ul class="categories" id="categoryList">
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function () {
+		getPostByCategory(1);
+		getPopularPost(10);
+	});
+</script>

@@ -10039,7 +10039,9 @@ textarea {
       border-radius: 10px; }
 
 .read-more {
-  border-bottom: 2px solid #214252; }
+    border-bottom: 2px solid #214252;
+    cursor: pointer;
+}
 
 .post-entry-alt h2, .post-entry-alt .h2 {
   font-size: 18px;

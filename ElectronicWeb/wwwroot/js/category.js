@@ -39,7 +39,9 @@ function getTopCategory() {
             const $navigationMenu = $("#parents");
             response.forEach(item => {
                 const $li = $("<li>");
-                const $a = $("<a>").text(item.name);
+                const $a = $("<a>").text(item.name).click(function () {
+                    rediectToCategory(item.id, item.name);
+                });
                 $li.append($a);
                 if (item.childrens && item.childrens.length > 0) {
                     $li.addClass("has-children");
@@ -116,7 +118,9 @@ function buildMenu(data, $parent) {
     const $ul = $("<ul>").addClass("dropdown");
     data.forEach(item => {
         const $li = $("<li>");
-        const $a = $("<a>").text(item.name);
+        const $a = $("<a>").text(item.name).click(function () {
+            rediectToCategory(item.id, item.name);
+        });
         $li.append($a);
 
         if (item.childrens && item.childrens.length > 0) {

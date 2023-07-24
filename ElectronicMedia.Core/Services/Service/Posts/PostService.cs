@@ -36,8 +36,10 @@ using ElectronicMedia.Core.Repository.Domains;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Repository.Models.Email;
+using ElectronicMedia.Core.RequestBody;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Interfaces.Email;
+using log4net.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +61,7 @@ namespace ElectronicMedia.Core.Services.Service
         private readonly IExcelService<Post> _excelService;
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
+        private readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(PostService));
         public PostService(ElectronicMediaDbContext context,
             IPostDetailService postDetailService,
             ICommentService commentService,
@@ -178,8 +181,7 @@ namespace ElectronicMedia.Core.Services.Service
         {
             try
             {
-                var posts = await _context.Posts.Include(x => x.User).Skip((requestBody.Page - 1) * requestBody.Top)
-                    .Take(requestBody.Top).ToListAsync();
+                var posts = await _context.Posts.Include(x => x.User).ToListAsync();
                 var countItem = await CommonService.GetTotalCount<Post>(_context);
                 var postModels = posts.MapTo<List<PostViewModel>>();
                 var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
@@ -311,7 +313,7 @@ namespace ElectronicMedia.Core.Services.Service
             var comments = await _commentService.GetAllCommentsByPost(postId);
             List<ReplyComment> replyComments = new List<ReplyComment>();
             List<Comment> commentEnities = new List<Comment>();
-            if (comments != null && comments.Any())
+            if (comments != null && comments.CommentModels.Any())
             {
                 commentEnities = comments.MapTo<List<Comment>>();
                 var commentIds = commentEnities.Select(x => x.Id).ToList();
@@ -363,18 +365,30 @@ namespace ElectronicMedia.Core.Services.Service
             bool result = await Update(post);
             return result;
         }
-        public async Task<IEnumerable<PostView>> GetPostByCateId(Guid cateId, int top)
+        public async Task<PagedList<PostView>> GetPostByCateId(PostRequestBody requestBody)
         {
-            var post = await _context.Posts.Include(x => x.User).Where(x => x.CategoryId == cateId && x.Status == PostStatusModel.Published).OrderBy(y => y.PublishedDate).Take(top).ToListAsync();
-            return post.MapToList<PostView>();
+            try
+            {
+                if (requestBody.CategoryId != Guid.Empty)
+                {
+                    var post = await _context.Posts.Include(x => x.User).Where(x => (x.CategoryId == requestBody.CategoryId || x.SubCategoryId == requestBody.CategoryId) && x.Status == PostStatusModel.Published)
+        .OrderBy(y => y.PublishedDate)
+        .Skip((requestBody.PageNumber - 1) * requestBody.PageSize)
+        .Take(requestBody.PageSize)
+        .ToListAsync();
+                    var number = await _context.Posts.Include(x => x.User).Where(x => (x.CategoryId == requestBody.CategoryId || x.SubCategoryId == requestBody.CategoryId) && x.Status == PostStatusModel.Published).CountAsync();
+                    return PagedList<PostView>.ToPagedList(post.MapToList<PostView>(),requestBody.PageNumber,requestBody.PageSize,number);
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw;
+            }
         }
 
         Task<PagedList<Post>> ICoreRepository<Post>.GetAllWithPaging(PageRequestBody requestBody)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Post>> GetPostByCateId(Guid cateId)
         {
             throw new NotImplementedException();
         }
