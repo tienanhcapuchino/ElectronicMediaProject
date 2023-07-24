@@ -54,6 +54,8 @@ namespace ElectronicMedia.Core.Repository.Entity
     {
         PostPublished = 1,
         CommentNotification = 2,
-        PendingForApprovalPost = 3
+        PendingForApprovalPost = 3,
+        AddNewUser = 4,
+        ForgotPassword = 5
     }
 }
