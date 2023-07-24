@@ -39,6 +39,7 @@ using ElectronicMedia.Core.Repository.Models.Email;
 using ElectronicMedia.Core.Services.Interfaces;
 using ElectronicMedia.Core.Services.Interfaces.Email;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -106,17 +107,37 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<bool> UpdatePost(PostViewModel post)
         {
             var categoryIds = await _context.PostCategories.Select(c => c.Id).ToListAsync();
-            if (string.IsNullOrEmpty(post.Title)
+            var oldPost = await GetById(post.Id);
+            bool result = false;
+            if (oldPost != null)
+            {
+                if (string.IsNullOrEmpty(post.Title)
                 || string.IsNullOrEmpty(post.Content)
                 || categoryIds == null || !categoryIds.Any()
                 || !categoryIds.Contains(post.CategoryId))
 
-            {
-                return false;
+                {
+                    return false;
+                }
+
+                var entity = post.MapTo<Post>();
+                 result = await Update(entity);
+                if (result == true)
+                {
+                    var currentUser = _userService.GetCurrentUser();
+                    var role = currentUser.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
+                    var receiveUser = await _userService.GetByIdAsync(Guid.Parse(entity.UserId));
+
+                    if (post.Status.ToString() == "Published" && oldPost.Status.ToString() != "Published")
+                    {
+                        var emailModel = await SendEmailForPublishPost(receiveUser.Email, entity);
+                        await _emailService.SendEmailAsync(emailModel);
+                    }
+                }
+                
             }
-            var entity = post.MapTo<Post>();
-            bool result = await Update(entity);
             return result;
+
         }
         public async Task<bool> Delete(Guid id,bool saveChange = true)
         {
@@ -214,7 +235,7 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<Post> GetByIdAsync(Guid id)
         {
-            var post = await _context.Posts.Include(x => x.User).Where(x => x.Id == id).SingleOrDefaultAsync();
+            var post = await _context.Posts.AsNoTracking().Include(x => x.User).Where(x => x.Id == id).SingleOrDefaultAsync();
             return post;
         }
         public async Task<PostViewModel> GetById(Guid id)
@@ -368,6 +389,21 @@ namespace ElectronicMedia.Core.Services.Service
             emailTos.Add(emailReceive);
             result.Subject = EmailTemplateSubjectConstant.DeletePostSubject;
             string bodyEmail = string.Format(EmailTemplateBodyConstant.DeletePostBody, roleCurrentUser, nameCurrentUser, post.Title, message, emailCurrentUser);
+            result.Body = bodyEmail + EmailTemplateBodyConstant.SignatureFooter;
+            result.To = emailTos;
+            return await Task.FromResult(result);
+        }
+        private async Task<EmailModel> SendEmailForPublishPost(string emailReceive, Post post)
+        {
+            var currentUser = _userService.GetCurrentUser();
+            var roleCurrentUser = currentUser.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
+            var nameCurrentUser = currentUser.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").Value;
+            var emailCurrentUser = currentUser.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
+            EmailModel result = new EmailModel();
+            List<string> emailTos = new List<string>();
+            emailTos.Add(emailReceive);
+            result.Subject = EmailTemplateSubjectConstant.PostPublishedSubject;
+            string bodyEmail = string.Format(EmailTemplateBodyConstant.PublishPostBody, roleCurrentUser, nameCurrentUser, post.Title, DateTime.Now.ToString("dddd, dd MMMM yyyy"),emailCurrentUser);
             result.Body = bodyEmail + EmailTemplateBodyConstant.SignatureFooter;
             result.To = emailTos;
             return await Task.FromResult(result);
