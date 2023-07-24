@@ -101,7 +101,7 @@ namespace ElectronicMedia.Core.Services.Service
         }
         public async Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody)
         {
-            var currentUser = _contextAccessor.HttpContext.User;
+            var currentUser = GetCurrentUser();
             var userId = currentUser.FindFirst("UserId")?.Value;
             var user = await _userManager.Users.Where(x => !x.Id.Equals(userId)).Include(x => x.Department).Skip((requestBody.Page - 1) * requestBody.Top)
                     .Take(requestBody.Top).ToListAsync();

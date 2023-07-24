@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,5 +53,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<APIResponeModel> AddNewUser(UserAddModel model);
         Task<DataTable> ExportUsers();
         Task SetRoleForMembersInDepartment(List<MemberModel> members, List<UserIdentity> userEntitys);
+        ClaimsPrincipal GetCurrentUser();
     }
 }

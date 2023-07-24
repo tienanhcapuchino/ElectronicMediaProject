@@ -107,6 +107,15 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<bool> AssignMemberToDepartment(Guid depId, Guid memberId)
         {
             var member = await _userService.GetByIdAsync(memberId);
+            var department = await GetByIdAsync(depId);
+            if (department == null)
+            {
+                return false;
+            }
+            var departmentModel = department.MapTo<DepartmentViewDetail>();
+            await _userService.SetRoleForMembersInDepartment(departmentModel.Members, department.Members.ToList());
+            var leader = departmentModel.Members.Where(x => x.RoleName.Equals(UserRole.Leader)).FirstOrDefault();
+            if (leader != null) return false; 
             member.DepartmentId = depId;
             bool result = await _userService.Update(member);
             return await Task.FromResult(result);
