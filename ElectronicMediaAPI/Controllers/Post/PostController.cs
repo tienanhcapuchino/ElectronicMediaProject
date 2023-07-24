@@ -197,14 +197,14 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
 
-        [HttpDelete("delete/{postId}")]
+        [HttpPost("delete/{postId}")]
         [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector},{UserRole.Writer}")]
-        public async Task<APIResponeModel> DeletePost([FromRoute] Guid postId)
+        public async Task<APIResponeModel> DeletePost([FromRoute] Guid postId, [FromBody] string message)
         {
             try
             {
                 var post = await _postService.GetByIdAsync(postId);
-                if (await _postService.DeletePost(postId))
+                if (await _postService.DeletePost(postId,message))
                 {
                     if (!string.IsNullOrEmpty(post.Image))
                     {

@@ -68,6 +68,14 @@ namespace ElectronicMedia.Core.Repository.Domains
                                             <p><span style=""color: #993300;"">Password</span>: <span style=""color: #0000ff;""><em><u>{3} </u></em></span></p>
                                             <p><span style=""color: #993300;"">Your role</span>: <span style=""background-color: #ff9900;"">{4}</span></p>
                                             <p>&nbsp;Please login to the website with your <strong><em>Username</em></strong> and <em><strong>Password</strong></em></p>";
+
+        public const string DeletePostBody = @"<p><strong><em>Electronic Media Online Service Notification For Writer</em></strong></p>
+                                            <p><span style=""color: #ff0000;"">Your post have been deleted by <strong>{0} : {1}</strong>. Below is the post information:</span></p>
+                                            <p><strong>Title:</strong> {2}</p>
+                                            <p>Reason for deleting post:</p>
+                                            <p><em>{3}</em></p>
+                                            <p>Any questions please send to email address: <strong>{4}</strong></p>";
+
         public const string SignatureFooter = @"<p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below: <a>tienanhcapuchino@gmail.com</a></p>
                                                 <p>This email is sent automatically, <em><strong>please don&rsquo;t reply</strong></em>.</p>
                                                 <p>&nbsp;</p>
@@ -85,6 +93,7 @@ namespace ElectronicMedia.Core.Repository.Domains
         public const string CommentNotificationSubject = "Your post have a new comment";
         public const string PendingForApprovalPostSubject = "You have a post need to be approved";
         public const string AddNewUserSubject = "ADDED TO ELECTRONIC MEDIA ONLINE SERVICE";
+        public const string DeletePostSubject = "Your post has been deleted";
     }
     public class EmailTemplateMailToConstant
     {
@@ -105,6 +114,8 @@ namespace ElectronicMedia.Core.Repository.Domains
         public const string PostPublishedDes = "Notify to writer that your post is published!";
         public const string CommentNotificationDes = "Notify to participant in the post that the post have new comment";
         public const string PendingForApprovalPostDes = "Notify to leader that he (she) has a new post need to be approved";
+        public const string DeletePostNotificationDes = "Notify to writer that your post is deleted!";
+
     }
     public static class EmailTemplateConstants
     {
