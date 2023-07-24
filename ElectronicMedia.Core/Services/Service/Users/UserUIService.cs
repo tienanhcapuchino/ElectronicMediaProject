@@ -31,6 +31,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core.Automaper;
 using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Common.Extension;
+using ElectronicMedia.Core.Repository.Domains;
 using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicMedia.Core.Repository.Models.Email;
@@ -216,18 +217,9 @@ namespace ElectronicMedia.Core.Services.Service
             EmailModel result = new EmailModel();
             List<string> emailTos = new List<string>();
             emailTos.Add(model.Email);
-            result.Subject = "ADDED TO ELECTRONIC MEDIA ONLINE SERVICE";
-            result.Body = @$"<p><strong><em>Welcome to Electronic Media Online Service</em></strong></p>
-                            <p><strong><em>&nbsp;</em></strong></p>
-                            <p>You have been added to Electronic Media Online Service, below is your account&lsquo;s information.</p>
-                            <p><span style=""color: #993300;"">Email</span>: <a href=""{model.Email}"">{model.Email}</a></p>
-                            <p><span style=""color: #993300;"">Username</span>: <span style=""background-color: #ff9900;"">{model.Username}</span></p>
-                            <p><span style=""color: #993300;"">Password</span>: <span style=""color: #0000ff;""><em><u>{password} </u></em></span></p>
-                            <p><span style=""color: #993300;"">Your role</span>: <span style=""background-color: #ff9900;"">{model.RoleName}</span></p>
-                            <p>&nbsp;Please login to the website with your <strong><em>Username</em></strong> and <em><strong>Password</strong></em></p>
-                            <p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below: <a href=""mailto:tienanhcapuchino@gmail.com"">tienanhcapuchino@gmail.com</a></p>
-                            <p>This email is sent automatically, please don&rsquo;t reply.</p>
-                            <p><strong><em>HAVE A GOOD EXPERIENCE!</em></strong></p>";
+            result.Subject = EmailTemplateSubjectConstant.AddNewUserSubject;
+            string bodyEmail = string.Format(EmailTemplateBodyConstant.AddNewUserBody, model.Email, model.Email, model.Username, password, model.RoleName);
+            result.Body = bodyEmail + EmailTemplateBodyConstant.SignatureFooter;
             result.To = emailTos;
             return await Task.FromResult(result);
         }

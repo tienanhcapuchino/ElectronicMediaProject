@@ -60,12 +60,31 @@ namespace ElectronicMedia.Core.Repository.Domains
         public const string PostPublishedBody = "Your post have been published! Let go to our website to view that!";
         public const string CommentNotificationBody = "Your following post have new comment! Let go to our website to see that!";
         public const string PendingForApprovalPostBody = "You have a new post that need to be approved! Please go to website to check that!";
+        public const string AddNewUserBody = @"<p><strong><em>Welcome to Electronic Media Online Service</em></strong></p>
+                                            <p><strong><em>&nbsp;</em></strong></p>
+                                            <p>You have been added to Electronic Media Online Service, below is your account&lsquo;s information.</p>
+                                            <p><span style=""color: #993300;"">Email</span>: <a href=""{0}"">{1}</a></p>
+                                            <p><span style=""color: #993300;"">Username</span>: <span style=""background-color: #ff9900;"">{2}</span></p>
+                                            <p><span style=""color: #993300;"">Password</span>: <span style=""color: #0000ff;""><em><u>{3} </u></em></span></p>
+                                            <p><span style=""color: #993300;"">Your role</span>: <span style=""background-color: #ff9900;"">{4}</span></p>
+                                            <p>&nbsp;Please login to the website with your <strong><em>Username</em></strong> and <em><strong>Password</strong></em></p>";
+        public const string SignatureFooter = @"<p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below: <a>tienanhcapuchino@gmail.com</a></p>
+                                                <p>This email is sent automatically, <em><strong>please don&rsquo;t reply</strong></em>.</p>
+                                                <p>&nbsp;</p>
+                                                <p><em><strong>Best Regards,</strong></em></p>
+                                                <p>&nbsp;<em><strong>Electronic Media Online Service</strong></em></p>
+                                                <p><em>PRN231 - SUMMER 2023</em></p>
+                                                <p><span style=""color: #3366ff;""><em>GROUP 10 - SE1614</em></span></p>
+                                                <p><span style=""color: #3366ff;""><em>FPT University - Hoa Lac - Ha Noi - Viet Nam</em></span></p>
+                                                <p><span style=""color: #3366ff;""><em>Contact: <a href=""mailto:tienanhcapuchino@gmail.com"">tienanhcapuchino@gmail.com</a></em></span></p>
+                                                <p><strong><em>HAVE A GOOD EXPERIENCE!</em></strong></p>";
     }
     public class EmailTemplateSubjectConstant
     {
         public const string PostPublishedSubject = "Your post have been published";
         public const string CommentNotificationSubject = "Your post have a new comment";
         public const string PendingForApprovalPostSubject = "You have a post need to be approved";
+        public const string AddNewUserSubject = "ADDED TO ELECTRONIC MEDIA ONLINE SERVICE";
     }
     public class EmailTemplateMailToConstant
     {
