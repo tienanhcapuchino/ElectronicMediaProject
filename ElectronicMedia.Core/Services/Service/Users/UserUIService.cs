@@ -212,6 +212,11 @@ namespace ElectronicMedia.Core.Services.Service
             return result;
         }
 
+        public ClaimsPrincipal GetCurrentUser()
+        {
+            return _contextAccessor.HttpContext.User;
+        }
+
         private async Task<EmailModel> GetEmailForAddUser(UserAddModel model, string password)
         {
             EmailModel result = new EmailModel();
