@@ -48,7 +48,8 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Username))
                 .ForMember(dest => dest.IsActived, opt => opt.MapFrom(src => true));
             CreateMap<UserIdentity, UserProfileModel>();
-            //.ForMember(dest => dest.Image, opt => opt.MapFrom(src => "data:image/jpg;base64," + CommonFunct.Decode(src.Image)));
+            CreateMap<UserProfileUpdateModel, UserIdentity>();
+                //.ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image.FileName));
             CreateMap<UserIdentity, UsersModel>()
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));

@@ -56,18 +56,31 @@ namespace ElectronicMediaAPI.Controllers
         }
 
         [Authorize]
-        [HttpPost("update/profile/{userId}")]
-        public async Task<bool> UpdateProfile([FromRoute] Guid userId, [FromBody] UserProfileModel profile)
+        [HttpPost("update/profile")]
+        public APIResponeModel UpdateProfile(UserProfileUpdateModel profile)
         {
             try
             {
-                var result = await _userService.UpdateUserProfile(userId, profile);
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                         .Select(e => e.ErrorMessage)
+                                         .ToList();
+                    return new APIResponeModel()
+                    {
+                        Code = 400,
+                        Data = errors,
+                        IsSucceed = false,
+                        Message = string.Join(";", errors)
+                    };
+                }
+                var result = _userService.UpdateUserProfile(profile);
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error when update profile user with userId: {userId}", ex);
-                return false;
+                _logger.Error($"Error when update profile user with userId: {profile.Id}", ex);
+                throw;
             }
         }
 

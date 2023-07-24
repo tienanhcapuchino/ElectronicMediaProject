@@ -52,6 +52,8 @@ namespace ElectronicWeb.Routes
         public static string AddNewUser = $"{GetUrlPattern(EndPoint.User)}/adduser";
         public static string ExportUsers = $"{GetUrlPattern(EndPoint.User)}/export";
         public static string GetDepartmentIdByUserId = $"{GetUrlPattern(EndPoint.User)}/departmentId";
+        public static string GetUserProfile = $"{GetUrlPattern(EndPoint.User)}/profile";
+        public static string UpdateUserProfile = $"{GetUrlPattern(EndPoint.User)}/update/profile";
         #endregion
 
         #region department

@@ -229,5 +229,59 @@ namespace ElectronicWeb.Controllers.Admin
             }
             return Content("Error when dowload excel!");
         }
+
+        public IActionResult UserProfile()
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            var userId = Guid.Parse(_tokenService.GetTokenModelUI(token).UserId);
+            HttpResponseMessage respone = CommonUIService.GetDataAPI($"{RoutesManager.GetUserProfile}/{userId}", MethodAPI.GET, token);
+            if (respone.IsSuccessStatusCode)
+            {
+                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                UserProfileModel userProfile = JsonConvert.DeserializeObject<UserProfileModel>(data);
+                if (TempData["UpdateFailed"] != null)
+                {
+                    ViewBag.UpdateFailed = TempData["UpdateFailed"] as string;
+                }
+                if (TempData["UpdateSuccess"] != null)
+                {
+                    ViewBag.UpdateSuccess = TempData["UpdateSuccess"] as string;
+                }
+                return View(userProfile);
+            }
+            return Content($"Error when get user profile: {userId}");
+        }
+
+        public IActionResult UpdateProfile(UserProfileUpdateModel userProfile)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            var jsonData = JsonConvert.SerializeObject(userProfile);
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.UpdateUserProfile, MethodAPI.POST, token, jsonData);
+            if (respone.IsSuccessStatusCode)
+            {
+                var dataRespone = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                APIResponeModel result = JsonConvert.DeserializeObject<APIResponeModel>(dataRespone);
+                if (result.Code == 200)
+                {
+                    TempData["UpdateSuccess"] = "Updated your profile!";
+                    return RedirectToAction("UserProfile");
+                }
+                else
+                {
+                    TempData["UpdateFailed"] = result.Message;
+                    return RedirectToAction("UserProfile");
+                }
+            }
+            return Content($"Error when update user profile: {userProfile.Id}");
+        }
+
     }
 }

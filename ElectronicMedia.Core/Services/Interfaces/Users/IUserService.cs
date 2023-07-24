@@ -45,7 +45,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<APIResponeModel> Register(UserRegisterModel model);
         Task<string> GenerateToken(UserIdentity us);
         Task<UserProfileModel> GetProfileUser(Guid userId);
-        Task<bool> UpdateUserProfile(Guid userId, UserProfileModel profile);
+        APIResponeModel UpdateUserProfile(UserProfileUpdateModel profile);
         Task<List<UserIdentity>> GetUsersByIds(List<Guid> userIds);
         Task<bool> UpdateRole(Guid userId, string roleType);
         Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody);
