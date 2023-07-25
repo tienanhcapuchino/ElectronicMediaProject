@@ -2,35 +2,37 @@
     Layout = "_AdminLayout";
 }
 
-<form>
+<form onsubmit="handleFileUpload(event)">
     <div class="form-group row">
-        <label for="inputEmail3" class="bold-label col-sm-2 col-form-label">Title</label>
-        <input type="text" class="form-control" placeholder="Title">
+        <label for="title" class="bold-label col-sm-2 col-form-label">Title</label>
+        <input type="text" class="form-control" placeholder="Title" id="title" required>
     </div>
     <div class="form-group row">
-        <label class="bold-label col-sm-2 col-form-label">Content</label>
-        <textarea class="form-control" placeholder="Content here..." id="textarea" rows="15"></textarea>
+        <label for="description" class="bold-label col-sm-2 col-form-label">Description</label>
+        <textarea class="form-control" placeholder="Description" name="description" id="description"></textarea>
     </div>
-
     <div class="form-group row">
-        <label for="inputEmail3" class="col-sm-2 col-form-label">Image Avatar Post</label>
+        <label for="textarea" class="bold-label col-sm-2 col-form-label">Content</label>
+        <textarea class="form-control" placeholder="Content here..." id="textarea" name="content" rows="15"></textarea>
+    </div>
+    <div class="form-group row">
+        <label for="imageInput" class="col-sm-2 col-form-label">Image Avatar Post</label>
             <div>
                 <img id="selectedImage" src="#" alt="Selected Image" style="display: none; max-width: 100%; height: auto;" />
-                <input type="file" id="imageInput" accept="image/*" />
+                <input type="file" id="imageInput" accept="image/*" required/>
                 <button id="removeImageBtn" class="btn btn-danger mt-2" style="display: none;">Remove Image</button>
             </div>
     </div>
     <div class="form-group row">
         <label for="category" class="bold-label col-sm-2 col-form-label">Post Category</label>
-        <select class="form-select">
-            <option></option>
+        <select class="form-select" id="category" required>
         </select>
     </div>
 
     <div class="form-group row">
         <label for="subCategory" class="bold-label col-sm-2 col-form-label">Sub Category</label>
-        <select class="form-select">
-            <option></option>
+        <select class="form-select" id="subCategory">
+            <option selected value="">None</option>
         </select>
     </div>
 
@@ -39,3 +41,10 @@
         <button type="submit" class="btn btn-primary btn-lg btn-block">Create</button>
     </div>
 </form>
+<script>
+    // jQuery document ready function to ensure the DOM is ready
+    $(document).ready(function () {
+        getcategoryForadd();
+        getsubcategory();
+    });
+</script>

@@ -133,3 +133,72 @@ function buildMenu(data, $parent) {
 
     $parent.append($ul);
 }
+
+function getcategoryForadd() {
+    $.ajax({
+        url: "http://localhost:5243/api/Category/category",
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            // Clear the current options from the category select element
+            $("#category").empty();
+
+            // Append the new options to the category select element
+            $.each(data, function (index, category) {
+                if (index == 0) {
+                    getFirstOptionValue(category.id);
+                }
+                $("#category").append('<option value="' + category.id + '">' + category.name + '</option>');
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Failed to load categories. Error:", error);
+        },
+    });
+}
+function getsubcategory() {
+    $("#category").on("change", function () {
+        // Get the selected category value
+        const selectedCategory = $(this).val();
+        // Make the AJAX GET request to fetch subcategories for the selected category
+        $.ajax({
+            url: "http://localhost:5243/api/Category/subcategory/" + selectedCategory, // Replace "Category" with the appropriate API endpoint to fetch subcategories for a specific category
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                // Clear the current options from the "subcategory" select element
+                $("#subCategory").empty();
+
+                // Append the new options to the "subcategory" select element
+                $.each(data, function (index, subCategory) {
+                    $("#subCategory").append('<option value="' + subCategory.id + '">' + subCategory.name + '</option>');
+                });
+
+                console.log("Subcategories loaded successfully.");
+            },
+            error: function (xhr, status, error) {
+                console.error("Failed to load subcategories. Error:", error);
+            },
+        });
+        
+    });
+}
+function getFirstOptionValue(id) {
+    $.ajax({
+        url: "http://localhost:5243/api/Category/subcategory/" + id, // Replace "Category" with the appropriate API endpoint to fetch subcategories for a specific category
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            // Clear the current options from the "subcategory" select element
+            $("#subCategory").empty();
+
+            // Append the new options to the "subcategory" select element
+            $.each(data, function (index, subCategory) {
+                $("#subCategory").append('<option value="' + subCategory.id + '">' + subCategory.name + '</option>');
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Failed to load subcategories. Error:", error);
+        },
+    });
+}

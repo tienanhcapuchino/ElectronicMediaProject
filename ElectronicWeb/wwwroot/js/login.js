@@ -48,13 +48,14 @@ function login(event) {
                 var serializedtoken = JSON.stringify(response.data);
                 setCookie("token", serializedtoken, 1);
                 var token = getCookie("token")
-
+                var user = decodeToken(token)
                 var allowedRoles = ["Leader", "EditorDirector", "Admin", "Writer"];
-                if (allowedRoles.includes(token.role)) {
+                if (allowedRoles.includes(user.role)) {
                     window.location.href = "/admin";
                 } else {
                     window.location.href = "/";
                 }
+                localStorage.setItem("userId", user.UserId);
             } else {
                 alert("Login failed!")
             }
