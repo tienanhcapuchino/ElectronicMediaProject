@@ -39,52 +39,43 @@
     TokenUIModel user = ViewBag.User;
     string status = ViewBag.SelectedStatus;
 }
-<h4>@user.Username  - @user.RoleName</h4>
+<h1>@user.Username  - @user.RoleName</h1>
+<div style="margin-bottom: 30px">
+    <form asp-controller="Post" asp-action="index" method="get" style="display: flex; margin:30px 0px">
+        <input name="text" value="@ViewBag.Text" id="search-focus" type="search" placeholder="Search Title or Content..." class="form-control" />
+        <input type="submit" class="btn btn-outline-primary" value="Search" /> <br />
+    </form>
 
-<form asp-controller="Post" asp-action="index" method="get">
-    <div class="input-group">
-        <div class="form-outline">
-            <input name="text" value="@ViewBag.Text" id="search-focus" type="search" placeholder="Search Title or Content..." class="" />
-        </div>
-        <div id="labeldiv"></div>
-        <button type="submit" aria-labelledby="labeldiv">
-            <i class="bi bi-search"></i>
-        </button>
-    </div>
-</form>
-
-<form asp-controller="Post" asp-action="index" method="get">
-    <div style="margin-top:10px">
+    <form asp-controller="Post" asp-action="index" method="get">
         <label>Filter Status</label>
-        <select style="margin-left:60px" name="status" onchange="this.form.submit()">
+        <select name="status" onchange="this.form.submit()" class="form-select">
             <option value="All" selected="@(status == "All"? true:false)">--All---</option>
             <option value="Pending" selected="@(status == "Pending"? true:false)">Pending</option>
             <option value="Approved" selected="@(status == "Approved"? true:false)">Approved</option>
             <option value="Published" selected="@(status == "Published"? true:false)">Published</option>
             <option value="Denied" selected="@(status == "Denied"? true:false)">Denied</option>
-
         </select>
-    </div>
-</form>
-@if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.EditorDirector)
-{
-    @Html.ActionLink("Export to excel", "DownloadExcel", "Post", null, new { @class = "btn btn-primary" })
-
-}
+    </form>
+</div>
+<div style="float: right">
+    @if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.EditorDirector)
+    {
+        @Html.ActionLink("Export to excel", "DownloadExcel", "Post", null, new { @class = "btn btn-primary" })
+    }
+    <a class="btn btn-primary" href="/post/add">Write Post</a>
+</div>
 <table class="table" style="margin-bottom: 20px">
     <thead>
         <tr>
             <th>Title</th>
-            <th>Content</th>
             <th>AuthorName</th>
             <th>CreatedDate</th>
             <th>PublishedDate</th>
-            @*<th>UpdatedDate</th>*@
             <th>Rate</th>
             <th>Like</th>
             <th>Dislike</th>
             <th>Status</th>
-            <th style="width:95%">Action</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -92,9 +83,6 @@
         {
             <tr>
                 <td style="width:40%">@p.Title</td>
-                <td class="ellipsis first">
-                    <span>@Html.Raw(@p.Content)</span>
-                </td>
                 <td>@p.AuthorName</td>
                 <td>@p.CreatedDate.ToString("dd/MM/yyyy")</td>
                 <td>@p.PublishedDate.Value.ToString("dd/MM/yyyy")</td>
@@ -132,7 +120,7 @@
                         <a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a>
 
                     }
-                   
+
 
                 </td>
 

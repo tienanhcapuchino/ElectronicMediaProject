@@ -57,12 +57,12 @@
         </select>
     </form>
 </div>
-<br />
 <div>
     <div style="float: right">
         <a class="btn btn-primary" asp-controller="User" asp-action="AddUser">Add new user</a>
         @Html.ActionLink("Export to excel", "DownloadExcel", "User", null, new { @class = "btn btn-primary" })
     </div>
+    <br />
     <table class="table">
         <thead>
             <tr>

@@ -52,6 +52,10 @@ namespace ElectronicWeb.Controllers
             _tokenService = tokenService;
 
         }
+        public IActionResult Add()
+        {
+            return View();
+        }
         public IActionResult Index(int currentPage = 1, string text = "", string status = "All")
         {
             string token = _tokenService.GetToken();

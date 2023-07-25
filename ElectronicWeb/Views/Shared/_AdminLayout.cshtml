@@ -57,6 +57,7 @@
     <title>ElectronicMedia</title>
     <link rel="shortcut icon" type="image/png" href="~/admin/assets/images/logos/ElectronicMedia.png" />
     <link rel="stylesheet" href="~/admin/assets/css/styles.min.css" asp-append-version="true" />
+    <script src="~/js/tinymce/js/tinymce/tinymce.min.js" asp-append-version="true"></script>
 </head>
 
 <body>
@@ -68,7 +69,7 @@
             <!-- Sidebar scroll-->
             <div>
                 <div class="brand-logo d-flex align-items-center justify-content-between">
-                    <a href="./" class="text-nowrap logo-img">
+                    <a href="/" class="text-nowrap logo-img">
                         <img src="~/admin/assets/images/logos/ElectronicMedia.png" width="180" alt="" />
                     </a>
                     <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -193,6 +194,94 @@
     <script src="~/admin/assets/libs/apexcharts/dist/apexcharts.min.js" asp-append-version="true"></script>
     <script src="~/admin/assets/libs/simplebar/dist/simplebar.js" asp-append-version="true"></script>
     <script src="~/admin/assets/js/dashboard.js" asp-append-version="true"></script>
-</body>
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" asp-append-version="true"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image code link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss image code',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat | code',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            image_title: true,
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            file_picker_callback: function (cb, value, meta) {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
 
+                input.onchange = function () {
+                    var file = this.files[0];
+                    var formData = new FormData();
+                    formData.append('image', file);
+                    $.ajax({
+                        url: 'http://localhost:5243/api/Image', // Đường dẫn API xử lý tải ảnh lên máy chủ (project 1)
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data != null) {
+                                // Trả về URL ảnh đã tải lên thành công
+                                cb(data, { title: file.name });
+                            } else {
+                                alert('Tải ảnh lên thất bại');
+                            }
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra trong quá trình tải ảnh');
+                        }
+                    });
+                };
+                input.click();
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get references to the file input and image tag
+            const imageInput = document.getElementById("imageInput");
+            const selectedImage = document.getElementById("selectedImage");
+            const removeImageBtn = document.getElementById("removeImageBtn");
+            // Add an event listener to the file input to handle changes
+            imageInput.addEventListener("change", function () {
+                // Get the selected file
+                const file = imageInput.files[0];
+
+                // Check if a file was selected
+                if (file) {
+                    // Create a FileReader to read the file
+                    const reader = new FileReader();
+
+                    // Set up the FileReader to display the selected image when it's loaded
+                    reader.onload = function () {
+                        selectedImage.src = reader.result;
+                        selectedImage.style.display = "block"; // Show the image
+                        removeImageBtn.style.display = "block";
+                    };
+
+                    // Read the file as a data URL (base64 encoded string)
+                    reader.readAsDataURL(file);
+                } else {
+                    // If no file was selected, hide the image
+                    selectedImage.src = "";
+                    selectedImage.style.display = "none";
+                    removeImageBtn.style.display = "none";
+                }
+                removeImageBtn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    // Clear the selected file and hide the image and remove button
+                    imageInput.value = null;
+                    selectedImage.src = "";
+                    selectedImage.style.display = "none";
+
+                    removeImageBtn.style.display = "none";
+                });
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
 </html>

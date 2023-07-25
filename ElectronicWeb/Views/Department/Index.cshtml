@@ -32,8 +32,7 @@
     Layout = "_AdminLayout";
 }
 @using ElectronicMedia.Core.Repository.Models;
-
-<a class="btn btn-primary" asp-controller="Department" asp-action="Add">Create department</a>
+<h1>Department management</h1>
 @{
     if (ViewBag.DeleteSuccess != null)
     {
@@ -44,10 +43,12 @@
         <p class="text-success">@ViewBag.AddSuccess</p>
     }
 }
-<form class="form form-controll" asp-controller="Department" asp-action="Index">
-    <input class="form-controll" name="search" placeholder="enter name to search" value="@ViewBag.SearchText" />
+<form asp-controller="Department" asp-action="Index" style="display: flex; margin:30px 0px">
+    <input class="form-control" name="search" placeholder="enter name to search" value="@ViewBag.SearchText" />
     <input type="submit" class="btn btn-outline-primary" value="Search" />
 </form>
+
+<a class="btn btn-primary" asp-controller="Department" asp-action="Add">Create department</a>
 <table class="table">
     <thead>
         <tr>
