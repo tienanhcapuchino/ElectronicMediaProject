@@ -45,7 +45,7 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<APIResponeModel> Register(UserRegisterModel model);
         Task<string> GenerateToken(UserIdentity us);
         Task<UserProfileModel> GetProfileUser(Guid userId);
-        APIResponeModel UpdateUserProfile(UserProfileUpdateModel profile);
+        Task<APIResponeModel> UpdateUserProfile(UserProfileModel profile);
         Task<List<UserIdentity>> GetUsersByIds(List<Guid> userIds);
         Task<bool> UpdateRole(Guid userId, string roleType);
         Task<PagedList<UsersModel>> GetAllWithPagingModels(PageRequestBody requestBody);
@@ -55,5 +55,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task SetRoleForMembersInDepartment(List<MemberModel> members, List<UserIdentity> userEntitys);
         ClaimsPrincipal GetCurrentUser();
         Task<bool> ResetPassword(string email);
+        Task<APIResponeModel> ChangePassword(ChangePassModel model);
     }
 }

@@ -57,7 +57,7 @@ namespace ElectronicMediaAPI.Controllers
 
         [Authorize]
         [HttpPost("update/profile")]
-        public APIResponeModel UpdateProfile(UserProfileUpdateModel profile)
+        public async Task<APIResponeModel> UpdateProfile(UserProfileModel profile)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace ElectronicMediaAPI.Controllers
                         Message = string.Join(";", errors)
                     };
                 }
-                var result = _userService.UpdateUserProfile(profile);
+                var result = await _userService.UpdateUserProfile(profile);
                 return result;
             }
             catch (Exception ex)
@@ -235,5 +235,28 @@ namespace ElectronicMediaAPI.Controllers
                 };
             }
         }
+
+        [Authorize]
+        [HttpPost("changepass")]
+        public async Task<APIResponeModel> ChangePassword([FromBody] ChangePassModel model)
+        {
+            try
+            {
+                var result = await _userService.ChangePassword(model);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error when change password user: {model.UserId}", ex);
+                return new APIResponeModel()
+                {
+                    Data = model,
+                    Message = ex.ToString(),
+                    IsSucceed = false,
+                    Code = 400
+                };
+            }
+        }
+
     }
 }

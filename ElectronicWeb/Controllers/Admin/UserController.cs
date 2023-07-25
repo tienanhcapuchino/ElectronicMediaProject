@@ -30,7 +30,6 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using ElectronicMedia.Core;
 using ElectronicMedia.Core.Common;
-using ElectronicMedia.Core.Repository.Entity;
 using ElectronicMedia.Core.Repository.Models;
 using ElectronicWeb.Models;
 using ElectronicWeb.Routes;
@@ -256,32 +255,98 @@ namespace ElectronicWeb.Controllers.Admin
             return Content($"Error when get user profile: {userId}");
         }
 
-        public IActionResult UpdateProfile(UserProfileUpdateModel userProfile)
+        //public IActionResult UpdateProfile(UserProfileModel userProfile, IFormFile formFile)
+        //{
+        //    var token = _tokenService.GetToken();
+        //    if (string.IsNullOrEmpty(token))
+        //    {
+        //        return View("Views/Account/Login.cshtml");
+        //    }
+        //    byte[] fileBytes;
+        //    using (var formData = new MultipartFormDataContent())
+        //    {
+        //        using (var memoryStream = new MemoryStream())
+        //        {
+        //            formFile.CopyToAsync(memoryStream).GetAwaiter().GetResult();
+        //            fileBytes = memoryStream.ToArray();
+        //        }
+        //        var fileContent = new ByteArrayContent(fileBytes);
+        //        fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+        //        {
+        //            Name = "file",
+        //            FileName = formFile.FileName // Tên tập tin, có thể chỉnh sửa nếu cần thiết
+        //        };
+        //        HttpClient httpClient = new HttpClient();
+        //        formData.Add(fileContent);
+        //        HttpResponseMessage saveImage = httpClient.PostAsync(RoutesManager.SaveImage, formData).GetAwaiter().GetResult();
+        //        if (saveImage.IsSuccessStatusCode)
+        //        {
+        //            var data = saveImage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        //            userProfile.Image = data;
+        //        }
+        //    }
+        //    var jsonData = JsonConvert.SerializeObject(userProfile);
+        //    HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.UpdateUserProfile, MethodAPI.POST, token, jsonData);
+        //    if (respone.IsSuccessStatusCode)
+        //    {
+        //        var dataRespone = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        //        APIResponeModel result = JsonConvert.DeserializeObject<APIResponeModel>(dataRespone);
+        //        if (result.Code == 200)
+        //        {
+        //            TempData["UpdateSuccess"] = "Updated your profile!";
+        //            return RedirectToAction("UserProfile");
+        //        }
+        //        else
+        //        {
+        //            TempData["UpdateFailed"] = result.Message;
+        //            return RedirectToAction("UserProfile");
+        //        }
+        //    }
+        //    return Content($"Error when update user profile: {userProfile.Id}");
+        //}
+        public IActionResult PasswordChange()
         {
             var token = _tokenService.GetToken();
             if (string.IsNullOrEmpty(token))
             {
                 return View("Views/Account/Login.cshtml");
             }
-            var jsonData = JsonConvert.SerializeObject(userProfile);
-            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.UpdateUserProfile, MethodAPI.POST, token, jsonData);
+            if (TempData["ChangeSuccess"] != null)
+            {
+                ViewBag.ChangeSuccess = TempData["ChangeSuccess"] as string;
+            }
+            if (TempData["ChangeFail"] != null)
+            {
+                ViewBag.ChangeFail = TempData["ChangeFail"] as string;
+            }
+            return View();
+        }
+        public IActionResult DoChangePass(ChangePassModel passwordModel)
+        {
+            var token = _tokenService.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("Views/Account/Login.cshtml");
+            }
+            var userId = Guid.Parse(_tokenService.GetTokenModelUI(token).UserId);
+            passwordModel.UserId = userId.ToString();
+            string jsonData = JsonConvert.SerializeObject(passwordModel);
+            HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.ChangePass, MethodAPI.POST, token, jsonData);
             if (respone.IsSuccessStatusCode)
             {
-                var dataRespone = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                APIResponeModel result = JsonConvert.DeserializeObject<APIResponeModel>(dataRespone);
+                var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var result = JsonConvert.DeserializeObject<APIResponeModel>(data);
                 if (result.Code == 200)
                 {
-                    TempData["UpdateSuccess"] = "Updated your profile!";
-                    return RedirectToAction("UserProfile");
+                    TempData["ChangeSuccess"] = "Change password successfully";
                 }
                 else
                 {
-                    TempData["UpdateFailed"] = result.Message;
-                    return RedirectToAction("UserProfile");
+                    TempData["ChangeFail"] = result.Message;
                 }
+                return RedirectToAction("PasswordChange");
             }
-            return Content($"Error when update user profile: {userProfile.Id}");
+            return Content("Error when change password");
         }
-
     }
 }

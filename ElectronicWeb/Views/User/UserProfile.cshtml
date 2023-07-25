@@ -38,30 +38,29 @@
 
 <div id="container-post" style="margin-left: 50px">
     <h1>Update your profile</h1>
-
-    <form asp-controller="User" asp-action="UpdateProfile" enctype="multipart/form-data">
+    <form onsubmit="UpdateProfile(event)">
         <div style="display: flex; justify-content: space-around">
             <div>
-                <input type="hidden" value="@Model.Id" name="userProfile.Id" />
-                <input type="hidden" value="@Model.Username" name="userProfile.Username" />
+                <input id="profileId" type="hidden" value="@Model.Id" name="userProfile.Id" />
+                <input id="profileUsername" type="hidden" value="@Model.Username" name="userProfile.Username" />
                 <label>Full name</label>
-                <input name="userProfile.FullName" class="form-control" type="text" value="@Model.FullName" required /> <br />
+                <input id="profileFullName" name="userProfile.FullName" class="form-control" type="text" value="@Model.FullName" required /> <br />
                 <label>Email</label>
-                <input name="userProfile.Email" class="form-control" type="email" value="@Model.Email" required /> <br />
+                <input id="profileEmail" name="userProfile.Email" class="form-control" type="email" value="@Model.Email" required /> <br />
             </div>
             <div>
                 <label>Phone number</label>
-                <input name="userProfile.PhoneNumber" class="form-control" type="number" maxlength="10" value="@Model.PhoneNumber" required /> <br />
+                <input id="profilePhone" name="userProfile.PhoneNumber" class="form-control" type="number" maxlength="10" value="@Model.PhoneNumber" required /> <br />
                 <label>Gender</label>
-                <select name="userProfile.Gender" class="form-control">
+                <select id="profileGender" name="userProfile.Gender" class="form-control">
                     <option selected="@(Model.Gender == Gender.Unknown)" value="0">@Gender.Unknown</option>
                     <option selected="@(Model.Gender == Gender.Male)" value="1">@Gender.Male</option>
                     <option selected="@(Model.Gender == Gender.Female)" value="2">@Gender.Female</option>
                 </select>
             </div>
             <div>
-                <img class="form-controll" src="/@(Model.Image != null ? Model.Image : "images/avt_def.jpg")" />
-                <input name="userProfile.ImageFile" type="file" class="form-control" />
+                <img style="width: 250px; height: 250px" class="form-controll" src="@(Model.Image != null ? Model.Image : "/images/avt_def.jpg")" />
+                <input name="formFile" id="imageInput" type="file" class="form-control" />
             </div>
         </div>
         @{
@@ -75,6 +74,66 @@
             }
         }
         <input class="btn btn-primary" style="margin-bottom: 20px; text-align: center; margin-left: 500px" value="Update" type="submit" />
-
+        <a class="btn btn-primary" style="margin-bottom: 20px;" asp-controller="User" asp-action="PasswordChange">Change password</a>
     </form>
 </div>
+
+<script>
+    function UpdateProfile(event) {
+        event.preventDefault();
+        // Get the selected file from the input element
+        const fileInput = document.getElementById("imageInput");
+        const file = fileInput.files[0];
+
+        // Create a FormData object to send the file to the server
+        const formData = new FormData();
+        formData.append("image", file, file.name); // The name "file" here should match the server's expected parameter name.
+        // Make the AJAX POST request to the server
+        $.ajax({
+            url: "http://localhost:5243/api/Image",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (item) {
+                $.ajax({
+                    url: "http://localhost:5243/api/User/update/profile",
+                    method: "POST",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        id: $('#profileId').val(),
+                        fullName: $('#profileFullName').val(),
+                        username: 'dm ban tuaN T',
+                        phoneNumber: $('#profilePhone').val(),
+                        gender: parseInt($('#profileGender').val()),
+                        image: item,
+                        email: $('#profileEmail').val()
+                    }),
+                    success: function (dataUpdate) {
+                        log
+                        // Handle the successful response from the API
+                        $("#genericModalLabel").text("Update profile");
+                        if (dataUpdate.isSucceed) {
+                            $("#genericModalBody").text(dataUpdate.message);
+                            $("#genericModalLabel").addClass("text-success");
+                            $("#genericModal").find(".modal-dialog").removeClass("modal-danger").addClass("modal-success");
+                        } else {
+                            $("#genericModalBody").text(dataUpdate.message);
+                            $("#genericModalLabel").addClass("text-danger");
+                            $("#genericModal").find(".modal-dialog").removeClass("modal-success").addClass("modal-danger");
+                        }
+                        $("#genericModal").modal("show");
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error)
+                        alert(error);
+                    },
+                });
+            },
+            error: function (xhr, status, error) {
+                alert(error);
+            },
+        });
+    }
+</script>

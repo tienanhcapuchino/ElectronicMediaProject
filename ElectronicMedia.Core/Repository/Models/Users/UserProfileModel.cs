@@ -39,8 +39,17 @@ using System.Threading.Tasks;
 
 namespace ElectronicMedia.Core.Repository.Models
 {
-    public class UserProfileModel : ProfileModelBase
+    public class UserProfileModel
     {
+        public string Id { get; set; }
+        [Required]
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string Username { get; set; }
+        [Required]
+        public string PhoneNumber { get; set; }
+        [Required]
+        public Gender Gender { get; set; }
         public string Image { get;set;}
     }
 }
