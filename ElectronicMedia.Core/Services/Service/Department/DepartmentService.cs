@@ -114,7 +114,7 @@ namespace ElectronicMedia.Core.Services.Service
             }
             var departmentModel = department.MapTo<DepartmentViewDetail>();
             await _userService.SetRoleForMembersInDepartment(departmentModel.Members, department.Members.ToList());
-            var leader = departmentModel.Members.Where(x => x.RoleName.Equals(UserRole.Leader)).FirstOrDefault();
+            var leader = departmentModel.Members.Where(x => x.RoleName.Equals(UserRole.Leader) && x.IsActived).FirstOrDefault();
             if (leader != null) return false; 
             member.DepartmentId = depId;
             bool result = await _userService.Update(member);
@@ -165,14 +165,14 @@ namespace ElectronicMedia.Core.Services.Service
 
         public async Task<Department> GetByIdAsync(Guid id)
         {
-            var result = await _dbContext.Departments.Include(x => x.Members).FirstOrDefaultAsync(x => x.Id == id);
+            var result = await _dbContext.Departments.Include(x => x.Members.Where(x => x.IsActived)).FirstOrDefaultAsync(x => x.Id == id);
             return result;
         }
 
         public async Task<List<MemberModel>> GetLeadersToAssign()
         {
             var leaders = (await _userManager.GetUsersInRoleAsync(UserRole.Leader)).ToList();
-            var leaderResult = leaders.Where(x => x.DepartmentId == null).ToList();
+            var leaderResult = leaders.Where(x => x.DepartmentId == null && x.IsActived).ToList();
             var result = leaderResult.MapToList<MemberModel>();
             return result;
         }
@@ -180,7 +180,7 @@ namespace ElectronicMedia.Core.Services.Service
         public async Task<List<MemberModel>> GetMembersToAssign()
         {
             var leaders = (await _userManager.GetUsersInRoleAsync(UserRole.Writer)).ToList();
-            var leaderResult = leaders.Where(x => x.DepartmentId == null).ToList();
+            var leaderResult = leaders.Where(x => x.DepartmentId == null && x.IsActived).ToList();
             var result = leaderResult.MapToList<MemberModel>();
             return result;
         }
