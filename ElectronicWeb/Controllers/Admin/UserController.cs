@@ -161,7 +161,7 @@ namespace ElectronicWeb.Controllers.Admin
             return Content("Error when deactive user");
         }
 
-        public IActionResult AddUser()
+        public IActionResult Add()
         {
             var token = _tokenService.GetToken();
             if (string.IsNullOrEmpty(token))
@@ -175,7 +175,9 @@ namespace ElectronicWeb.Controllers.Admin
             }
             if (tokenModel != null && tokenModel.RoleName.Equals(UserRole.Admin))
             {
-                return View("Views/User/Add.cshtml");
+                if (TempData["AddFailed"] != null)
+                    ViewBag.ErrorAdd = TempData["AddFailed"] as string;
+                return View();
             }
             return View("Views/Account/Login.cshtml");
         }
@@ -198,8 +200,18 @@ namespace ElectronicWeb.Controllers.Admin
                 HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.AddNewUser, MethodAPI.POST, token, jsonData);
                 if (respone.IsSuccessStatusCode)
                 {
-                    TempData["AddUserSuccess"] = "Add successfully";
-                    return RedirectToAction("UserManager");
+                    var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    var resultData = JsonConvert.DeserializeObject<APIResponeModel>(data);
+                    if (resultData.Code == 200)
+                    {
+                        TempData["AddUserSuccess"] = "Add successfully";
+                        return RedirectToAction("UserManager");
+                    }
+                    else
+                    {
+                        TempData["AddFailed"] = resultData.Message;
+                        return RedirectToAction("Add");
+                    }
                 }
             }
             return Content("Error when add user");
