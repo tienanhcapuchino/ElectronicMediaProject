@@ -261,6 +261,7 @@ namespace ElectronicWeb.Controllers
                 var content = getPost.Content.ReadAsStringAsync().Result;
                 post = JsonConvert.DeserializeObject<PostViewModel>(content);
             }
+            ViewBag.user = user;
             return View(post);
         }
 
@@ -277,7 +278,7 @@ namespace ElectronicWeb.Controllers
                 ViewBag.Message = "Delete Post Successful!";
 
             }
-         
+            ViewBag.user = user;
             return View();
         }
         public IActionResult DownloadExcel()

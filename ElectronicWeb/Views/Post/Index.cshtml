@@ -115,7 +115,8 @@
 
                     }
 
-                    @if ((user.RoleName != UserRole.Leader && user.RoleName != UserRole.Writer) || (user.RoleName == UserRole.Writer && p.Status.ToString() == "Pending"))
+                    @if ((user.RoleName != UserRole.Leader && user.RoleName != UserRole.Writer &&( p.Status.ToString() != "Published" && p.Status.ToString()!= "Approved"))
+                   || (user.RoleName == UserRole.Writer && p.Status.ToString() == "Pending"))
                     {
                         <a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="ti ti-trash"></i></a>
 

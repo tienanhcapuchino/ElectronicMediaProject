@@ -5,12 +5,17 @@
 }
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 @using ElectronicMedia.Core.Repository.Models;
-
+@using ElectronicMedia.Core.Repository.Entity;
+@using ElectronicMedia.Core.Common;
+@using ElectronicWeb.Models;
 @{
     Layout = "_AdminLayout";
 }
+@{
+    TokenUIModel user = ViewBag.User;
+}
 
-@if (ViewBag.Message== null)
+@if (ViewBag.Message == null)
 {
     <div class="container">
         <div class="card">
@@ -47,10 +52,13 @@
                         <form asp-controller="Post" asp-action="Delete" method="post">
                             <!-- Message input -->
                             <input type="hidden" name="postId" value="@Model.Id" />
-                            <div class="form-outline mb-4">
-                                <label class="form-label text-danger" for="form4Example3">Enter the reason you deleted the post</label>
-                                <textarea name="message" class="form-control" id="form4Example3" rows="4" placeholder="Give the author a few reasons to let them know why you removed their post."></textarea>
-                            </div>
+                            @if(user.RoleName == UserRole.Admin || user.RoleName == UserRole.EditorDirector)
+                            {
+                                <div class="form-outline mb-4">
+                                    <label class="form-label text-danger" for="form4Example3">Enter the reason you deleted the post</label>
+                                    <textarea name="message" class="form-control" id="form4Example3" rows="4" placeholder="Give the author a few reasons to let them know why you removed their post."></textarea>
+                                </div>
+                            }
                             <div>
                                 <a asp-controller="Post" asp-action="Index" class="text-success"><i class="bi bi-arrow-return-left"></i> Back to list</a>
                                 <button type="submit" class="btn btn-danger btn-lg btn-block">DELETE</button>
