@@ -217,6 +217,21 @@ namespace ElectronicMedia.Core.Services.Service
             return _contextAccessor.HttpContext.User;
         }
 
+        public async Task<bool> ResetPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return false;
+            string passwordGen = CommonService.GeneratePassword(8);
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, passwordGen);
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                var emailModel = await GetEmailForResetPassword(email, passwordGen);
+                await _emailService.SendEmailAsync(emailModel);
+                return true;
+            }
+            return false;
+        }
         private async Task<EmailModel> GetEmailForAddUser(UserAddModel model, string password)
         {
             EmailModel result = new EmailModel();
@@ -228,5 +243,18 @@ namespace ElectronicMedia.Core.Services.Service
             result.To = emailTos;
             return await Task.FromResult(result);
         }
+
+        private async Task<EmailModel> GetEmailForResetPassword( string emailReceive, string newPassword)
+        {
+            EmailModel result = new EmailModel();
+            List<string> emailTos = new List<string>();
+            emailTos.Add(emailReceive);
+            result.Subject = EmailTemplateSubjectConstant.ResetPasswordSubject;
+            string bodyEmail = string.Format(EmailTemplateBodyConstant.ResetPasswordBody,emailReceive, newPassword);
+            result.Body = bodyEmail + EmailTemplateBodyConstant.SignatureFooter;
+            result.To = emailTos;
+            return await Task.FromResult(result);
+        }
+
     }
 }

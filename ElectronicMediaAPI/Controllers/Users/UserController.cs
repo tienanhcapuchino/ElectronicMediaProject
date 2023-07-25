@@ -113,7 +113,7 @@ namespace ElectronicMediaAPI.Controllers
                 };
             }
         }
-        [HttpPost("testSendMail")]
+        [HttpPost("testsendmail")]
         public async Task<APIResponeModel> TestSendMail(EmailModel emailModel)
         {
 

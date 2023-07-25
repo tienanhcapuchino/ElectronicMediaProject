@@ -53,6 +53,7 @@ namespace ElectronicWeb.Routes
         public static string GetDepartmentIdByUserId = $"{GetUrlPattern(EndPoint.User)}/departmentId";
         public static string GetUserProfile = $"{GetUrlPattern(EndPoint.User)}/profile";
         public static string UpdateUserProfile = $"{GetUrlPattern(EndPoint.User)}/update/profile";
+        public static string ResetPassword = $"{GetUrlPattern(EndPoint.User)}/resetpassword";
         #endregion
 
         #region department

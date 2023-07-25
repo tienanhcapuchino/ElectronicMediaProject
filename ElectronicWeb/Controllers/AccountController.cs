@@ -27,7 +27,12 @@
  * of the Government of Viet Nam
 *********************************************************************/
 
+using ElectronicMedia.Core.Common;
+using ElectronicMedia.Core.Repository.Entity;
+using ElectronicMedia.Core.Repository.Models;
+using ElectronicWeb.Routes;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace ElectronicWeb.Controllers
 {
@@ -41,8 +46,26 @@ namespace ElectronicWeb.Controllers
         {
             return View();
         }
-        public IActionResult ForgotPassword()
+        public IActionResult ForgotPassword(string email)
         {
+            if(!string.IsNullOrEmpty(email))
+            {
+                string data = JsonConvert.SerializeObject(email);
+                var result  = CommonUIService.GetDataAPI(RoutesManager.ResetPassword, MethodAPI.POST,null,data);
+                if (result.IsSuccessStatusCode)
+                {
+                    ViewBag.Status = 200;
+                    ViewBag.Message = "Your password has been reset successfully!. Please check your email.";
+                   
+                }
+                else
+                {
+                    ViewBag.Status = 400;
+                    ViewBag.Message = "Your password has been reset failed!. Please input correct email.";
+                }
+                return View();
+
+            }
             return View();
         }
     }

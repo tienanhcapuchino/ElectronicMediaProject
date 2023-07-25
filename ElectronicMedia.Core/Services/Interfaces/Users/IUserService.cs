@@ -54,5 +54,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<DataTable> ExportUsers();
         Task SetRoleForMembersInDepartment(List<MemberModel> members, List<UserIdentity> userEntitys);
         ClaimsPrincipal GetCurrentUser();
+        Task<bool> ResetPassword(string email);
     }
 }

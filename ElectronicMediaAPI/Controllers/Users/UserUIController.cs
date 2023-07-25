@@ -163,6 +163,43 @@ namespace ElectronicMediaAPI.Controllers
                 };
             }
         }
+        [HttpPost("resetpassword")]
+        public async Task<APIResponeModel> ResetPassword([FromBody] string email)
+        {
+            try
+            {
+                bool result = await _userService.ResetPassword(email);
+                if (result)
+                {
+                    return new APIResponeModel()
+                    {
+                        IsSucceed = true,
+                        Code = 200,
+                        Message = "reset successfully"        
+                    };
+                }
+                else
+                {
+                    return new APIResponeModel()
+                    {
+                        IsSucceed = false,
+                        Code = 400,
+                        Message = "reset failed!",
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error when reset password", ex);
+                return new APIResponeModel()
+                {
+                    Data = ex.ToString(),
+                    Message = ex.Message,
+                    IsSucceed = false,
+                    Code = 400
+                };
+            }
+        }
 
         [Authorize(Roles = $"{UserRole.Admin}")]
         [HttpPost("adduser")]
