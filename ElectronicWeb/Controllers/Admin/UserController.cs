@@ -161,10 +161,9 @@ namespace ElectronicWeb.Controllers.Admin
             return Content("Error when deactive user");
         }
 
-        public IActionResult Add(UserAddModel userModel)
+        public IActionResult Add()
         {
             var token = _tokenService.GetToken();
-            if (userModel == null) userModel = new UserAddModel();
             if (string.IsNullOrEmpty(token))
             {
                 return View("Views/Account/Login.cshtml");
@@ -211,7 +210,7 @@ namespace ElectronicWeb.Controllers.Admin
                     else
                     {
                         TempData["AddFailed"] = resultData.Message;
-                        return RedirectToAction("Add", new {userModel = user});
+                        return RedirectToAction("Add");
                     }
                 }
             }
