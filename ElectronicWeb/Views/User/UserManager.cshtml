@@ -40,105 +40,104 @@
         <p class="text-success">@ViewBag.AddSuccess</p>
     }
 }
-<div style="margin-bottom: -50px">
-    <form class="form form-controll" asp-controller="User" asp-action="UserManager">
-        <input class="form-controll" name="search" placeholder="enter username, email or fullname to search" value="@ViewBag.SearchText" />
+<div style="margin-bottom: 30px">
+    <form asp-controller="User" asp-action="UserManager" style="display: flex; margin:30px 0px">
+        <input class="form-control" name="search" placeholder="enter username, email or fullname to search" value="@ViewBag.SearchText" />
         <input type="submit" class="btn btn-outline-primary" value="Search" /> <br />
     </form>
-    <form class="form form-controll" onchange="this.form.submit()" asp-controller="User" asp-action="UserManager">
+    <form onchange="this.form.submit()" asp-controller="User" asp-action="UserManager">
         <label>Role</label>
-        <select name="role" onchange="this.form.submit()" class="form-controll">
-            <option value="@string.Empty" selected="@(ViewBag.RoleSearch == "")" class="form-controll">All</option>
-            <option class="form-controll text-success" selected="@(ViewBag.RoleSearch == "UserNormal")" value="UserNormal">User Normal</option>
-            <option class="form-controll text-black" selected="@(ViewBag.RoleSearch == "Writer")" value="Writer">Writer</option>
-            <option class="form-controll text-primary" selected="@(ViewBag.RoleSearch == "Leader")" value="Leader">Leader</option>
-            <option class="form-controll text-warning" selected="@(ViewBag.RoleSearch == "EditorDirector")" value="EditorDirector">Editor Director</option>
-            <option class="form-controll text-info" selected="@(ViewBag.RoleSearch == "Admin")" value="Admin">Admin</option>
+        <select name="role" onchange="this.form.submit()" class="form-select">
+            <option value="@string.Empty" selected="@(ViewBag.RoleSearch == "")" class="form-control">All</option>
+            <option class="form-control text-success" selected="@(ViewBag.RoleSearch == "UserNormal")" value="UserNormal">User Normal</option>
+            <option class="form-control text-black" selected="@(ViewBag.RoleSearch == "Writer")" value="Writer">Writer</option>
+            <option class="form-control text-primary" selected="@(ViewBag.RoleSearch == "Leader")" value="Leader">Leader</option>
+            <option class="form-control text-warning" selected="@(ViewBag.RoleSearch == "EditorDirector")" value="EditorDirector">Editor Director</option>
+            <option class="form-control text-info" selected="@(ViewBag.RoleSearch == "Admin")" value="Admin">Admin</option>
         </select>
     </form>
 </div>
 <br />
-<div style="float: right">
-    <a class="btn btn-primary" asp-controller="User" asp-action="AddUser">Add new user</a>
-    @Html.ActionLink("Export to excel", "DownloadExcel", "User", null, new { @class = "btn btn-primary" })
-</div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>FullName</th>
-            <th>Email</th>
-            <th>UserName</th>
-            <th>PhoneNumber</th>
-            <th>Dob</th>
-            <th>Role</th>
-            <th>Image</th>
-            <th>IsActivate</th>
-            <th>Gender</th>
-            <th>Department</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            foreach (UsersModel item in Model.Values)
-            {
-                <tr>
-                    <td>@item.FullName</td>
-                    <td>@item.Email</td>
-                    <td>@item.UserName</td>
-                    <td>@item.PhoneNumber</td>
-                    <td>@item.Dob.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        <form asp-controller="User" asp-route-userId="@item.UserId" asp-action="ChangeRole">
+<div>
+    <div style="float: right">
+        <a class="btn btn-primary" asp-controller="User" asp-action="AddUser">Add new user</a>
+        @Html.ActionLink("Export to excel", "DownloadExcel", "User", null, new { @class = "btn btn-primary" })
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>FullName</th>
+                <th>Email</th>
+                <th>UserName</th>
+                <th>PhoneNumber</th>
+                <th>Dob</th>
+                <th>Role</th>
+                <th>IsActivate</th>
+                <th>Gender</th>
+                <th>Department</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (UsersModel item in Model.Values)
+                {
+                    <tr>
+                        <td>@item.FullName</td>
+                        <td>@item.Email</td>
+                        <td>@item.UserName</td>
+                        <td>@item.PhoneNumber</td>
+                        <td>@item.Dob.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <form asp-controller="User" asp-route-userId="@item.UserId" asp-action="ChangeRole">
                             <select class="form-controll" name="newRole" onchange="this.form.submit()">
                                 <option class="form-controll text-success" value="UserNormal" selected="@(item.RoleName == "UserNormal")">User Normal</option>
                                 <option class="form-controll text-black" value="Writer" selected="@(item.RoleName == "Writer")">Writer</option>
                                 <option class="form-controll text-primary" value="Leader" selected="@(item.RoleName == "Leader")">Leader</option>
                                 <option class="form-controll text-warning" value="EditorDirector" selected="@(item.RoleName == "EditorDirector")">Editor Director</option>
                                 <option class="form-controll text-info" value="Admin" selected="@(item.RoleName == "Admin")">Admin</option>
-                            </select>
-                        </form>
-                    </td>
-                    <td></td>
-                    <td>
-                        @{
-                            if (item.IsActived)
-                            {
-                                <p class="text text-success">Active</p>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            @{
+                                if (item.IsActived)
+                                {
+                                    <p class="text text-success">Active</p>
+                                }
+                                else
+                                {
+                                    <p class="text text-danger">Deactive</p>
+                                }
                             }
-                            else
-                            {
-                                <p class="text text-danger">Deactive</p>
-                            }
-                        }
-                    </td>
-                    <td>@item.Gender</td>
-                    <td>@item.Department?.Name</td>
-                    <td>
+                        </td>
+                        <td>@item.Gender</td>
+                        <td>@item.Department?.Name</td>
+                        <td>
 
-                        @{
-                            if (item.IsActived)
-                            {
-                                <form asp-route-id="@item.UserId" asp-controller="User" asp-action="DeactiveUser">
-                                    <input type="hidden" name="isActive" value="false" />
-                                    <input class="text-danger" type="submit" value="Deactivate" />
-                                </form>
+                            @{
+                                if (item.IsActived)
+                                {
+                                    <form asp-route-id="@item.UserId" asp-controller="User" asp-action="DeactiveUser">
+                                        <input type="hidden" name="isActive" value="false" />
+                                        <input class="btn btn-danger" type="submit" value="Deactivate" />
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-route-id="@item.UserId" asp-controller="User" asp-action="DeactiveUser">
+                                        <input type="hidden" name="isActive" value="true" />
+                                        <input class="text-success" type="submit" value="Activate" />
+                                    </form>
+                                }
                             }
-                            else
-                            {
-                                <form asp-route-id="@item.UserId" asp-controller="User" asp-action="DeactiveUser">
-                                    <input type="hidden" name="isActive" value="true" />
-                                    <input class="text-success" type="submit" value="Activate" />
-                                </form>
-                            }
-                        }
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
-
+        </tbody>
+    </table>
+</div>
 <div>
     @if (Model.TotalPages > 0)
     {
