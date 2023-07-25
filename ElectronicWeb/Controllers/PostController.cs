@@ -87,12 +87,11 @@ namespace ElectronicWeb.Controllers
                     new PageRequestFilter
                     {
                         ColumnName = "Status",
-                         IsNullValue = (status=="All"?true:false),
+                        IsNullValue = (status=="All"?true:false),
                         IncludeNullValue= true,
                         Value = new List<string>(){status}
 
                     }
-
                 },
                 AdditionalFilters = new List<AdditionalFilter>
                 {
@@ -101,22 +100,9 @@ namespace ElectronicWeb.Controllers
                 },
 
             };
-
-
             string data = JsonConvert.SerializeObject(pageRequestBody);       
            
             var result = CommonUIService.GetDataAPI(RoutesManager.GetPostsWithPaging, MethodAPI.POST, token, data);
-            if (user.RoleName == UserRole.Leader)
-            {
-                string url = RoutesManager.GetPostByLeader + user.UserId;
-                result = CommonUIService.GetDataAPI(url, MethodAPI.POST, token, data);
-            }
-
-            if (user.RoleName == UserRole.Writer)
-            {
-                string url = RoutesManager.GetPostByWriter + user.UserId;
-                result = CommonUIService.GetDataAPI(url, MethodAPI.POST, token, data);
-            }
 
             if (result.IsSuccessStatusCode)
             {

@@ -50,8 +50,6 @@ namespace ElectronicMedia.Core.Services.Interfaces
         Task<DataTable> ExportPosts();
         Task<IEnumerable<PostView>> GetNewPost(int take);
         Task<PagedList<PostView>> GetPostByCateId(PostRequestBody requestBody);
-        Task<PagedList<PostViewModel>> GetAllWithPaging(PageRequestBody requestBody);
-        Task<PagedList<PostViewModel>> GetAllWithPagingByLeader( Guid leaderId,PageRequestBody requestBody);
-        Task<PagedList<PostViewModel>> GetAllWithPagingByWriter(Guid writerId, PageRequestBody requestBody);
+        Task<PagedList<PostViewModel>> GetAllWithPaging(PageRequestBody requestBody); 
     }
 }
