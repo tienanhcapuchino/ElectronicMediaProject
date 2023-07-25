@@ -81,6 +81,13 @@ namespace ElectronicMedia.Core.Repository.Domains
                                                 <p><strong>Publish Date:&nbsp; {3}</strong></p>
                                                 <p>&nbsp;<em>Your post have been published! Let go to our website to view that!</em></p>
                                                 <p>Any questions please send to email address: <strong>{4}</strong></p>";
+        public const string ResetPasswordBody = @"<h4><strong><em>Electronic Media Online Service</em></strong></h4>
+                                                <p><span style=""color: #009933;"">Your password has been reset successfully!</span></p>
+                                                <p>Your email: <strong>{0}</strong></p>
+                                                <p>Your new password is: <strong>{1}</strong></p>
+                                                <div class=""FFpbKc"">
+                                                <div class=""nidPne""><span style=""color: #ff0000;""><em>Please login to the system to change your password to protect your account!</em></span></div>
+                                                </div>";
 
         public const string SignatureFooter = @"<p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below: <a>tienanhcapuchino@gmail.com</a></p>
                                                 <p>This email is sent automatically, <em><strong>please don&rsquo;t reply</strong></em>.</p>
@@ -100,6 +107,7 @@ namespace ElectronicMedia.Core.Repository.Domains
         public const string PendingForApprovalPostSubject = "You have a post need to be approved";
         public const string AddNewUserSubject = "ADDED TO ELECTRONIC MEDIA ONLINE SERVICE";
         public const string DeletePostSubject = "Your post has been deleted";
+        public const string ResetPasswordSubject = "Your password has been reset successfully";
 
     }
     public class EmailTemplateMailToConstant
