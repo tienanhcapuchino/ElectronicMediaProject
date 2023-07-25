@@ -312,8 +312,9 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 _context.Comments.RemoveRange(commentEnities);
             }
-            _context.Posts.Remove(post);
-            var result = await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            var result = _context.Database.ExecuteSqlRaw($"DELETE FROM [dbo].[post] WHERE id= '{post.Id}'");
+
             if (result > 0)
             {
                 if (role == UserRole.Admin || role == UserRole.EditorDirector)
@@ -333,7 +334,7 @@ namespace ElectronicMedia.Core.Services.Service
             if (role == UserRole.Writer)
             {
                 posts = await _context.Posts.Where(x => x.UserId == userId).Include(x => x.User).Include(x => x.SubCategory).Include(x => x.Category).ToListAsync();
-              
+
             }
             if (role == UserRole.Leader)
             {

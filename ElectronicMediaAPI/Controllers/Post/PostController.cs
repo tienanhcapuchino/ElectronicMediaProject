@@ -176,7 +176,6 @@ namespace ElectronicMediaAPI.Controllers.Post
                     {
                         Code = StatusCodes.Status200OK,
                         Message = "Ok",
-                        Data = post,
                         IsSucceed = true
                     };
                 }
@@ -186,7 +185,6 @@ namespace ElectronicMediaAPI.Controllers.Post
                     {
                         Code = StatusCodes.Status400BadRequest,
                         IsSucceed = false,
-                        Data = post,
                         Message = "delete failed"
                     };
                 }
