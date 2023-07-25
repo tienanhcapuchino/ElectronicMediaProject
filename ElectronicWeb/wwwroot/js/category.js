@@ -51,16 +51,25 @@ function getTopCategory() {
             });
             const $log = $("<li>");
             if (token != null) {
+                var user = decodeToken(token);
                 const $logOut = $("<a>").text("LogOut").addClass("log-link").click(function () {
                     logout(event);
                 });
                 $log.append($logOut)
+                var allowedRoles = ["Leader", "EditorDirector", "Admin", "Writer"];
+                if (allowedRoles.includes(user.role)) {
+                    const $setting = $("<a>").text("Admin").addClass("log-link").click(function () {
+                        window.location.href = "/admin";
+                    });
+                    $log.append($setting)
+                }
             } else {
                 const $logIn = $("<a>").text("LogIn").addClass("log-link").click(function () {
                     redirect(event);
                 });
                 $log.append($logIn)
             }
+            
             $navigationMenu.append($log);
             if (categoryPost != null) {
                 response.forEach(function (category) {
