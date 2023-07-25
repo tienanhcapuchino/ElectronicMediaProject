@@ -43,7 +43,8 @@ namespace ElectronicMedia.Core.Repository.Models
         public string Title { get; set; }
         public string Content { get; set; }
         public Guid CategoryId { get; set; }
-        public IFormFile FileURL { get; set; }
+        public string FileURL { get; set; }
+        public string Description { get; set; }
         public Guid? SubCategoryId { get; set; } = Guid.Empty;
     }
 }

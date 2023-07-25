@@ -88,7 +88,7 @@ namespace ElectronicMedia.Core.Automaper
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => PostStatusModel.Pending))
                 .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SubCategoryId))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.FileURL != null ? src.FileURL.FileName : null));
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.FileURL != null ? src.FileURL : null));
             CreateMap<PostCategoryModel, PostCategory>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))

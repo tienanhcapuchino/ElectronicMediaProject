@@ -109,14 +109,13 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
         [HttpPost("create")]
-        [Authorize]
-        public async Task<APIResponeModel> CreatePost([FromForm] PostModel model)
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector},{UserRole.Writer}")]
+        public async Task<APIResponeModel> CreatePost(PostModel model)
         {
             try
             {
                 if (await _postService.CreatePost(model))
                 {
-                    _fileStorageService.SaveImageFile(model.FileURL);
                     return new APIResponeModel()
                     {
                         Code = 200,

@@ -686,3 +686,55 @@ function generateBlogEntries(listFirstEntry) {
 
     return colMd7Div;
 }
+
+function createPost(url) {
+    var titles = $("#title").val();
+    const selectedCategory = $("#category").val();
+    const selectedSubCategory = $("#subCategory").val();
+    const content = $("#textarea").val();
+    const description = $("#description").val();
+    const postData = {
+        userId: localStorage.getItem("userId"),
+        title: titles,
+        content: content,
+        categoryId: selectedCategory,
+        fileURL: url,
+        subCategoryId: selectedSubCategory,
+        description: description
+    };
+    $.ajax({
+        url: "http://localhost:5243/api/Post/create",
+        type: "POST",
+        data: JSON.stringify(postData),
+        contentType: "application/json",
+        success: function (data) {
+            console.log("Post created successfully.", postData);
+            // Handle the response from the server, if needed
+        },
+        error: function (xhr, status, error) {
+            console.error("Failed to create the post.", error);
+        },
+    });
+}
+function handleFileUpload(event) {
+    event.preventDefault();
+    // Get the selected file from the input element
+    const fileInput = document.getElementById("imageInput");
+    const file = fileInput.files[0];
+    // Create a FormData object to send the file to the server
+    const formData = new FormData();
+    formData.append("image", file, file.name); // The name "file" here should match the server's expected parameter name.
+    // Make the AJAX POST request to the server
+    $.ajax({
+        url: "http://localhost:5243/api/Image", // Replace with your server's API endpoint
+        type: "POST",
+        data: formData ,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+            createPost(data)
+        },
+        error: function (xhr, status, error) {
+        },
+    });
+}

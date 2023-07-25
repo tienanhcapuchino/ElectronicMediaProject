@@ -82,7 +82,7 @@ namespace ElectronicMedia.Core.Services.Service
             {
                 var sharedImagesFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
                 CommonService.GrantDirectoryAccess(sharedImagesFolder);
-                var fileName = image.FileName;
+                var fileName = $"{Guid.NewGuid().ToString().Replace("-","")}{image.FileName}";
 
                 string directoryPath = Path.GetDirectoryName(sharedImagesFolder);
                 if (!Directory.Exists(directoryPath))
