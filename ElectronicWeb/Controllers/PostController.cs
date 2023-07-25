@@ -302,6 +302,10 @@ namespace ElectronicWeb.Controllers
             return Content("Error when dowload excel!");
         }
 
+        public IActionResult CategoryPost(string id)
+        {
+            return View();
+        }
 
     }
 }
