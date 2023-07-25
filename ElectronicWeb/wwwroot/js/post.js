@@ -708,11 +708,24 @@ function createPost(url) {
         data: JSON.stringify(postData),
         contentType: "application/json",
         success: function (data) {
-            console.log("Post created successfully.", postData);
-            // Handle the response from the server, if needed
+            $("#genericModalLabel").text("Create Post");
+            if (data.isSucceed) {
+                $("#genericModalBody").text(data.message);
+                $("#genericModalLabel").addClass("text-success");
+                $("#genericModal").find(".modal-dialog").removeClass("modal-danger").addClass("modal-success");
+            } else {
+                $("#genericModalBody").text(data.message);
+                $("#genericModalLabel").addClass("text-danger");
+                $("#genericModal").find(".modal-dialog").removeClass("modal-success").addClass("modal-danger");
+            }
+            $("#genericModal").modal("show");
         },
         error: function (xhr, status, error) {
-            console.error("Failed to create the post.", error);
+            $("#genericModalLabel").text("Create Post");
+            $("#genericModalBody").text(data.message);
+            $("#genericModalLabel").addClass("text-danger");
+            $("#genericModal").find(".modal-dialog").removeClass("modal-success").addClass("modal-danger");
+            $("#genericModal").modal("show");
         },
     });
 }
