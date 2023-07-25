@@ -66,6 +66,7 @@
     <thead>
         <tr>
             <th>Title</th>
+            <th>Description</th>
             <th>AuthorName</th>
             <th>CreatedDate</th>
             <th>PublishedDate</th>
@@ -81,6 +82,7 @@
         {
             <tr>
                 <td style="width:40%">@p.Title</td>
+                <td>@p.Description</td>
                 <td>@p.AuthorName</td>
                 <td>@p.CreatedDate.ToString("dd/MM/yyyy")</td>
                 <td>@p.PublishedDate.Value.ToString("dd/MM/yyyy")</td>

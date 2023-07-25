@@ -186,8 +186,7 @@ namespace ElectronicWeb.Controllers
                     return View("Views/Home/Index.cshtml");
                 }
                 post.UpdatedDate = DateTime.Now;
-                post.Description = "";
-                if (!string.IsNullOrEmpty(post.Title) && !string.IsNullOrEmpty(post.Content))
+                if (!string.IsNullOrEmpty(post.Title) && !string.IsNullOrEmpty(post.Content) && ! string.IsNullOrEmpty(post.Description))
                 {
                     string data = JsonConvert.SerializeObject(post);
                     var result = CommonUIService.GetDataAPI(RoutesManager.UpdatePost, MethodAPI.POST, token, data);
@@ -205,7 +204,7 @@ namespace ElectronicWeb.Controllers
                 }
                 else
                 {
-                    TempData["message"] = "Title and Content must be not empty!";
+                    TempData["message"] = "Title and Content,Description must be not empty!";
                     return Redirect("/Post/Update?pid=" + post.Id);
                 }
             }
