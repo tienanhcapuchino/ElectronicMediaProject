@@ -161,9 +161,10 @@ namespace ElectronicWeb.Controllers.Admin
             return Content("Error when deactive user");
         }
 
-        public IActionResult AddUser()
+        public IActionResult Add(UserAddModel userModel)
         {
             var token = _tokenService.GetToken();
+            if (userModel == null) userModel = new UserAddModel();
             if (string.IsNullOrEmpty(token))
             {
                 return View("Views/Account/Login.cshtml");
@@ -175,7 +176,9 @@ namespace ElectronicWeb.Controllers.Admin
             }
             if (tokenModel != null && tokenModel.RoleName.Equals(UserRole.Admin))
             {
-                return View("Views/User/Add.cshtml");
+                if (TempData["AddFailed"] != null)
+                    ViewBag.ErrorAdd = TempData["AddFailed"] as string;
+                return View(userModel);
             }
             return View("Views/Account/Login.cshtml");
         }
@@ -198,8 +201,18 @@ namespace ElectronicWeb.Controllers.Admin
                 HttpResponseMessage respone = CommonUIService.GetDataAPI(RoutesManager.AddNewUser, MethodAPI.POST, token, jsonData);
                 if (respone.IsSuccessStatusCode)
                 {
-                    TempData["AddUserSuccess"] = "Add successfully";
-                    return RedirectToAction("UserManager");
+                    var data = respone.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    var resultData = JsonConvert.DeserializeObject<APIResponeModel>(data);
+                    if (resultData.Code == 200)
+                    {
+                        TempData["AddUserSuccess"] = "Add successfully";
+                        return RedirectToAction("UserManager");
+                    }
+                    else
+                    {
+                        TempData["AddFailed"] = resultData.Message;
+                        return RedirectToAction("Add", new {userModel = user});
+                    }
                 }
             }
             return Content("Error when add user");

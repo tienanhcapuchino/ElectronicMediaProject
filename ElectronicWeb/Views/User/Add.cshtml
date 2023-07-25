@@ -51,7 +51,7 @@
         <option value="Admin">Admin</option>
     </select>
     <label>Date of birth</label>
-    <input class="form-control" type="date"/>
+    <input class="form-control" type="date" />
     <label>Phone number</label>
     <input name="user.PhoneNumber" class="form-control" required maxlength="10" type="number" placeholder="enter phone number" />
     <label>Gender</label>
@@ -62,3 +62,9 @@
     </select>
     <input type="submit" value="Add" class="btn btn-primary" />
 </form>
+
+@{
+    if (ViewBag.ErrorAdd != null) {
+        <span class="text text-danger">@ViewBag.ErrorAdd</span>
+    }
+}
