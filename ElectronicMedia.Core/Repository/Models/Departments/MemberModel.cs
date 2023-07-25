@@ -45,5 +45,6 @@ namespace ElectronicMedia.Core.Repository.Models
         public DateTime Dob { get; set; }
         public string Gender { get; set; }
         public string PhoneNumber { get; set; }
+        public bool IsActived { get; set; }
     }
 }
