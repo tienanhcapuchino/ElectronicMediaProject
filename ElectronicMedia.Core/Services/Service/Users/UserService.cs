@@ -102,8 +102,7 @@ namespace ElectronicMedia.Core.Services.Service
         {
             var currentUser = GetCurrentUser();
             var userId = currentUser.FindFirst("UserId")?.Value;
-            var user = await _userManager.Users.Where(x => !x.Id.Equals(userId)).Include(x => x.Department).Skip((requestBody.Page - 1) * requestBody.Top)
-                    .Take(requestBody.Top).ToListAsync();
+            var user = await _userManager.Users.Where(x => !x.Id.Equals(userId)).Include(x => x.Department).ToListAsync();
             var resultTemp = user.MapToList<UsersModel>();
             foreach (var item in user)
             {

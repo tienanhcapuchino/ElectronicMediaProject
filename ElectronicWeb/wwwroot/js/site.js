@@ -62,5 +62,5 @@ function rediectToCategory(id,name) {
 }
 
 function redirectTo() {
-    window.location.href = "/";
+    window.location.href = "/user/userprofile";
 }
