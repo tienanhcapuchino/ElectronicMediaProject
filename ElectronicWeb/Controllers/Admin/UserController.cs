@@ -177,7 +177,7 @@ namespace ElectronicWeb.Controllers.Admin
             {
                 if (TempData["AddFailed"] != null)
                     ViewBag.ErrorAdd = TempData["AddFailed"] as string;
-                return View(userModel);
+                return View();
             }
             return View("Views/Account/Login.cshtml");
         }
