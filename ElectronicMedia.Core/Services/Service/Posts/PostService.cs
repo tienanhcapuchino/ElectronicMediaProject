@@ -168,9 +168,8 @@ namespace ElectronicMedia.Core.Services.Service
         {
             try
             {
-                var post = await _context.Posts.Where(y => y.Status == PostStatusModel.Published).OrderBy(x => x.CreatedDate).Take(take).ToListAsync();
+                var post = await _context.Posts.Where(y => y.Status == PostStatusModel.Published).OrderByDescending(x => x.PublishedDate).Take(take).ToListAsync();
                 return post.MapToList<PostView>();
-
             }
             catch (Exception ex)
             {
