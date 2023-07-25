@@ -370,7 +370,7 @@ namespace ElectronicMedia.Core.Services.Service
                 if (requestBody.CategoryId != Guid.Empty)
                 {
                     var post = await _context.Posts.Include(x => x.User).Where(x => (x.CategoryId == requestBody.CategoryId || x.SubCategoryId == requestBody.CategoryId) && x.Status == PostStatusModel.Published)
-                                    .OrderBy(y => y.PublishedDate)
+                                    .OrderByDescending(y => y.PublishedDate)
                                     .Skip((requestBody.PageNumber - 1) * requestBody.PageSize)
                                     .Take(requestBody.PageSize)
                                     .ToListAsync();
