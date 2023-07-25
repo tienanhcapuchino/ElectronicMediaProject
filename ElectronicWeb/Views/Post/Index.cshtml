@@ -39,13 +39,13 @@
     TokenUIModel user = ViewBag.User;
     string status = ViewBag.SelectedStatus;
 }
-<h1>@user.Username  - @user.RoleName</h1>
+<h4>@user.Username  - @user.RoleName</h4>
+
 <div style="margin-bottom: 30px">
     <form asp-controller="Post" asp-action="index" method="get" style="display: flex; margin:30px 0px">
-        <input name="text" value="@ViewBag.Text" id="search-focus" type="search" placeholder="Search Title or Content..." class="form-control" />
+        <input class="form-control" name="text" value="@ViewBag.Text" type="search" placeholder="Search Title or Content..." />
         <input type="submit" class="btn btn-outline-primary" value="Search" /> <br />
     </form>
-
     <form asp-controller="Post" asp-action="index" method="get">
         <label>Filter Status</label>
         <select name="status" onchange="this.form.submit()" class="form-select">
@@ -57,11 +57,9 @@
         </select>
     </form>
 </div>
+
 <div style="float: right">
-    @if (user.RoleName == UserRole.Admin || user.RoleName == UserRole.EditorDirector)
-    {
-        @Html.ActionLink("Export to excel", "DownloadExcel", "Post", null, new { @class = "btn btn-primary" })
-    }
+    @Html.ActionLink("Export to excel", "DownloadExcel", "Post", null, new { @class = "btn btn-primary" })
     <a class="btn btn-primary" href="/post/add">Write Post</a>
 </div>
 <table class="table" style="margin-bottom: 20px">
@@ -108,16 +106,16 @@
 
                 <td class="button-cell">
 
-                    <a asp-controller="Post" asp-action="Detail" asp-route-pid="@p.Id" type="button" class="btn btn-success"><i class="bi bi-eye"></i></a>
+                    <a asp-controller="Post" asp-action="Detail" asp-route-pid="@p.Id" type="button" class="btn btn-success"><i class="ti ti-eye"></i></a>
                     @if (user.RoleName != UserRole.Writer || (user.RoleName == UserRole.Writer && p.Status.ToString() == "Pending"))
                     {
-                        <a asp-controller="Post" asp-action="Update" asp-route-pid="@p.Id" asp-route-currentPage="@Model.CurrentPage" type="button" class="btn btn-primary"><i class="bi bi-pen"></i></a>
+                        <a asp-controller="Post" asp-action="Update" asp-route-pid="@p.Id" asp-route-currentPage="@Model.CurrentPage" type="button" class="btn btn-primary"><i class="ti ti-edit"></i></a>
 
                     }
 
                     @if ((user.RoleName != UserRole.Leader && user.RoleName != UserRole.Writer) || (user.RoleName == UserRole.Writer && p.Status.ToString() == "Pending"))
                     {
-                        <a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                        <a asp-controller="Post" asp-action="Delete" asp-route-pid="@p.Id" type="button" class="btn btn-danger"><i class="ti ti-trash"></i></a>
 
                     }
 
@@ -203,9 +201,6 @@
         width: 100%;
     }
 
-
-
-
     .button-cell {
         display: grid;
         grid-template-columns: repeat(3, auto);
@@ -221,23 +216,5 @@
     .first {
         width: 70%;
     }
-
-    .ellipsis {
-        position: relative;
-    }
-
-        .ellipsis:before {
-            content: ' ';
-            visibility: hidden;
-        }
-
-        .ellipsis span {
-            position: absolute;
-            left: 0;
-            right: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
 </style>
 

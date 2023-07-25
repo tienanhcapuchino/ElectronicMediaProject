@@ -142,50 +142,12 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
         [HttpPost("page")]
-        [Authorize(Roles =$"{UserRole.Admin}, {UserRole.EditorDirector}")]
+        [Authorize(Roles =$"{UserRole.Admin}, {UserRole.EditorDirector},{UserRole.Leader},{UserRole.Writer}")]
         public async Task<IActionResult> GetPostByPaging(PageRequestBody requestBody)
         {
             try
             {
                 var result = await _postService.GetAllWithPaging(requestBody);
-                return new JsonResult(result);
-            }
-            catch (Exception ex)
-            {
-                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
-                {
-                    Status = ApiResultStatus.Failed,
-                    ErrorMessage = ex.Message
-                });
-            }
-        }
-
-        [HttpPost("leader/page/{leaderId}")]
-        [Authorize(Roles = $"{UserRole.Leader}")]
-        public async Task<IActionResult> GetPostByPagingByLeader([FromRoute] Guid leaderId, [FromBody] PageRequestBody requestBody)
-        {
-            try
-            {
-                var result = await _postService.GetAllWithPagingByLeader(leaderId,requestBody);
-                return new JsonResult(result);
-            }
-            catch (Exception ex)
-            {
-                return new JsonResult(new ResultDto<PagedList<UserIdentity>>
-                {
-                    Status = ApiResultStatus.Failed,
-                    ErrorMessage = ex.Message
-                });
-            }
-        }
-
-        [HttpPost("writer/page/{writerId}")]
-        [Authorize(Roles = $"{UserRole.Writer}")]
-        public async Task<IActionResult> GetPostByPagingByWriter([FromRoute] Guid writerId, [FromBody] PageRequestBody requestBody)
-        {
-            try
-            {
-                var result = await _postService.GetAllWithPagingByWriter(writerId,requestBody);
                 return new JsonResult(result);
             }
             catch (Exception ex)
@@ -243,7 +205,7 @@ namespace ElectronicMediaAPI.Controllers.Post
             }
         }
         [HttpGet("export")]
-        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector}")]
+        [Authorize(Roles = $"{UserRole.Admin}, {UserRole.EditorDirector},{UserRole.Leader},{UserRole.Writer}")]
         public async Task<IActionResult> ExportPost()
         {
             try

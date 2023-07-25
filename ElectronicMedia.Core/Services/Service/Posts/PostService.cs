@@ -28,6 +28,7 @@
 *********************************************************************/
 
 using AutoMapper;
+using DocumentFormat.OpenXml.Bibliography;
 using ElectronicMedia.Core.Automaper;
 using ElectronicMedia.Core.Common;
 using ElectronicMedia.Core.Common.Extension;
@@ -124,7 +125,7 @@ namespace ElectronicMedia.Core.Services.Service
                 }
 
                 var entity = post.MapTo<Post>();
-                 result = await Update(entity);
+                result = await Update(entity);
                 if (result == true)
                 {
                     var currentUser = _userService.GetCurrentUser();
@@ -137,12 +138,12 @@ namespace ElectronicMedia.Core.Services.Service
                         await _emailService.SendEmailAsync(emailModel);
                     }
                 }
-                
+
             }
             return result;
 
         }
-        public async Task<bool> Delete(Guid id,bool saveChange = true)
+        public async Task<bool> Delete(Guid id, bool saveChange = true)
         {
             bool result = true;
             var post = await GetByIdAsync(id);
@@ -177,55 +178,41 @@ namespace ElectronicMedia.Core.Services.Service
             }
 
         }
+        private async Task<List<Post>> GetListPostsOfLeader(string leaderId)
+        {
+            var depId = (Guid)_context.Users.FirstOrDefault(x => x.Id == leaderId).DepartmentId;
+
+            var posts = await _context.Posts.Include(x => x.User).Include(x => x.SubCategory).Include(x => x.Category).ToListAsync();
+            List<Post> postsLeader = new List<Post>();
+            foreach (var post in posts)
+            {
+                if (post.User.DepartmentId == depId)
+                {
+                    postsLeader.Add(post);
+                }
+            }
+            return postsLeader;
+        }
         public async Task<PagedList<PostViewModel>> GetAllWithPaging(PageRequestBody requestBody)
         {
             try
             {
+                var currentUser = _userService.GetCurrentUser();
+                var role = currentUser.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
+                var userId = currentUser.FindFirst("UserId")?.Value;
                 var posts = await _context.Posts.Include(x => x.User).ToListAsync();
                 var countItem = await CommonService.GetTotalCount<Post>(_context);
-                var postModels = posts.MapTo<List<PostViewModel>>();
-                var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
-                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        public async Task<PagedList<PostViewModel>> GetAllWithPagingByLeader(Guid leaderId, PageRequestBody requestBody)
-        {
-            try
-            {
-                var depId = (Guid)_context.Users.FirstOrDefault(x => x.Id == leaderId.ToString()).DepartmentId;
-
-                var posts = await _context.Posts.Include(x => x.User).ToListAsync();
-                List<Post> postsLeader = new List<Post>();
-                foreach (var post in posts)
+                if (role == UserRole.Writer)
                 {
-                    if (post.User.DepartmentId == depId)
-                    {
-                        postsLeader.Add(post);
-                    }
+                    posts = await _context.Posts.Where(x => x.UserId == userId).Include(x => x.User).ToListAsync();
+                    countItem = posts.Count();
                 }
-                var postModels = postsLeader.MapTo<List<PostViewModel>>();
-                var countItem = postsLeader.Count();
-                var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
-                return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        public async Task<PagedList<PostViewModel>> GetAllWithPagingByWriter(Guid writerId, PageRequestBody requestBody)
-        {
-            try
-            {
-                var posts = await _context.Posts.Where(x => x.UserId == writerId.ToString()).Include(x => x.User).ToListAsync();
+                if (role == UserRole.Leader)
+                {
+                    posts = await GetListPostsOfLeader(userId);
+                    countItem = posts.Count();
+                }
                 var postModels = posts.MapTo<List<PostViewModel>>();
-                var countItem = postModels.Count();
                 var result = QueryData<PostViewModel>.QueryForModel(requestBody, postModels).ToList();
                 return PagedList<PostViewModel>.ToPagedList(result, requestBody.Page, requestBody.Top, countItem);
             }
@@ -234,7 +221,6 @@ namespace ElectronicMedia.Core.Services.Service
                 throw;
             }
         }
-
         public async Task<Post> GetByIdAsync(Guid id)
         {
             var post = await _context.Posts.AsNoTracking().Include(x => x.User).Where(x => x.Id == id).SingleOrDefaultAsync();
@@ -307,7 +293,7 @@ namespace ElectronicMedia.Core.Services.Service
         {
             var currentUser = _userService.GetCurrentUser();
             var role = currentUser.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
-            var post = await GetByIdAsync(postId);        
+            var post = await GetByIdAsync(postId);
             if (post == null) return false;
             var receiveUser = await _userService.GetByIdAsync(Guid.Parse(post.UserId));
             var comments = await _commentService.GetAllCommentsByPost(postId);
@@ -341,7 +327,20 @@ namespace ElectronicMedia.Core.Services.Service
         }
         public async Task<DataTable> ExportPosts()
         {
+            var currentUser = _userService.GetCurrentUser();
+            var role = currentUser.FindFirst("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
+            var userId = currentUser.FindFirst("UserId")?.Value;
             var posts = await _context.Posts.Include(x => x.User).Include(x => x.SubCategory).Include(x => x.Category).ToListAsync();
+            if (role == UserRole.Writer)
+            {
+                posts = await _context.Posts.Where(x => x.UserId == userId).Include(x => x.User).Include(x => x.SubCategory).Include(x => x.Category).ToListAsync();
+              
+            }
+            if (role == UserRole.Leader)
+            {
+                posts = await GetListPostsOfLeader(userId);
+            }
+
             DataTable dt = _excelService.ExportToExcel(posts);
             return dt;
         }
@@ -372,12 +371,12 @@ namespace ElectronicMedia.Core.Services.Service
                 if (requestBody.CategoryId != Guid.Empty)
                 {
                     var post = await _context.Posts.Include(x => x.User).Where(x => (x.CategoryId == requestBody.CategoryId || x.SubCategoryId == requestBody.CategoryId) && x.Status == PostStatusModel.Published)
-        .OrderBy(y => y.PublishedDate)
-        .Skip((requestBody.PageNumber - 1) * requestBody.PageSize)
-        .Take(requestBody.PageSize)
-        .ToListAsync();
+                                    .OrderBy(y => y.PublishedDate)
+                                    .Skip((requestBody.PageNumber - 1) * requestBody.PageSize)
+                                    .Take(requestBody.PageSize)
+                                    .ToListAsync();
                     var number = await _context.Posts.Include(x => x.User).Where(x => (x.CategoryId == requestBody.CategoryId || x.SubCategoryId == requestBody.CategoryId) && x.Status == PostStatusModel.Published).CountAsync();
-                    return PagedList<PostView>.ToPagedList(post.MapToList<PostView>(),requestBody.PageNumber,requestBody.PageSize,number);
+                    return PagedList<PostView>.ToPagedList(post.MapToList<PostView>(), requestBody.PageNumber, requestBody.PageSize, number);
                 }
                 return null;
             }
@@ -417,7 +416,7 @@ namespace ElectronicMedia.Core.Services.Service
             List<string> emailTos = new List<string>();
             emailTos.Add(emailReceive);
             result.Subject = EmailTemplateSubjectConstant.PostPublishedSubject;
-            string bodyEmail = string.Format(EmailTemplateBodyConstant.PublishPostBody, roleCurrentUser, nameCurrentUser, post.Title, DateTime.Now.ToString("dddd, dd MMMM yyyy"),emailCurrentUser);
+            string bodyEmail = string.Format(EmailTemplateBodyConstant.PublishPostBody, roleCurrentUser, nameCurrentUser, post.Title, DateTime.Now.ToString("dddd, dd MMMM yyyy"), emailCurrentUser);
             result.Body = bodyEmail + EmailTemplateBodyConstant.SignatureFooter;
             result.To = emailTos;
             return await Task.FromResult(result);
