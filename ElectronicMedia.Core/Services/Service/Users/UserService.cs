@@ -154,59 +154,56 @@ namespace ElectronicMedia.Core.Services.Service
             }
             return result;
         }
-        public APIResponeModel UpdateUserProfile(UserProfileUpdateModel profile)
+        public async Task<APIResponeModel> UpdateUserProfile(UserProfileModel profile)
         {
-            APIResponeModel result = new APIResponeModel()
+            var result = new APIResponeModel()
             {
                 Data = profile,
                 Code = 200,
                 IsSucceed = true,
                 Message = "update successfully"
             };
-            //var user = GetByIdAsync(Guid.Parse(profile.Id)).GetAwaiter().GetResult();
-            //if (user == null)
-            //{
-            //    return new APIResponeModel()
-            //    {
-            //        Data = profile,
-            //        Code = 400,
-            //        IsSucceed = false,
-            //        Message = "user doesn't exist"
-            //    };
-            //}
-            //if (!profile.Username.Equals(user.UserName))
-            //{
-            //    return new APIResponeModel()
-            //    {
-            //        Data = profile,
-            //        Code = 400,
-            //        IsSucceed = false,
-            //        Message = "cannot change username"
-            //    };
-            //}
-            var updateProfile = profile.MapTo<UserIdentity>();
-            IFormFile fileDemo = ConvertObjectToIFormFile(profile.ImageFile);
-            updateProfile.Image = _fileStorageService.SaveImageFile(fileDemo).GetAwaiter().GetResult();
-            _context.Entry(updateProfile).State = EntityState.Detached;
-            var resultUpdate = _userManager.UpdateAsync(updateProfile).GetAwaiter().GetResult();
-            if (resultUpdate.Succeeded)
+            var user = _context.Users.AsNoTracking().Where(x => x.Id.Equals(profile.Id)).FirstOrDefault();
+            if (user == null)
             {
-                return result;
-            }
-            else
-            {
-                string errorMesage = "";
-                foreach (var error in resultUpdate.Errors)
-                {
-                    errorMesage += error.Description;
-                }
                 return new APIResponeModel()
                 {
+                    Data = profile,
                     Code = 400,
-                    Message = errorMesage,
-                    IsSucceed = false
+                    IsSucceed = false,
+                    Message = "user doesn't exist"
                 };
             }
+            var isDuplicateEmail = (await _context.Users.Where(x => x.Email.Equals(profile.Email) && !x.Email.Equals(user.Email)).FirstOrDefaultAsync() != null);
+            var isDuplicatePhone = (await _context.Users.Where(x => x.PhoneNumber.Equals(profile.PhoneNumber) && !x.PhoneNumber.Equals(user.PhoneNumber)).FirstOrDefaultAsync() != null);
+            if (isDuplicateEmail)
+            {
+                return new APIResponeModel()
+                {
+                    Data = profile,
+                    Code = 400,
+                    IsSucceed = false,
+                    Message = "email has been existed"
+                };
+            }
+            if (isDuplicatePhone)
+            {
+                return new APIResponeModel()
+                {
+                    Data = profile,
+                    Code = 400,
+                    IsSucceed = false,
+                    Message = "phone number has been existed"
+                };
+            }
+            user.FullName = profile.FullName;
+            user.Email = profile.Email;
+            user.PhoneNumber = profile.PhoneNumber;
+            user.Gender = profile.Gender;
+            user.Image = profile.Image;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return result;
         }
 
         public async Task<IEnumerable<UserIdentity>> GetAllAsync()
@@ -250,24 +247,53 @@ namespace ElectronicMedia.Core.Services.Service
             }
         }
 
-        private IFormFile ConvertObjectToIFormFile(object imageFileObject)
+        public async Task<APIResponeModel> ChangePassword(ChangePassModel model)
         {
-            JsonDocument jsonDocument = JsonDocument.Parse(imageFileObject.ToString());
-            JsonElement root = jsonDocument.RootElement;
-
-            // Extract the necessary properties
-            string contentDisposition = root.GetProperty("ContentDisposition").GetString();
-            string contentType = root.GetProperty("ContentType").GetString();
-            string fileName = root.GetProperty("FileName").GetString();
-            long length = root.GetProperty("Length").GetInt64();
-
-            // Create a temporary MemoryStream to hold the file content
-            IFormFile formFile = new FormFile(Stream.Null, 0, length, "userProfile.ImageFile", fileName)
+            string pattern = @"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$";
+            bool isValidPassword = Regex.IsMatch(model.Password, pattern);
+            APIResponeModel result = new APIResponeModel()
             {
-                Headers = new HeaderDictionary(),
-                ContentType = contentType
+                Code = 200,
+                Data = model,
+                IsSucceed = true,
+                Message = "Change success"
             };
-            return formFile;
+            var user = await _userManager.Users.AsNoTracking().Where(x => x.Id.Equals(model.UserId)).FirstOrDefaultAsync();
+            var checkPass = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+            if (!checkPass)
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Data = model,
+                    IsSucceed = false,
+                    Message = "Current password is incorrect"
+                };
+            }
+            if (!isValidPassword)
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Data = model,
+                    IsSucceed = false,
+                    Message = "password must be at least 6 charactes, have both upper case, lower case and number"
+                };
+            }
+            if (!model.Password.Equals(model.RePassword))
+            {
+                return new APIResponeModel()
+                {
+                    Code = 400,
+                    Data = model,
+                    IsSucceed = false,
+                    Message = "re password does not match with password"
+                };
+            }
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return result;
         }
 
        
