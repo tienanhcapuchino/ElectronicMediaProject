@@ -60,7 +60,7 @@
             </div>
             <div>
                 <img style="width: 250px; height: 250px" class="form-controll" src="@(Model.Image != null ? Model.Image : "/images/avt_def.jpg")" />
-                <input name="formFile" id="imageInput" type="file" class="form-control" />
+                <input required name="formFile" id="imageInput" type="file" class="form-control" />
             </div>
         </div>
         @{
@@ -111,19 +111,7 @@
                         email: $('#profileEmail').val()
                     }),
                     success: function (dataUpdate) {
-                        log
-                        // Handle the successful response from the API
-                        $("#genericModalLabel").text("Update profile");
-                        if (dataUpdate.isSucceed) {
-                            $("#genericModalBody").text(dataUpdate.message);
-                            $("#genericModalLabel").addClass("text-success");
-                            $("#genericModal").find(".modal-dialog").removeClass("modal-danger").addClass("modal-success");
-                        } else {
-                            $("#genericModalBody").text(dataUpdate.message);
-                            $("#genericModalLabel").addClass("text-danger");
-                            $("#genericModal").find(".modal-dialog").removeClass("modal-success").addClass("modal-danger");
-                        }
-                        $("#genericModal").modal("show");
+                        alert('update successfully');
                     },
                     error: function (xhr, status, error) {
                         console.log(error)

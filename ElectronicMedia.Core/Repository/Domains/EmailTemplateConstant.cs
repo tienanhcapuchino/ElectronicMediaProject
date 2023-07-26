@@ -89,7 +89,7 @@ namespace ElectronicMedia.Core.Repository.Domains
                                                 <div class=""nidPne""><span style=""color: #ff0000;""><em>Please login to the system to change your password to protect your account!</em></span></div>
                                                 </div>";
 
-        public const string SignatureFooter = @"<p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below: <a>tienanhcapuchino@gmail.com</a></p>
+        public const string SignatureFooter = @"<p>Thanks for using our service. If you have any problem with our service, feel free to share it with us by emailing the admin below.</p>
                                                 <p>This email is sent automatically, <em><strong>please don&rsquo;t reply</strong></em>.</p>
                                                 <p>&nbsp;</p>
                                                 <p><em><strong>Best Regards,</strong></em></p>
